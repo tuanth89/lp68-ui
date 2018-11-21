@@ -1,0 +1,33 @@
+<div class="panel panel-default">
+    <div class="panel-heading">Daily Average</div>
+    <ul class="list-unstyled report list-info">
+        <!--<li>-->
+            <!--<label>Estimated Revenue</label>-->
+            <!--<span class="pull-right">{{ dataAverage.averageEstRevenue | currency }}</span>-->
+        <!--</li>-->
+        <!--<li>-->
+            <!--<label>Estimated CPM</label>-->
+            <!--<span class="pull-right">{{ dataAverage.averageEstCpm | currency:'$':4 }}</span>-->
+        <!--</li>-->
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.SLOT_OPPORTUNITIES' | translate }}</label>
+            <span class="pull-right">{{ dataAverage.averageSlotOpportunities | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.NETWORK_OPPORTUNITIES' | translate }}</label>
+            <span class="pull-right">{{ dataAverage.averageTotalOpportunities | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.IMPRESSIONS' | translate }}</label>
+            <span class="pull-right">{{ dataAverage.averageImpressions | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.PASSBACKS' | translate }}</label>
+            <span class="pull-right">{{ dataAverage.averagePassbacks | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.FILL_RATE' | translate }}</label>
+            <span class="pull-right">{{ dataAverage.averageFillRate | percentage }}</span>
+        </li>
+    </ul>
+</div>

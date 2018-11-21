@@ -1,0 +1,29 @@
+<div class="panel panel-default">
+    <div class="panel-heading">{{ 'DASHBOARD_MODULE.PLATFORM_STATISTICS' | translate }}</div>
+    <ul class="list-unstyled report list-info">
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.BILLED_AMOUNT' | translate }}</label>
+            <span class="pull-right">{{ dataStatistics.billedAmount | currency }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.SLOT_OPPORTUNITIES' | translate }}</label>
+            <span class="pull-right">{{ dataStatistics.slotOpportunities | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.NETWORK_OPPORTUNITIES' | translate }}</label>
+            <span class="pull-right">{{ dataStatistics.totalOpportunities | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.IMPRESSIONS' | translate }}</label>
+            <span class="pull-right">{{ dataStatistics.impressions | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.PASSBACKS' | translate }}</label>
+            <span class="pull-right">{{ dataStatistics.passbacks | number }}</span>
+        </li>
+        <li>
+            <label>{{ 'DASHBOARD_MODULE.FILL_RATE' | translate }}</label>
+            <span class="pull-right">{{ dataStatistics.fillRate | percentage }}</span>
+        </li>
+    </ul>
+</div>

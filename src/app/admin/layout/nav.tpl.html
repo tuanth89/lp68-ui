@@ -1,0 +1,301 @@
+<div class="sidebar-inner">
+    <div class="sidebar-logo">
+        <div class="peers ai-c fxw-nw">
+            <div class="peer peer-greed">
+                <a class="sidebar-link td-n" href="http://medu.vn" target="_blank">
+                    <div class="peers ai-c fxw-nw">
+                        <div class="peer">
+                            <div class="logo">
+                                <img class="left-menu-logo" src="/assets/images/logo.png" alt="">
+                            </div>
+                        </div>
+                        <div class="peer peer-greed">
+                            <h5 class="lh-1 mB-0 logo-text">&nbsp;</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="peer">
+                <div class="mobile-toggle sidebar-toggle">
+                    <a href="#" class="td-n">
+                        <i class="ti-arrow-circle-left"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="sidebar-menu scrollable pos-r ps">
+        <li class="nav-item mT-30" ui-sref-active="active" ng-click="navigateSidebar('.dashboard')">
+            <a class="sidebar-link" href="javascript:void(0)" ui-sref="app.admin.dashboard">
+                <span class="icon-holder">
+                    <i class="c-orange-500 ti-dashboard"></i>
+                </span>
+                <span class="title">Tổng quan</span>
+            </a>
+        </li>
+        <li class="nav-item dropdown" ng-class="{'active': stateName == '.course'}">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                aria-expanded="false" aria-haspopup="true" data-display="static">
+                <span class="icon-holder">
+                    <i class="c-blue-500 ti-book"></i>
+                </span>
+                <span class="title">
+                    {{'COURSE_MODULE.COURSE' | translate}}
+                </span>
+                <span class="arrow">
+                    <i class="ti-angle-right"></i>
+                </span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li ui-sref-active="active" ng-click="navigateSidebar('.course')">
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".course.list">
+                        {{'LIST' | translate}}
+                    </a>
+                </li>
+                <!-- <li>
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".course.new">Create New</a>
+                </li> -->
+            </ul>
+        </li>
+        <li class="nav-item dropdown" ng-class="{'active': stateName == '.category'}">
+            <a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false"
+                data-display="static">
+                <span class="icon-holder">
+                    <i class="c-blue-500 ti-menu"></i>
+                </span>
+                <span class="title">
+                    {{'CATEGORY_MODULE.CATEGORY' | translate}}
+                </span>
+                <span class="arrow">
+                    <i class="ti-angle-right"></i>
+                </span>
+            </a>
+            <ul class="dropdown-menu">
+                <li ui-sref-active="active" ng-click="navigateSidebar('.category')">
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".category.list">
+                        {{'LIST' | translate}}
+                    </a>
+                </li>
+                <li ui-sref-active="active" ng-click="navigateSidebar('.category')">
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".category.new">
+                        {{'CREATE_NEW' | translate}}
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown" ng-class="{'active': stateName == '.subcategory'}">
+            <a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false"
+                data-display="static">
+                <span class="icon-holder">
+                    <i class="c-blue-500 ti-menu-alt"></i>
+                </span>
+                <span class="title">
+                    {{'SUBCATEGORY_MODULE.SUBCATEGORY' | translate}}
+                </span>
+                <span class="arrow">
+                    <i class="ti-angle-right"></i>
+                </span>
+            </a>
+            <ul class="dropdown-menu">
+                <li ui-sref-active="active" ng-click="navigateSidebar('.subcategory')">
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".subcategory.list">
+                        {{'LIST' | translate}}
+                    </a>
+                </li>
+                <li ui-sref-active="active" ng-click="navigateSidebar('.subcategory')">
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".subcategory.new">
+                        {{'CREATE_NEW' | translate}}
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown" ng-class="{'active': stateName == '.topic'}">
+            <a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false"
+                data-display="static">
+                <span class="icon-holder">
+                    <i class="c-blue-500 ti-folder"></i>
+                </span>
+                <span class="title">
+                    {{'TOPIC_MODULE.TOPIC' | translate}}
+                </span>
+                <span class="arrow">
+                    <i class="ti-angle-right"></i>
+                </span>
+            </a>
+            <ul class="dropdown-menu">
+                <li ui-sref-active="active" ng-click="navigateSidebar('.topic')">
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".topic.list">
+                        {{'LIST' | translate}}
+                    </a>
+                </li>
+                <li ui-sref-active="active" ng-click="navigateSidebar('.topic')">
+                    <a class='sidebar-link' href="javascript:void(0)" ui-sref=".topic.new">
+                        {{'CREATE_NEW' | translate}}
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown" ng-class="{'active': stateName == '.contentManagerManagement' 
+                                                || stateName == '.accountantManagement'
+                                                || stateName == '.customerManagerManagement'
+                                                || stateName == '.lecturerManagerManagement'
+                                                || stateName == '.lecturerManagement'
+                                                || stateName == '.studentManagement' }">
+            <a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false"
+                data-display="static">
+                <span class="icon-holder">
+                    <i class="c-blue-500 ti-user"></i>
+                </span>
+                <span class="title">
+                    {{ 'USERS_MANAGEMENT_MODULE.USER_MANAGEMENT'| translate}}
+                </span>
+                <span class="arrow">
+                    <i class="ti-angle-right"></i>
+                </span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="nav-item dropdown" ng-class="{'active': stateName == '.contentManagerManagement'}">
+                    <a class="submenu" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">
+                        <span>
+                            {{'NAV_MODULE.CONTENT_MANAGER' | translate}}
+                        </span>
+                        <span class="arrow">
+                            <i class="ti-angle-right"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.contentManagerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".contentManagerManagement.list">
+                                {{'LIST' | translate}}
+                            </a>
+                        </li>
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.contentManagerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".contentManagerManagement.new">
+                                {{'CREATE_NEW' | translate}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown" ng-class="{'active': stateName == '.accountantManagement'}">
+                    <a class="submenu" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">
+                        <span>
+                            {{'NAV_MODULE.ACCOUNTANT_MANAGER' | translate}}
+                        </span>
+                        <span class="arrow">
+                            <i class="ti-angle-right"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.accountantManagement')">
+                            <a href="javascript:void(0);" ui-sref=".accountantManagement.list">
+                                {{'LIST' | translate}}
+                            </a>
+                        </li>
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.accountantManagement')">
+                            <a href="javascript:void(0);" ui-sref=".accountantManagement.new">
+                                {{'CREATE_NEW' | translate}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown" ng-class="{'active': stateName == '.customerManagerManagement'}">
+                    <a class="submenu" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">
+                        <span>
+                            {{'NAV_MODULE.CUSTOMER_MANAGER' | translate}}
+                        </span>
+                        <span class="arrow">
+                            <i class="ti-angle-right"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.customerManagerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".customerManagerManagement.list">
+                                {{'LIST' | translate}}
+                            </a>
+                        </li>
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.customerManagerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".customerManagerManagement.new">
+                                {{'CREATE_NEW' | translate}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown" ng-class="{'active': stateName == '.lecturerManagerManagement'}">
+                    <a class="submenu" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">
+                        <span>
+                            {{'NAV_MODULE.LECTURER_MANAGER' | translate}}
+                        </span>
+                        <span class="arrow">
+                            <i class="ti-angle-right"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.lecturerManagerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".lecturerManagerManagement.list">
+                                {{'LIST' | translate}}
+                            </a>
+                        </li>
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.lecturerManagerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".lecturerManagerManagement.new">{{'CREATE_NEW' |
+                                translate}}</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown" ng-class="{'active': stateName == '.lecturerManagement'}">
+                    <a class="submenu" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">
+                        <span>
+                            {{'NAV_MODULE.LECTURER' | translate}}
+                        </span>
+                        <span class="arrow">
+                            <i class="ti-angle-right"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.lecturerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".lecturerManagement.list">
+                                {{'LIST' | translate}}
+                            </a>
+                        </li>
+                        <li ui-sref-active="active" ng-click="navigateSidebar('.lecturerManagement')">
+                            <a href="javascript:void(0);" ui-sref=".lecturerManagement.new">
+                                {{'CREATE_NEW' | translate}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown" ng-class="{'active': stateName == '.studentManagement'}">
+                    <a class="submenu" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">
+                        <span>
+                            {{'NAV_MODULE.STUDENTS' | translate}}
+                        </span>
+                        <span class="arrow">
+                            <i class="ti-angle-right"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active">
+                            <a href="javascript:void(0);" ui-sref=".studentManagement.list">
+                                {{'LIST' | translate}}
+                            </a>
+                        </li>
+                        <li ui-sref-active="active">
+                            <a href="javascript:void(0);" ui-sref=".studentManagement.new">
+                                {{'CREATE_NEW' | translate}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item mT-30" ui-sref-active="active">
+            <a class="sidebar-link" href="javascript:void(0)" ui-sref=".accessManagement.list">
+                <span class="icon-holder">
+                    <i class="c-blue-500 ti-id-badge"></i>
+                </span>
+                <span class="title">
+                    {{'USER_ROLES' | translate}}
+                </span>
+            </a>
+        </li>
+    </ul>
+</div>

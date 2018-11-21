@@ -1,0 +1,10 @@
+module.exports = {
+    //apiEndPoint: 'http://api.khamsuckhoe.com/app_dev.php/api',
+
+    hostname: '127.0.0.1',
+    port: 9001,
+    appUrl: 'http://localhost:9001',
+    // application to open your app
+    browser: 'firefox',
+    seleniumPath: '/usr/lib/node_modules/selenium-standalone/bin/'
+};

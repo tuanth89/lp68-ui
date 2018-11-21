@@ -1,0 +1,82 @@
+<!--<div class="page-signin">-->
+
+    <!--<div class="signin-header">-->
+        <!--<section class="logo text-center">-->
+            <!--<a ng-href="{{ frontPageEndPoint+'/#/public/home?lang='+lang }}">{{ 'HOME_PAGE' | translate }}</a>-->
+        <!--</section>-->
+    <!--</div>-->
+
+    <!--<div class="signin-body">-->
+        <!--<div class="container">-->
+
+            <!--<div class="form-container">-->
+
+                <!--<alert-box></alert-box>-->
+
+                <!--<form name="loginForm" class="form-horizontal" novalidate>-->
+                    <!--<fieldset>-->
+                        <!--<div class="form-group">-->
+                            <!--<span class="glyphicon glyphicon-user"></span>-->
+                            <!--<input type="text" name="username" ng-model="credentials.username" ng-required="true" ng-minlength="2" class="form-control input-lg input-round text-center" placeholder="{{ 'USERNAME' | translate}}">-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<span class="glyphicon glyphicon-lock"></span>-->
+                            <!--<input type="password" name="password" ng-model="credentials.password" ng-required="true" ng-minlength="2" class="form-control input-lg input-round text-center" placeholder="{{ 'PASSWORD' | translate}}">-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<button ng-disabled="!isFormValid()" ng-click="login(credentials)" ng-disabled="formProcessing" class="btn btn-primary btn-lg btn-round btn-block text-center">{{ 'LOGIN' | translate}}</button>-->
+                        <!--</div>-->
+                    <!--</fieldset>-->
+                <!--</form>-->
+
+                <!--<section>-->
+                    <!--<p class="text-center"><a ui-sref="checkEmail">{{ 'FORGOT_PASSWORD' | translate }}</a></p>-->
+                <!--</section>-->
+
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+<!--</div>-->
+<!--<div class="peers ai-s fxw-nw h-100vh">-->
+    <!--<div class="d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv" style='background-image: url("assets/static/images/bg.jpg")'>-->
+        <!--<div class="pos-a centerXY">-->
+            <!--<div class="bgc-white bdrs-50p pos-r" style='width: 120px; height: 120px;'>-->
+                <!--<img class="pos-a centerXY" src="/assets/images/logo.png" alt="">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="col-12 col-md-4 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r" style='min-width: 320px;'>-->
+    <h4 class="c-grey-900 mB-40">{{ 'LOGIN' | translate}}</h4>
+    <alert-box></alert-box>
+    <form name="loginForm" class="form-horizontal" novalidate>
+        <div class="form-group">
+            <label class="text-normal text-dark">
+                Email
+            </label>
+            <span class="glyphicon glyphicon-user"></span>
+            <input type="email" name="username" ng-model="credentials.username" ng-required="true" ng-minlength="2" class="form-control" placeholder="Email" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label class="text-normal text-dark">{{ 'PASSWORD' | translate}}</label>
+            <span class="glyphicon glyphicon-lock"></span>
+            <input type="password" name="password" ng-model="credentials.password" ng-required="true" ng-minlength="2" class="form-control" placeholder="{{ 'PASSWORD' | translate}}" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <div class="peers ai-c jc-sb fxw-nw">
+                <div class="peer">
+                    <div class="checkbox checkbox-circle checkbox-info peers ai-c">
+                        <input type="checkbox" id="inputCall1" ng-checked="remember" name="remember" class="peer" ng-click="rememberMe()">
+                        <label for="inputCall1" class=" peers peer-greed js-sb ai-c">
+                            <span class="peer peer-greed">{{'REMEMBER_ME' | translate}}</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="peer">
+                    <button ng-disabled="!isFormValid()" ng-click="login(credentials)" ng-disabled="formProcessing" class="btn btn-primary">{{ 'LOGIN' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--</div>-->
+<!--</div>-->

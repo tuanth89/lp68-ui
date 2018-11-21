@@ -1,0 +1,14 @@
+.flag-icon-en {
+    background-image: url('/assets/images/flag-en.gif');
+    background-size: 32px 21px;
+    height: 21px;
+    width: 32px;
+    border-radius: 5px;
+}
+.flag-icon-vi {
+    background-image: url('/assets/images/flag-vi.gif');
+    background-size: 32px 21px;
+    height: 21px;
+    width: 32px;
+    border-radius: 5px;
+}

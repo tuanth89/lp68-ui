@@ -1,0 +1,39 @@
+.ui-select-bootstrap{
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 0.25rem;
+    &:after {
+        content: "";
+        display: block;
+        width: 0;
+        border-width: 6px 6px 0;
+        border-style: solid;
+        border-color:#212529 transparent transparent;
+        position: absolute;
+        // top: calc(50% - 3px);
+        bottom: 13px;
+        pointer-events: none;
+        right: 15px;
+    }
+    .ui-select-match{
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .clear{
+            position: absolute;
+            right: 25px;
+            top:7px;
+        }
+    }
+    .ui-select-match-text{
+        // line-height: 0.875rem;
+    }
+    .ui-select-toggle{
+        padding-bottom: 5px !important;
+        min-height: 35px !important;
+    }
+    ul.ui-select-choices{
+        position: absolute;
+    }
+}
+

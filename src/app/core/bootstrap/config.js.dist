@@ -1,0 +1,29 @@
+(function () {
+    'use strict';
+
+    // var apiUrl = "https://e-learning-siten-demo.herokuapp.com/api";
+    // var apiUrl = "http://api-admin-elearning.demo.siten.vn/api"
+    // var apiUrl = "http://localhost:3000/api";
+    var apiUrl = "http://medu.cloudbsc.com:3000/api";
+    // var apiUrl = "http://125.212.202.64:3000/api";
+
+
+    angular.module('ati.core.bootstrap')
+        .constant('API_END_POINT', apiUrl)
+        .provider('API_BASE_URL', {
+            $get: function (API_END_POINT) {
+                return API_END_POINT + '/v1';
+            }
+        })
+        .provider('API_UPDATE_IMAGES', {
+            $get: function (API_BASE_URL) {
+                // return API_BASE_URL + '/upload/image';
+                return API_BASE_URL + '/uploadFiles';
+            }
+        })
+        .provider('API_ADMIN_BASE_URL', {
+            $get: function (API_END_POINT) {
+                return API_END_POINT + '/admin/v1';
+            }
+        });
+})();

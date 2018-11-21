@@ -1,0 +1,7 @@
+<!-- <div class="input-group col-sm-6 search-box"> -->
+<div class="input-group mb-2 mr-sm-2 mb-sm-0">
+    <input ng-blur="updateQueryTerm()" class="form-control" ng-model="query" placeholder="{{ pHolder }}" type="search" ng-change="search()"/>
+        <span class="input-group-addon">
+           {{ sbList.length }} {{ 'RECORDS_FOUND'| translate }}
+        </span>
+</div>

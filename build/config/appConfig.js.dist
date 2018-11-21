@@ -1,0 +1,103 @@
+module.exports = {
+    dirs: {
+        build: {
+            dev: 'build/targets/dev',
+            prod: 'build/targets/prod'
+        },
+        temp: 'build/temp'
+    },
+    deployment: {
+        origin: {
+            dev: {
+                match: /localhost:3000/g,
+                val: 'localhost:3000'
+            },
+            prod: {
+                val: 'api.medu.vn'
+            }
+        },
+
+        apiEndPoint: {
+            dev: 'http://localhost:3000/api',
+            prod: 'http://api.medu.vn/api'
+        }
+    },
+    envFiles: {
+        js: [
+            'src/browserCheck.js'
+        ]
+    },
+    appFiles: {
+        js: ['src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js', '!src/app/app.js', '!src/app/bootstrap.js'],
+        coreJs: ['src/app/app.js', 'src/app/bootstrap.js'],
+        tests: ['src/**/*.spec.js'],
+        appTemplates: ['src/app/**/*/*.tpl.html'],
+        commonTemplates: ['src/common/**/*/*.tpl.html'],
+        scss: ['src/styles/ui/**/*.scss'],
+        css: [],
+        html: ['src/*.html']
+    },
+    vendorFiles: {
+        js: [
+            'vendor/jquery/dist/jquery.min.js',
+            'vendor/popper.js/dist/umd/popper.min.js',
+            'vendor/bootstrap/dist/js/bootstrap.min.js',
+            'vendor/jquery-ui/jquery-ui.min.js',
+            'vendor/angular/angular.js',
+            'vendor/angular-deferred-bootstrap/angular-deferred-bootstrap.js',
+            'vendor/angular-underscore-module/angular-underscore-module.js',
+            'vendor/angular-animate/angular-animate.min.js',
+            'vendor/angular-sanitize/angular-sanitize.min.js',
+            'vendor/angular-base64/angular-base64.min.js',
+            'vendor/angular-ui-router/release/angular-ui-router.js',
+            'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
+            'vendor/lodash/dist/lodash.min.js',
+            'vendor/restangular/dist/restangular.min.js',
+            'vendor/moment/min/moment.min.js',
+            'vendor/angular-moment/angular-moment.min.js',
+            'vendor/angular-ui-select/dist/select.min.js',
+            'vendor/bootstrap-daterangepicker/daterangepicker.js',
+            'vendor/angular-daterangepicker/js/angular-daterangepicker.js',
+            'vendor/angular-loading-bar/build/loading-bar.min.js',
+            'vendor/angular-httpi/lib/httpi.js',
+            'vendor/at-table/dist/angular-table.min.js',
+            'vendor/angular-translate/angular-translate.js',
+            'vendor/jquery.slimscroll/jquery.slimscroll.min.js',
+            'vendor/file-saver/FileSaver.js',
+            'vendor/angular-file-upload/angular-file-upload.js',
+            'vendor/inputmask/dist/inputmask/inputmask.js',
+            'vendor/inputmask/dist/inputmask/inputmask.extensions.js',
+            'vendor/inputmask/dist/inputmask/inputmask.date.extensions.js',
+            'vendor/datatables.net/js/jquery.dataTables.min.js',
+            // 'vendor/datatables.net-bs/js/dataTables.bootstrap.min.js',
+            'vendor/datatables.net-bs4/js/dataTables.bootstrap4.min.js',
+            'vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
+            'vendor/toastr/toastr.min.js',
+            'vendor/angular-ui-carousel/dist/ui-carousel.min.js',
+            'src/lib/js/locationpicker.jquery.min.js',
+            'src/lib/js/angularLocationpicker.jquery.min.js',
+            'vendor/summernote/dist/summernote-bs4.min.js',
+            // 'vendor/summernote/dist/summernote.min.js',
+
+            'vendor/jquery-cropper/dist/jquery-cropper.min.js',
+
+            'vendor/twbs-pagination/jquery.twbsPagination.min.js'
+        ],
+        css: [
+            'vendor/datatables.net-bs4/css/dataTables.bootstrap4.min.css',
+            'vendor/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
+            'vendor/components-font-awesome/css/fontawesome-all.min.css',
+            'src/styles/customvendor/**/*.css',
+            'vendor/angular-ui-carousel/dist/ui-carousel.min.css',
+            'vendor/toastr/toastr.min.css',
+            'vendor/summernote/dist/summernote-bs4.css',
+            'vendor/sweetalert2/dist/sweetalert2.min.css',
+            'vendor/angular-ui-select/dist/select.min.css',
+            // 'vendor/datatables.net-bs/css/dataTables.bootstrap.min.css'
+        ],
+        font: [
+            'src/styles/customvendor/fonts/**/*.*',
+            'vendor/summernote/dist/font/*.*'
+        ]
+    }
+    };

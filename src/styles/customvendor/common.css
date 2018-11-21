@@ -1,0 +1,1244 @@
+@font-face{
+    font-family:UdemyIcons;
+    src:url(fonts/UdemyIcons.woff2) format("woff2"),url(fonts/UdemyIcons.ttf) format("truetype"),url(fonts/UdemyIcons.woff) format("woff"),url(fonts/UdemyIcons.svg#UdemyIcons) format("svg");
+    font-weight:400;
+    font-style:normal
+}
+.udi{
+    font-family:UdemyIcons!important;
+    speak:none;
+    font-style:normal;
+    font-weight:400;
+    font-variant:normal;
+    text-transform:none;
+    line-height:1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale
+}
+.udi-3d-and-animation:before{
+    content:"\E692"
+}
+.udi-academics:before{
+    content:"\E693"
+}
+.udi-activity:before{
+    content:"\E902"
+}
+.udi-add:before{
+    content:"\E72C"
+}
+.udi-adjust:before{
+    content:"\F042"
+}
+.udi-advertising:before{
+    content:"\E694"
+}
+.udi-affiliate-marketing:before{
+    content:"\E695"
+}
+.udi-analytics-and-automation:before{
+    content:"\E696"
+}
+.udi-angle-double-left:before{
+    content:"\F100"
+}
+.udi-angle-double-right:before{
+    content:"\F101"
+}
+.udi-angle-down:before{
+    content:"\F107"
+}
+.udi-angle-left:before{
+    content:"\F104"
+}
+.udi-angle-right:before{
+    content:"\F105"
+}
+.udi-angle-up:before{
+    content:"\F106"
+}
+.udi-apple:before{
+    content:"\E697"
+}
+.udi-arabic:before{
+    content:"\E77E"
+}
+.udi-architectural-design:before{
+    content:"\E699"
+}
+.udi-archive:before{
+    content:"\E91C"
+}
+.udi-arrow-left:before{
+    content:"\F060"
+}
+.udi-arrow-right:before{
+    content:"\F061"
+}
+.udi-article:before{
+    content:"\E6C5"
+}
+.udi-arts-and-crafts:before{
+    content:"\E69A"
+}
+.udi-ban:before{
+    content:"\F05E"
+}
+.udi-bar-chart-o:before,.udi-bar-chart:before{
+    content:"\F080"
+}
+.udi-bars:before,.udi-navicon:before,.udi-reorder:before{
+    content:"\F0C9"
+}
+.udi-beauty-and-makeup:before{
+    content:"\E69B"
+}
+.udi-bell:before{
+    content:"\E72E"
+}
+.udi-bell-line:before{
+    content:"\E91F"
+}
+.udi-black-and-white:before{
+    content:"\E69C"
+}
+.udi-bold:before{
+    content:"\F032"
+}
+.udi-book:before{
+    content:"\F02D"
+}
+.udi-bookmark:before{
+    content:"\E791"
+}
+.udi-bookmark-add:before{
+    content:"\E788"
+}
+.udi-branding:before{
+    content:"\E69D"
+}
+.udi-bullhorn:before{
+    content:"\F0AB"
+}
+.udi-business:before{
+    content:"\E69F"
+}
+.udi-business-law:before{
+    content:"\E69E"
+}
+.udi-calendar:before{
+    content:"\F073"
+}
+.udi-calendar-o:before{
+    content:"\F133"
+}
+.udi-career-development:before{
+    content:"\E6A0"
+}
+.udi-caret-down:before{
+    content:"\F0D7"
+}
+.udi-caret-left:before{
+    content:"\F0D9"
+}
+.udi-caret-right:before{
+    content:"\F0DA"
+}
+.udi-caret-up:before{
+    content:"\F0D8"
+}
+.udi-cart:before{
+    content:"\E789"
+}
+.udi-cart-add:before{
+    content:"\E901"
+}
+.udi-cart-check:before{
+    content:"\E90D"
+}
+.udi-cart-line:before{
+    content:"\E91E"
+}
+.udi-chain:before,.udi-link:before{
+    content:"\F0C1"
+}
+.udi-chat-line:before{
+    content:"\E920"
+}
+.udi-check:before,.udi-ok:before{
+    content:"\F00C"
+}
+.udi-check-circle:before{
+    content:"\F058"
+}
+.udi-check-square-o:before{
+    content:"\F046"
+}
+.udi-chevron-circle-right:before{
+    content:"\F138"
+}
+.udi-chevron-down:before{
+    content:"\F07D"
+}
+.udi-chevron-left:before{
+    content:"\F053"
+}
+.udi-chevron-right:before{
+    content:"\F054"
+}
+.udi-chevron-up:before{
+    content:"\F07B"
+}
+.udi-chinese:before{
+    content:"\E6A1"
+}
+.udi-circle:before{
+    content:"\F111"
+}
+.udi-circle-loader:before{
+    content:"\E779"
+}
+.udi-circle-o:before{
+    content:"\F10C"
+}
+.udi-clock:before{
+    content:"\E733"
+}
+.udi-clock-o:before{
+    content:"\F017"
+}
+.udi-close:before,.udi-icon-xmark:before{
+    content:"\E730"
+}
+.udi-closed-caption:before{
+    content:"\E78A"
+}
+.udi-code:before{
+    content:"\F121"
+}
+.udi-cog:before,.udi-gear:before{
+    content:"\F013"
+}
+.udi-cogs:before,.udi-gears:before{
+    content:"\F085"
+}
+.udi-college-entry-exam:before{
+    content:"\E6A2"
+}
+.udi-comment:before{
+    content:"\F075"
+}
+.udi-comment-o:before{
+    content:"\F0E9"
+}
+.udi-comments:before{
+    content:"\F086"
+}
+.udi-comments-double:before{
+    content:"\E921"
+}
+.udi-commercial-photography:before{
+    content:"\E6A3"
+}
+.udi-communications:before{
+    content:"\E6A4"
+}
+.udi-content-marketing:before{
+    content:"\E6A5"
+}
+.udi-coupon:before{
+    content:"\E800"
+}
+.udi-create-course:before{
+    content:"\E90E"
+}
+.udi-creativity:before{
+    content:"\E6A6"
+}
+.udi-curly-braces:before{
+    content:"\E900"
+}
+.udi-curly-braces-bold:before{
+    content:"\E909"
+}
+.udi-curriculum:before{
+    content:"\E735"
+}
+.udi-dance:before{
+    content:"\E6A7"
+}
+.udi-data-and-analytics:before{
+    content:"\E6A8"
+}
+.udi-databases:before{
+    content:"\E6A9"
+}
+.udi-delete:before{
+    content:"\E75A"
+}
+.udi-design:before{
+    content:"\E6AC"
+}
+.udi-design-thinking:before{
+    content:"\E6AA"
+}
+.udi-design-tools:before{
+    content:"\E6AB"
+}
+.udi-desktop:before{
+    content:"\F108"
+}
+.udi-development:before{
+    content:"\E6AD"
+}
+.udi-development-tools:before{
+    content:"\E727"
+}
+.udi-dieting:before{
+    content:"\E6AE"
+}
+.udi-digital-marketing:before{
+    content:"\E6AF"
+}
+.udi-digital-photography:before{
+    content:"\E6B0"
+}
+.udi-download:before{
+    content:"\F019"
+}
+.udi-drawer:before{
+    content:"\E792"
+}
+.udi-e-commerce:before{
+    content:"\E728"
+}
+.udi-educational-development:before{
+    content:"\E6B1"
+}
+.udi-ellipsis-h:before{
+    content:"\F141"
+}
+.udi-ellipsis-v:before{
+    content:"\F142"
+}
+.udi-english:before{
+    content:"\E6B2"
+}
+.udi-entrepreneurship:before{
+    content:"\E6B3"
+}
+.udi-envelope:before{
+    content:"\F0E5"
+}
+.udi-exclamation-circle:before{
+    content:"\F06D"
+}
+.udi-exit-fullscreen:before{
+    content:"\E78E"
+}
+.udi-expand:before{
+    content:"\F065"
+}
+.udi-explore:before{
+    content:"\E90F"
+}
+.udi-external-link:before{
+    content:"\F08E"
+}
+.udi-facebook-f:before,.udi-facebook:before{
+    content:"\F09A"
+}
+.udi-facebook-square:before{
+    content:"\F082"
+}
+.udi-fashion:before{
+    content:"\E6B4"
+}
+.udi-file:before{
+    content:"\F15B"
+}
+.udi-file-o:before{
+    content:"\F016"
+}
+.udi-file-text:before{
+    content:"\F15C"
+}
+.udi-file-text-o:before{
+    content:"\F0F6"
+}
+.udi-film:before{
+    content:"\F008"
+}
+.udi-finance:before{
+    content:"\E6B5"
+}
+.udi-fitness:before{
+    content:"\E6B6"
+}
+.udi-flag:before{
+    content:"\F024"
+}
+.udi-folder-open:before{
+    content:"\F07C"
+}
+.udi-food-and-beverage:before{
+    content:"\E6B7"
+}
+.udi-french:before{
+    content:"\E6B8"
+}
+.udi-fullscreen:before{
+    content:"\E78D"
+}
+.udi-game-design:before{
+    content:"\E6B9"
+}
+.udi-game-development:before{
+    content:"\E6BA"
+}
+.udi-gaming:before{
+    content:"\E6BB"
+}
+.udi-general-health:before{
+    content:"\E6BC"
+}
+.udi-german:before{
+    content:"\E6BD"
+}
+.udi-gift:before{
+    content:"\F06B"
+}
+.udi-globe:before{
+    content:"\F0AC"
+}
+.udi-google:before{
+    content:"\E6BE"
+}
+.udi-google-plus:before{
+    content:"\E76A"
+}
+.udi-grad-entry-exam:before{
+    content:"\E6BF"
+}
+.udi-graphic-design:before{
+    content:"\E6C0"
+}
+.udi-group:before,.udi-users:before{
+    content:"\F0C0"
+}
+.udi-growth-hacking:before{
+    content:"\E6C1"
+}
+.udi-happiness:before{
+    content:"\E6C2"
+}
+.udi-hardware:before{
+    content:"\E6C3"
+}
+.udi-health-and-fitness:before{
+    content:"\E6C4"
+}
+.udi-heart:before{
+    content:"\F007"
+}
+.udi-heart-o:before{
+    content:"\F08A"
+}
+.udi-hebrew:before{
+    content:"\E77F"
+}
+.udi-history:before{
+    content:"\F1DA"
+}
+.udi-home:before{
+    content:"\F015"
+}
+.udi-home-business:before{
+    content:"\E6C6"
+}
+.udi-home-improvement:before{
+    content:"\E6C7"
+}
+.udi-how-discover:before{
+    content:"\E751"
+}
+.udi-how-learn:before{
+    content:"\E752"
+}
+.udi-how-master:before{
+    content:"\E753"
+}
+.udi-human-resources:before{
+    content:"\E6C8"
+}
+.udi-humanities:before{
+    content:"\E6C9"
+}
+.udi-icon-check:before{
+    content:"\E606"
+}
+.udi-image:before,.udi-photo:before,.udi-picture-o:before{
+    content:"\F03E"
+}
+.udi-industry:before{
+    content:"\E6CA"
+}
+.udi-influence:before{
+    content:"\E6CB"
+}
+.udi-info:before{
+    content:"\F129"
+}
+.udi-info-circle:before{
+    content:"\F05A"
+}
+.udi-instructional-design:before{
+    content:"\E6CC"
+}
+.udi-instruments:before{
+    content:"\E6CD"
+}
+.udi-interior-design:before{
+    content:"\E6CE"
+}
+.udi-international-high-school:before{
+    content:"\E6CF"
+}
+.udi-intuit:before{
+    content:"\E6D0"
+}
+.udi-ion-arrow-graph-up-right:before{
+    content:"\F262"
+}
+.udi-ion-ios-refresh-empty:before{
+    content:"\F49A"
+}
+.udi-it-and-software:before{
+    content:"\E6D2"
+}
+.udi-it-certification:before{
+    content:"\E6D1"
+}
+.udi-italian:before{
+    content:"\E6D3"
+}
+.udi-italic:before{
+    content:"\F033"
+}
+.udi-japanese:before{
+    content:"\E780"
+}
+.udi-join-course:before{
+    content:"\E754"
+}
+.udi-join-hours:before{
+    content:"\E755"
+}
+.udi-join-students:before{
+    content:"\E756"
+}
+.udi-landscape:before{
+    content:"\E6D5"
+}
+.udi-language:before{
+    content:"\E6D6"
+}
+.udi-latin:before{
+    content:"\E6D7"
+}
+.udi-leadership:before{
+    content:"\E6D8"
+}
+.udi-length-1:before{
+    content:"\E926"
+}
+.udi-length-2:before{
+    content:"\E925"
+}
+.udi-length-4:before{
+    content:"\E923"
+}
+.udi-lifestyle:before{
+    content:"\E6D9"
+}
+.udi-line-chart:before{
+    content:"\F201"
+}
+.udi-line-star:before{
+    content:"\E786"
+}
+.udi-list:before{
+    content:"\F03A"
+}
+.udi-list-alt:before{
+    content:"\F022"
+}
+.udi-list-ol:before{
+    content:"\F0CB"
+}
+.udi-list-ul:before{
+    content:"\F0CA"
+}
+.udi-lock:before{
+    content:"\F023"
+}
+.udi-mail-forward:before,.udi-share:before{
+    content:"\F064"
+}
+.udi-management:before{
+    content:"\E6DA"
+}
+.udi-map-marker:before{
+    content:"\F041"
+}
+.udi-marketing:before{
+    content:"\E6DC"
+}
+.udi-marketing-fundamentals:before{
+    content:"\E6DB"
+}
+.udi-math-and-science:before{
+    content:"\E6DD"
+}
+.udi-media:before{
+    content:"\E6DE"
+}
+.udi-meditation:before{
+    content:"\E6DF"
+}
+.udi-memory:before{
+    content:"\E6E0"
+}
+.udi-mental-health:before{
+    content:"\E6E1"
+}
+.udi-menu:before{
+    content:"\E73B"
+}
+.udi-microphone:before{
+    content:"\F130"
+}
+.udi-microsoft:before{
+    content:"\E6E2"
+}
+.udi-minimize:before{
+    content:"\E905"
+}
+.udi-minus:before{
+    content:"\F068"
+}
+.udi-minus-circle:before{
+    content:"\F056"
+}
+.udi-minus-square-o:before{
+    content:"\F147"
+}
+.udi-mobile-phone:before,.udi-mobile:before{
+    content:"\F10B"
+}
+.udi-mobile-apps:before{
+    content:"\E6E3"
+}
+.udi-mobile-photography:before{
+    content:"\E6E4"
+}
+.udi-motivation:before{
+    content:"\E6E5"
+}
+.udi-music:before{
+    content:"\E6E9"
+}
+.udi-music-fundamentals:before{
+    content:"\E6E6"
+}
+.udi-music-software:before{
+    content:"\E6E7"
+}
+.udi-music-techniques:before{
+    content:"\E6E8"
+}
+.udi-network-and-security:before{
+    content:"\E6EA"
+}
+.udi-next:before{
+    content:"\E73E"
+}
+.udi-no-results:before{
+    content:"\E927"
+}
+.udi-non-digital-marketing:before{
+    content:"\E6EB"
+}
+.udi-nutrition:before{
+    content:"\E6EC"
+}
+.udi-office-productivity:before{
+    content:"\E6ED"
+}
+.udi-operating-systems:before{
+    content:"\E6EE"
+}
+.udi-operations:before{
+    content:"\E6EF"
+}
+.udi-oracle:before{
+    content:"\E6F0"
+}
+.udi-overflow:before{
+    content:"\E777"
+}
+.udi-parenting-and-relationships:before{
+    content:"\E6F1"
+}
+.udi-pause:before{
+    content:"\F04C"
+}
+.udi-pencil:before{
+    content:"\F040"
+}
+.udi-personal-brand-building:before{
+    content:"\E6F2"
+}
+.udi-personal-development:before{
+    content:"\E6F3"
+}
+.udi-personal-finance:before{
+    content:"\E6F4"
+}
+.udi-personal-transformation:before{
+    content:"\E6F5"
+}
+.udi-pet-care-and-training:before{
+    content:"\E6F6"
+}
+.udi-phone:before{
+    content:"\F095"
+}
+.udi-photography:before{
+    content:"\E6F9"
+}
+.udi-photography-fundamentals:before{
+    content:"\E6F7"
+}
+.udi-photography-tools:before{
+    content:"\E6F8"
+}
+.udi-piggy-bank:before{
+    content:"\E907"
+}
+.udi-play:before{
+    content:"\E771"
+}
+.udi-play-circle:before{
+    content:"\F144"
+}
+.udi-play-circle-o:before{
+    content:"\F01D"
+}
+.udi-plus:before{
+    content:"\F067"
+}
+.udi-plus-circle:before{
+    content:"\F055"
+}
+.udi-plus-square:before{
+    content:"\F0FE"
+}
+.udi-plus-square-o:before{
+    content:"\F196"
+}
+.udi-portraits:before{
+    content:"\E6FA"
+}
+.udi-portuguese:before{
+    content:"\E6FB"
+}
+.udi-presentation:before{
+    content:"\E912"
+}
+.udi-previous:before{
+    content:"\E741"
+}
+.udi-product-marketing:before{
+    content:"\E6FC"
+}
+.udi-production:before{
+    content:"\E6FD"
+}
+.udi-productivity:before{
+    content:"\E6FE"
+}
+.udi-programming-languages:before{
+    content:"\E6FF"
+}
+.udi-project-management:before{
+    content:"\E700"
+}
+.udi-public-relations:before{
+    content:"\E701"
+}
+.udi-purchase-history-line:before{
+    content:"\E91D"
+}
+.udi-question-circle:before{
+    content:"\F059"
+}
+.udi-ready-set-go:before{
+    content:"\E906"
+}
+.udi-real-estate:before{
+    content:"\E702"
+}
+.udi-religion-and-spirituality:before{
+    content:"\E703"
+}
+.udi-repeat:before,.udi-rotate-right:before{
+    content:"\F01E"
+}
+.udi-right_talk:before{
+    content:"\E92E"
+}
+.udi-rocket:before{
+    content:"\F135"
+}
+.udi-russian:before{
+    content:"\E704"
+}
+.udi-safety-and-first-aid:before{
+    content:"\E705"
+}
+.udi-sales:before{
+    content:"\E706"
+}
+.udi-salesforce:before{
+    content:"\E707"
+}
+.udi-sap:before{
+    content:"\E708"
+}
+.udi-schedule:before{
+    content:"\E78F"
+}
+.udi-search:before{
+    content:"\F002"
+}
+.udi-search-engine-optimization:before{
+    content:"\E709"
+}
+.udi-search-filter:before{
+    content:"\E795"
+}
+.udi-self-defense:before{
+    content:"\E70B"
+}
+.udi-self-esteem:before{
+    content:"\E70C"
+}
+.udi-settings:before{
+    content:"\E748"
+}
+.udi-settings-line:before{
+    content:"\E91B"
+}
+.udi-share-alt:before{
+    content:"\F1E0"
+}
+.udi-share-square-o:before{
+    content:"\F045"
+}
+.udi-shopping-cart:before{
+    content:"\F07F"
+}
+.udi-sign-up:before{
+    content:"\E904"
+}
+.udi-signup_temp:before{
+    content:"\E92F"
+}
+.udi-social-media-marketing:before{
+    content:"\E70D"
+}
+.udi-social-science:before{
+    content:"\E70E"
+}
+.udi-software-engineering:before{
+    content:"\E70F"
+}
+.udi-software-testing:before{
+    content:"\E710"
+}
+.udi-sort:before,.udi-unsorted:before{
+    content:"\F0DC"
+}
+.udi-sort-alpha-desc:before{
+    content:"\F15F"
+}
+.udi-sort-numeric-asc:before{
+    content:"\F162"
+}
+.udi-sort-numeric-desc:before{
+    content:"\F163"
+}
+.udi-spanish:before{
+    content:"\E781"
+}
+.udi-spinner:before{
+    content:"\F110"
+}
+.udi-sports:before{
+    content:"\E712"
+}
+.udi-square:before{
+    content:"\F0C8"
+}
+.udi-star:before{
+    content:"\F005"
+}
+.udi-star-half:before{
+    content:"\F089"
+}
+.udi-stop:before{
+    content:"\F04D"
+}
+.udi-strategy:before{
+    content:"\E713"
+}
+.udi-stress-management:before{
+    content:"\E714"
+}
+.udi-tag:before{
+    content:"\F02B"
+}
+.udi-tasks:before{
+    content:"\F0AE"
+}
+.udi-teacher-training:before{
+    content:"\E715"
+}
+.udi-teaching-tools:before{
+    content:"\E716"
+}
+.udi-test-prep:before{
+    content:"\E717"
+}
+.udi-test-taking-skills:before{
+    content:"\E718"
+}
+.udi-thin-arrow-down:before{
+    content:"\E633"
+}
+.udi-thin-arrow-left:before{
+    content:"\E67F"
+}
+.udi-thin-arrow-right:before{
+    content:"\E642"
+}
+.udi-thin-arrow-up:before{
+    content:"\E698"
+}
+.udi-thumbs-o-up:before{
+    content:"\F087"
+}
+.udi-thumbs-up:before{
+    content:"\E903"
+}
+.udi-timeless:before{
+    content:"\E92D"
+}
+.udi-times-circle:before{
+    content:"\F057"
+}
+.udi-trash:before{
+    content:"\F1F8"
+}
+.udi-trash-o:before{
+    content:"\F014"
+}
+.udi-travel:before{
+    content:"\E71A"
+}
+.udi-travel-photography:before{
+    content:"\E719"
+}
+.udi-trophy:before{
+    content:"\F091"
+}
+.udi-twitter:before{
+    content:"\F099"
+}
+.udi-upload:before{
+    content:"\F093"
+}
+.udi-user:before{
+    content:"\F009"
+}
+.udi-user-experience:before{
+    content:"\E71B"
+}
+.udi-video-and-mobile-marketing:before{
+    content:"\E71D"
+}
+.udi-video-content:before{
+    content:"\E908"
+}
+.udi-video-design:before{
+    content:"\E71C"
+}
+.udi-vjs-cc-subtitles:before{
+    content:"\E910"
+}
+.udi-vjs-circle:before{
+    content:"\E90A"
+}
+.udi-vjs-forward:before{
+    content:"\E911"
+}
+.udi-vjs-fullscreen:before{
+    content:"\E914"
+}
+.udi-vjs-fullscreen-collapse:before{
+    content:"\E913"
+}
+.udi-vjs-minus:before{
+    content:"\E90B"
+}
+.udi-vjs-pause:before{
+    content:"\E915"
+}
+.udi-vjs-play:before{
+    content:"\E916"
+}
+.udi-vjs-plus:before{
+    content:"\E90C"
+}
+.udi-vjs-rewind:before{
+    content:"\E917"
+}
+.udi-vjs-settings:before{
+    content:"\E918"
+}
+.udi-vjs-volume:before{
+    content:"\E91A"
+}
+.udi-vjs-volume-off:before{
+    content:"\E919"
+}
+.udi-vocal:before{
+    content:"\E71E"
+}
+.udi-volume-up:before{
+    content:"\F028"
+}
+.udi-web-design:before{
+    content:"\E71F"
+}
+.udi-web-development:before{
+    content:"\E720"
+}
+.udi-website:before{
+    content:"\E766"
+}
+.udi-wedding-photography:before{
+    content:"\E721"
+}
+.udi-what-30day:before{
+    content:"\E757"
+}
+.udi-what-desktop:before{
+    content:"\E758"
+}
+.udi-what-lifetime:before{
+    content:"\E759"
+}
+.udi-wildlife-photography:before{
+    content:"\E722"
+}
+.udi-wrench:before{
+    content:"\F0AD"
+}
+.udi-yoga:before{
+    content:"\E723"
+}
+.udi-youtube:before{
+    content:"\F167"
+}
+.udi-zoom-in:before{
+    content:"\E711"
+}
+.udi-credit-card:before{
+    content:"\F09D"
+}
+.udi-exclamation-line:before{
+    content:"\E930"
+}
+.udi-exclamation-triangle:before,.udi-remove:before,.udi-warning-sign:before,.udi-warning:before{
+    content:"\F071"
+}
+.udi-eye:before{
+    content:"\F06E"
+}
+.udi-eye-slash:before{
+    content:"\F070"
+}
+.udi-grav:before{
+    content:"\F2D6"
+}
+.udi-length-3:before{
+    content:"\E924"
+}
+.udi-level-advance:before{
+    content:"\E92A"
+}
+.udi-level-all:before{
+    content:"\E92B"
+}
+.udi-level-beginner:before{
+    content:"\E928"
+}
+.udi-level-intermediate:before{
+    content:"\E929"
+}
+.udi-linkedin:before{
+    content:"\F0E1"
+}
+.udi-popular-students:before{
+    content:"\E922"
+}
+.udi-question:before{
+    content:"\F128"
+}
+.udi-sort-alpha-asc:before{
+    content:"\F15D"
+}
+.udi-sort-asc:before,.udi-sort-up:before{
+    content:"\F0DE"
+}
+.udi-sort-desc:before,.udi-sort-down:before{
+    content:"\F0DD"
+}
+.udi-students:before{
+    content:"\E92C"
+}
+.udi-unlock:before{
+    content:"\F09C"
+}
+.udi-workplace:before{
+    content:"\E931"
+}
+.icon-spin{
+    -ms-animation:spin 1s infinite linear;
+    -o-animation:spin 1s infinite linear;
+    -webkit-animation:spin 1s infinite linear;
+    -moz-animation:spin 1s infinite linear;
+    animation:spin 1s infinite linear;
+    text-decoration:none
+}
+.icon-spin,.loader{
+    display:inline-block
+}
+@-moz-keyframes spin{
+    0%{
+        -webkit-transform:rotate(0deg);
+        -ms-transform:rotate(0deg);
+        -o-transform:rotate(0deg);
+        transform:rotate(0deg)
+    }
+    to{
+        -webkit-transform:rotate(1turn);
+        -ms-transform:rotate(1turn);
+        -o-transform:rotate(1turn);
+        transform:rotate(1turn)
+    }
+}
+@-webkit-keyframes spin{
+    0%{
+        -webkit-transform:rotate(0deg);
+        -ms-transform:rotate(0deg);
+        -o-transform:rotate(0deg);
+        transform:rotate(0deg)
+    }
+    to{
+        -webkit-transform:rotate(1turn);
+        -ms-transform:rotate(1turn);
+        -o-transform:rotate(1turn);
+        transform:rotate(1turn)
+    }
+}
+@keyframes spin{
+    0%{
+        -webkit-transform:rotate(0deg);
+        -ms-transform:rotate(0deg);
+        -o-transform:rotate(0deg);
+        transform:rotate(0deg)
+    }
+    to{
+        -webkit-transform:rotate(1turn);
+        -ms-transform:rotate(1turn);
+        -o-transform:rotate(1turn);
+        transform:rotate(1turn)
+    }
+}
+.ud-icon-success{
+    font-family:UdemyIcons;
+    font-style:normal;
+    color:#004025
+}
+.ud-icon-success:before{
+    content:"\F058"
+}
+.ud-icon-info{
+    font-family:UdemyIcons;
+    font-style:normal;
+    color:#003440
+}
+.ud-icon-info:before{
+    content:"\F05A"
+}
+.ud-icon-warning{
+    font-family:UdemyIcons;
+    font-style:normal;
+    color:#f59c49
+}
+.ud-icon-warning:before{
+    content:"\F071"
+}
+.ud-icon-danger{
+    font-family:UdemyIcons;
+    font-style:normal;
+    color:#521822
+}
+.ud-icon-danger:before{
+    content:"\F06D"
+}
+.udi-circle-loader{
+    -ms-animation:spin 1.5s infinite linear;
+    -o-animation:spin 1.5s infinite linear;
+    -webkit-animation:spin 1.5s infinite linear;
+    -moz-animation:spin 1.5s infinite linear;
+    animation:spin 1.5s infinite linear;
+    display:inline-block
+}
+.udi-large{
+    font-size:64px
+}
+.udi-medium{
+    font-size:32px
+}
+.udi-small{
+    font-size:16px
+}
+.udi{
+    vertical-align:-8%
+}
+
+.ui-select-bootstrap .ui-select-match-text span{
+    width: unset !important;
+}
+
+.form-control-custom {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0;
+    line-height: 1.25;
+    border: solid transparent;
+    border-width: 1px 0;
+}
