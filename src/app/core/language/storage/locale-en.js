@@ -3,7 +3,7 @@
 
     angular.module("ati.core.language")
         .constant("LOCALE_EN", {
-            "APP_NAME": "Medu Elearning",
+            "APP_NAME": "Lộc Phát 68",
             "LOGIN": "Log in",
             "LOGOUT": "Log Out",
             "EDIT_PROFILE": "Edit Profile",

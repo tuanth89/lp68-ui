@@ -44,7 +44,8 @@
             return angular.isObject(result) &&
                 result.hasOwnProperty('token') &&
                 result.hasOwnProperty('id') &&
-                result.hasOwnProperty('username');
+                result.hasOwnProperty('username') &&
+                result.hasOwnProperty('userRoles');
         }
 
         /**

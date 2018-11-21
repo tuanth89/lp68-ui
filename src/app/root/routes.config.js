@@ -23,9 +23,9 @@
                     skip: true
                 },
                 resolve: {
-                    routeNames: function (AdminService) {
-                        return AdminService.getFeatureAccessByCurentRole();
-                    }
+                    // routeNames: function (AdminService) {
+                    //     return AdminService.getFeatureAccessByCurentRole();
+                    // }
                 }
             })
 

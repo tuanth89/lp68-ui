@@ -19,9 +19,9 @@
                     },
                 },
                 url: '/admin',
-                data: {
-                    requiredUserRole: USER_ROLES.admin
-                },
+                // data: {
+                //     requiredUserRole: USER_ROLES.admin
+                // },
                 ncyBreadcrumb: {
                     skip: true
                 },
