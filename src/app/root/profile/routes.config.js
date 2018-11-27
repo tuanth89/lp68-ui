@@ -25,7 +25,8 @@
                 },
                 resolve: {
                     admin: function(RoleManager, userSession) {
-                        return RoleManager.one(userSession.username).get();
+                        return {};
+                        // return RoleManager.one(userSession.username).get();
                     }
                 },
                 ncyBreadcrumb: {

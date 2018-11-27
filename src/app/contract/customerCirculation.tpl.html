@@ -1,0 +1,23 @@
+<div class="bgc-white p-20 bd">
+    <hot-table hot-id="my-handsontable"
+               settings="settings"
+               row-headers="settings.rowHeaders"
+               min-spare-rows="settings.minSpareRows"
+               on-after-init="onAfterInit()"
+               datarows="contracts">
+        <hot-column class="htCenter" data="isActive" title="''" type="'checkbox'" checked-template="'Yes'"
+                    unchecked-template="'No'" width="40"></hot-column>
+        <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200"></hot-column>
+        <hot-column data="dailyMoney" title="'Tiền đóng trong ngày'" width="200" type="'numeric'" format="'#,###'"></hot-column>
+        <hot-column data="loanEndDate" title="'Ngày hết hạn'" width="200" type="'date'" correct-format="true"
+                    date-format="'DD/MM/YYYY'" read-only></hot-column>
+        <!--<hot-column data="product.description" title="'Favorite food'" type="'autocomplete'">-->
+        <!--<hot-autocomplete datarows="description in product.options"></hot-autocomplete>-->
+        <!--</hot-column>-->
+    </hot-table>
+
+    <div class="form-group mt20">
+        <button type="button" class="btn btn-primary">Lưu</button>
+    </div>
+
+</div>

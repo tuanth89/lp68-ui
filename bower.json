@@ -4,10 +4,10 @@
   "dependencies": {
     "jquery": "~2.1.1",
     "jquery.slimscroll": "~1.3.3",
-    "angular-animate": "~1.3.15",
-    "angular-sanitize": "~1.3.15",
-    "angular": "~1.3.15",
-    "angular-ui-router": "0.2.13",
+    "angular-animate": "1.6.9",
+    "angular-sanitize": "1.6.9",
+    "angular": "1.6.9",
+    "angular-ui-router": "0.3.2",
     "angular-bootstrap": "~0.13.0",
     "restangular": "~1.4.0",
     "moment": "~2.9.0",
@@ -26,8 +26,6 @@
     "popper.js": "1.14.3",
     "inputmask": "3.3.11",
     "angular-base64": "^2.0.5",
-    "datatables.net": "^1.10.19",
-    "datatables.net-bs4": "^3.2.2",
     "bootstrap-datepicker": "^1.8.0",
     "ng-img-crop": "ngImgCrop#^0.3.2",
     "components-font-awesome": "^5.0.6",
@@ -36,9 +34,10 @@
     "summernote": "^0.8.10",
     "sweetalert2": "^7.26.12",
     "jquery-cropper": "^1.0.0",
-    "twbs-pagination": "^1.4.2"
+    "twbs-pagination": "^1.4.2",
+    "ngHandsontable": "^0.13.0"
   },
   "resolutions": {
-    "angular": "~1.3.15"
+    "angular": "1.6.9"
   }
 }

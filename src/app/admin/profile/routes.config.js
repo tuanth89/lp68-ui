@@ -24,7 +24,8 @@
                 },
                 resolve: {
                     admin: function (AdminManager, userSession) {
-                        return AdminManager.one(userSession.username).get();
+                        return {};
+                        // return AdminManager.one(userSession.username).get();
                     }
                 },
                 ncyBreadcrumb: {

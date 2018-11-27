@@ -10,14 +10,14 @@
             /**
              * @param {String|Object} token
              * @param {String} id
-             * @param {String} name
+             * @param {String} fullName
              * @param {String} username
              * @param {String} email
              * @param {String} photo
              * @param {Array} [userRoles]
              */
-            createNew: function(token, id, name, username, email, userRoles, photo) {
-                return new Session(token, id, name, username, email, userRoles, photo);
+            createNew: function(token, id, fullName, username, email, userRoles, photo) {
+                return new Session(token, id, fullName, username, email, userRoles, photo);
             },
 
             /**
@@ -40,7 +40,7 @@
                     throw new Error('missing email');
                 }
 
-                if (!data.name) {
+                if (!data.fullName) {
                     throw new Error('missing name');
                 }
 
@@ -48,7 +48,7 @@
                     data.photo = '/assets/images/45611310_7ad3.jpg';
                 }
 
-                return this.createNew(data.token, data.id, data.name, data.username, data.email, data.userRoles, data.photo);
+                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo);
             },
 
             isSession: function (session) {
@@ -56,11 +56,11 @@
             }
         };
 
-        function Session(token, id, name, username, email, userRoles, photo) {
+        function Session(token, id, fullName, username, email, userRoles, photo) {
             this.token = token;
             this.id = id || null;
             this.username = username;
-            this.name = name;
+            this.fullName = fullName;
             this.email = email;
 
             if (!angular.isArray(userRoles)) {

@@ -81,7 +81,10 @@ module.exports = {
 
             'vendor/jquery-cropper/dist/jquery-cropper.min.js',
 
-            'vendor/twbs-pagination/jquery.twbsPagination.min.js'
+            'vendor/twbs-pagination/jquery.twbsPagination.min.js',
+            'vendor/handsontable/dist/handsontable.full.css',
+            'vendor/handsontable/dist/handsontable.full.js',
+            'vendor/ngHandsontable/dist/ngHandsontable.js'
         ],
         css: [
             'vendor/datatables.net-bs4/css/dataTables.bootstrap4.min.css',

@@ -8,5 +8,6 @@
 
     function RootDashboard($scope, $translate, $filter, $stateParams, UserStateHelper, AlertService) {
 
+
     }
 })();

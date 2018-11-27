@@ -1,41 +1,46 @@
 <div ng-init="init()"></div>
 <div class="sidebar-inner">
+    <!-- ### $Sidebar Header ### -->
     <div class="sidebar-logo">
         <div class="peers ai-c fxw-nw">
             <div class="peer peer-greed">
-                <a class="sidebar-link td-n" href="http://medu.vn" target="_blank">
+                <a class="sidebar-link td-n" href="index.html">
                     <div class="peers ai-c fxw-nw">
                         <div class="peer">
                             <div class="logo">
                                 <img class="left-menu-logo" src="/assets/images/logo.png" alt="">
                             </div>
                         </div>
-                        <div class="peer peer-greed">
-                            <h5 class="lh-1 mB-0 logo-text">&nbsp;</h5>
-                        </div>
+                        <!--<div class="peer peer-greed">-->
+                            <!--<h5 class="lh-1 mB-0 logo-text">Quản trị</h5>-->
+                        <!--</div>-->
                     </div>
                 </a>
             </div>
             <div class="peer">
                 <div class="mobile-toggle sidebar-toggle">
-                    <a href="#" class="td-n">
+                    <a href="" class="td-n">
                         <i class="ti-arrow-circle-left"></i>
                     </a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- ### $Sidebar Menu ### -->
     <ul class="sidebar-menu scrollable pos-r ps">
-        <li ng-repeat="item in menuItems" ui-sref-active="active" ng-class="{'nav-item dropdown':item.noneDropdown, 'nav-item dropdown': !item.noneDropdown }"
+        <!--ng-class="{'nav-item dropdown':item.noneDropdown, 'nav-item dropdown': !item.noneDropdown }"-->
+        <li ng-repeat="item in menuItems"
+            class="nav-item mT-30 active"
             ng-show="item.visible">
-            <a ng-if="item.noneDropdown" class="sidebar-link" href="javascript:void(0)" ui-sref="{{item.state}}">
+            <a ng-if="item.noneDropdown" class="sidebar-link" ui-sref="{{item.state}}">
                 <span class="icon-holder">
                     <i class="{{item.icon}}"></i>
                 </span>
                 <span class="title">{{item.title}}</span>
             </a>
 
-            <a ng-if="!item.noneDropdown" class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown"
+            <a ng-if="!item.noneDropdown" class="dropdown-toggle" data-toggle="dropdown"
                 aria-expanded="false" data-display="static">
                 <span class="icon-holder">
                     <i class="{{item.icon}}"></i>
@@ -49,317 +54,12 @@
             </a>
             <ul ng-if="!item.noneDropdown" class="dropdown-menu">
                 <li ui-sref-active="active" ng-repeat="child in item.children" ng-show="child.visible">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref="{{child.state}}">
+                    <a class="sidebar-link" ui-sref="{{child.state}}">
                         {{child.title}} <span ng-if="child.countNumber" class="badge badge-danger" style="margin-left: 5px">{{countInfo[child.countNumber]}}</span>
                     </a>
                 </li>
             </ul>
         </li>
 
-        <!-- <li class="nav-item mT-30" ui-sref-active="active">
-            <a class="sidebar-link" href="javascript:void(0)" ui-sref="app.root.dashboard">
-                <span class="icon-holder">
-                    <i class="c-orange-500 ti-dashboard"></i>
-                </span>
-                <span class="title">Dashboard</span>
-            </a>
-        </li>
-
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false"
-                data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-menu"></i>
-                </span>
-                <span class="title">
-                    {{'CATEGORY_MODULE.CATEGORY' | translate}}
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu">
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".category.list">
-                        {{'LIST' | translate}}
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".category.new">
-                        {{'CREATE_NEW' | translate}}
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false"
-                data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-menu-alt"></i>
-                </span>
-                <span class="title">
-                    {{'SUBCATEGORY_MODULE.SUBCATEGORY' | translate}}
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu">
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".subcategory.list">
-                        {{'LIST' | translate}}
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".subcategory.new">
-                        {{'CREATE_NEW' | translate}}
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                aria-expanded="false" aria-haspopup="true" data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-book"></i>
-                </span>
-                <span class="title">
-                    Khóa học
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".course.lecturerList">
-                        Danh sách khoá học <span class="badge badge-danger" style="margin-left: 5px">{{newCourseCount}}</span>
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".certificate.list">
-                        Danh sách chứng nhận hoàn thành khóa học
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false"
-                aria-haspopup="true" data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-user"></i>
-                </span>
-                <span class="title">
-                    Tài khoản
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".studentManagement.list">
-                        Học viên
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".lecturerManagement.list">
-                        Giảng viên
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".emailManagement.list">
-                        Danh sách nhận email
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".feedback.list">
-                        Danh sách thư góp ý <span class="badge badge-danger" style="margin-left: 5px">{{requestUnReadCount}}</span>
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)">
-                        Thông báo cho học viên
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)">
-                        Thông báo cho giảng viên
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false"
-                aria-haspopup="true" data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-gift"></i>
-                </span>
-                <span class="title">
-                    Marketing
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".promotions.list">
-                        Chương trình khuyến mại
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".voucher.list">
-                        Voucher
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false"
-                aria-haspopup="true" data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-credit-card"></i>
-                </span>
-                <span class="title">
-                    Tài chính
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".shipCOD.list">
-                        Ship COD
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".paymentHistory.list">
-                        Lịch sử thanh toán
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false"
-                aria-haspopup="true" data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-bar-chart"></i>
-                </span>
-                <span>
-                    Báo cáo
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-
-            <ul class="dropdown-menu">
-                <li ui-sref-active="active">
-                    <a href="javascript:void(0);" ui-sref=".report.courseByTime">
-                        Báo cáo số lượng khóa học
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a href="javascript:void(0);" ui-sref=".report.studentByCourse">
-                        Báo cáo số lượng học viên theo khóa học
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a href="javascript:void(0);" ui-sref=".report.newStudent">
-                        Báo cáo số lượng tài khoản mới
-                    </a>
-                </li>
-
-                <li ui-sref-active="active">
-                    <a href="javascript:void(0);" ui-sref=".report.revenueByMonth">
-                        Báo cáo doanh thu
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a href="javascript:void(0);" ui-sref=".report.revenueByMonth">
-                        Báo cáo kết quả thi theo tháng
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a href="javascript:void(0);" ui-sref=".report.revenueByCourse">
-                        {{'NAV_MODULE.REVENUE_BY_COURSE_REPORT' | translate}}
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a href="javascript:void(0);" ui-sref=".report.studentByCategory">
-                        Báo cáo doanh thu theo danh mục
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false"
-                aria-haspopup="true" data-display="static">
-                <span class="icon-holder">
-                    <i class="c-blue-500 ti-settings"></i>
-                </span>
-                <span class="title">
-                    Cấu hình
-                </span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".banner.homeList">
-                        Banner
-                    </a>
-                </li>
-
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".visibleCourseConfig">
-                        Khóa học ngoài trang chủ
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".customerReview.list">
-                        Nhận xét của khách hàng
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".partner.list">
-                        Danh sách đối tác
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".image.list">
-                        Thư viện ảnh
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".systemConfig.paymentMethod">
-                        Cấu hình chung
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".role.list">
-                        Phân quyền
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".faq.list">
-                        Câu hỏi thường gặp
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".webConfig.header">
-                        Cấu hình Logo
-                    </a>
-                </li>
-                <li ui-sref-active="active">
-                    <a class="sidebar-link" href="javascript:void(0)" ui-sref=".webConfig.footer.list">
-                        Quản lý Footer
-                    </a>
-                </li>
-            </ul>
-        </li> -->
     </ul>
 </div>

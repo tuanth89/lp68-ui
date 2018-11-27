@@ -3,6 +3,7 @@ angular.module('ati', [
     'ati.root',
     'ati.admin',
     'ati.dashboard',
+    'ati.contract',
     'ati.adminManagement',
     'angularMoment'
 ]);

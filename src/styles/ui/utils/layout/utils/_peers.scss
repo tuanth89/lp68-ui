@@ -16,12 +16,12 @@
   flex: 0 0 auto;
 }
 
-.peer-greed {
-  flex: 1 1 auto;
-  // overflow: hidden;
-}
+//.peer-greed {
+//  flex: 1 1 auto;
+//  // overflow: hidden;
+//}
 
-.peers-greed > .peer,
+.peer-greed, .peers-greed > .peer,
 .peers-greed > .peers {
   flex: 1 1 auto;
 }
