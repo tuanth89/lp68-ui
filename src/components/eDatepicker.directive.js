@@ -29,7 +29,7 @@
                             }
                         },
                         autoclose: true,
-                        clearBtn: true,
+                        clearBtn: false,
                         todayHighlight: true,
                         orientation: "bottom",
                     }).on('changeDate', function (e) {
@@ -49,7 +49,11 @@
                             } else {
                                 scope.inputValue = undefined;
                             }
-                            scope.$apply();
+
+                            setTimeout(function(){
+                                scope.$apply();
+                            },1);
+
                         }
                     }).on('clearDate', function (e) {
                       

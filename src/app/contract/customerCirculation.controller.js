@@ -4,55 +4,80 @@
     angular.module('ati.contract')
         .controller('CustomerCirculationController', CustomerCirculationController);
 
-    function CustomerCirculationController($scope, $timeout, hotRegisterer, $state, contracts, ContractManager, Restangular) {
+    function CustomerCirculationController($scope, $timeout, hotRegisterer, $state, ContractManager, Restangular) {
+
+        $scope.filter = {date: ""};
+
+        $scope.$watch('filter.date', function (newValue, oldValue) {
+            if (newValue != oldValue) {
+                $scope.getData();
+            }
+        });
+        $scope.filter.date = new Date();
+
+        $scope.contracts = [];
+        $scope.rowHeaders = true;
+        $scope.colHeaders = true;
+        $scope.settings = {
+            data: $scope.contracts,
+            // rowHeaders: true,
+            colHeaders: true,
+            minSpareRows: 0,
+            stretchH: "all",
+            cells: function (row, col) {
+                let cellPrp = {};
+                if (col === 4) {
+                    cellPrp.renderer = myBtns;
+                    cellPrp.readOnly = true;
+                }
+
+                return cellPrp;
+            },
+            afterOnCellMouseDown: function (event, cords, TD) {
+                if (event.realTarget.className.indexOf('btnPay') < 0) {
+                    return;
+                }
+
+                $scope.clickPay(event.realTarget.innerText);
+            }
+        };
+
+        function myBtns(instance, td, row, col, prop, value, cellProperties) {
+            Handsontable.renderers.TextRenderer.apply(this, arguments);
+            td.innerHTML = '<div style="text-align: center;"><button class="btnPay btn btn-success bt-' + row + '">' + 100 + '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 200 + '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 300 + '</button></div>';
+
+        }
+
+        $scope.clickPay = function (value) {
+            alert(value);
+        };
 
         let hotInstance = "";
-        $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
-        
 
+        $scope.getData = function () {
+            ContractManager.one("circulation").one("all")
+                .getList("", {date: $scope.filter.date})
+                .then(function (resp) {
+                    $scope.contracts = resp;
+                });
+        };
+
+        $scope.convertToDate = function (stringDate) {
+            let dateOut = new Date(stringDate);
+            dateOut.setDate(dateOut.getDate());
+            return dateOut;
+        };
 
         $timeout(function () {
             hotInstance = hotRegisterer.getInstance('my-handsontable');
 
-            $scope.onAfterInit = function() {
+            $scope.onAfterInit = function () {
                 hotInstance.validateCells();
             };
-            
-            // hotInstance.addHook('afterSelectionEnd',
-            //     function (rowId, colId, rowEndId, colEndId) {
-            //         if (colId === 2 || colId === 3)
-            //             hotInstance.setDataAtCell(rowId, 4, 100);
-            //     });
 
-            // hotInstance.addHook('afterChange',
-            //     function(changes, source) {
-            //         if (changes !== null) {
-            //             changes.forEach(function(item) {
-            //                 if (hotInstance.propToCol(item[1]) === 2 || hotInstance.propToCol(item[1]) === 3) {
-            //                     hotInstance.setDataAtCell(item[0], 4, 100);
-            //                 }
-            //             });
-            //         }
-            //     }), hotInstance;
 
-            // hotInstance.addHook('afterCreateRow', function (index, amount) {
-            //     hotInstance.selectCell(index, 0);
-            // });
-            //
-            // document.addEventListener('keydown', function (e) {
-            //     if (e.which === 9 && hotInstance) {
-            //         if (!hotInstance.getSelected())
-            //             return;
-            //
-            //         let rowIndex = $('.current').parent().index();
-            //         let colIndex = hotInstance.getSelected()[1];
-            //         let totalCols = hotInstance.countCols();
-            //         let totalRows = hotInstance.countRows();
-            //         if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1))
-            //             hotInstance.alter("insert_row", totalRows + 1);
-            //     }
-            // }, true);
         }, 0);
 
+        $scope.getData();
     }
 })();

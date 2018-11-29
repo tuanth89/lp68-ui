@@ -873,9 +873,19 @@ input.has-error, textarea.has-error, select.has-error {
 }
 
 .handsontable th, .handsontable td {
-    color: #333;
+    color: #333 !important;
+    font-size: 14px !important;
 }
 
 .mt20 {
     margin-top: 20px;
+}
+
+.mtb-20 {
+    margin-bottom: 20px;
+}
+
+.btnPay {
+    padding: 6px;
+    margin: 2px;
 }

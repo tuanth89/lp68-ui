@@ -1,28 +1,39 @@
-<div class="bgc-white p-20 bd">
-    <hot-table hot-id="my-handsontable"
-               settings="settings"
-               row-headers="settings.rowHeaders"
-               min-spare-rows="settings.minSpareRows"
-               datarows="customers">
-        <hot-column class="htCenter" data="isActive" title="''" type="'checkbox'" checked-template="'Yes'"
-                    unchecked-template="'No'" width="40"></hot-column>
-        <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200"></hot-column>
-        <hot-column data="loanMoney" title="'Tiền vay'" width="200" type="'numeric'" format="'#,###'"></hot-column>
-        <hot-column data="actuallyCollectedMoney" title="'Thực thu (Tiền vay + lãi)'" width="200" type="'numeric'"
-                    format="'#,###'"></hot-column>
-        <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100"></hot-column>
-        <hot-column data="customer.phone" title="'Điện thoại'" type="'numeric'" width="150"></hot-column>
-        <!--<hot-column data="product.description" title="'Favorite food'" type="'autocomplete'">-->
-        <!--<hot-autocomplete datarows="description in product.options"></hot-autocomplete>-->
-        <!--</hot-column>-->
-    </hot-table>
-
-    <div class="form-group mt20">
+<div class="row mtb-20">
+    <div class="col-sm-1">
         <button type="button" class="btn btn-primary" ng-click="saveCustomer()">Lưu</button>
+
     </div>
-
-    <!--<h2>Handsontable add row/sort bug</h2>-->
-
-    <!--<div id="exampleGrid" class="dataTable"></div>-->
-    <!--<button id="addRow">Add row</button>-->
+    <div class="col-sm-3">
+        <input input-value="filter.date" e-datepicker class="form-control" type="text" placeholder="Chọn ngày">
+    </div>
 </div>
+
+<div style="margin-left: 5px;margin-bottom: 3px;">
+    <input type="checkbox" value="" id="defaultCheck1">
+    <label class="form-check-label" for="defaultCheck1">
+    </label>
+</div>
+
+
+<hot-table hot-id="my-handsontable"
+           settings="settings"
+           row-headers="settings.rowHeaders"
+           min-spare-rows="settings.minSpareRows"
+           datarows="customers">
+    <hot-column data="isActive" title="''" type="'checkbox'" checked-template="'Yes'"
+                unchecked-template="'No'" width="40"></hot-column>
+    <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200"></hot-column>
+    <hot-column data="loanMoney" title="'Tiền vay'" width="200" type="'numeric'" format="'#,###'"></hot-column>
+    <hot-column data="actuallyCollectedMoney" title="'Thực thu (Tiền vay + lãi)'" width="200" type="'numeric'"
+                format="'#,###'"></hot-column>
+    <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100"></hot-column>
+    <hot-column data="customer.phone" title="'Điện thoại'" type="'text'" width="150"></hot-column>
+    <!--<hot-column data="product.description" title="'Favorite food'" type="'autocomplete'">-->
+    <!--<hot-autocomplete datarows="description in product.options"></hot-autocomplete>-->
+    <!--</hot-column>-->
+</hot-table>
+
+<!--<h2>Handsontable add row/sort bug</h2>-->
+
+<!--<div id="exampleGrid" class="dataTable"></div>-->
+<!--<button id="addRow">Add row</button>-->

@@ -31,11 +31,6 @@
                         controller: 'CustomerCirculationController',
                         templateUrl: 'contract/customerCirculation.tpl.html'
                     }
-                },
-                resolve: {
-                    contracts: function (ContractManager) {
-                        return ContractManager.one("circulation").one("all").getList();
-                    }
                 }
             })
     }

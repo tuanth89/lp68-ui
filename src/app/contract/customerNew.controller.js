@@ -8,6 +8,17 @@
         $scope.settings = {rowHeaders: true, colHeaders: true, minSpareRows: 1};
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
+        $scope.filter = {date: ""};
+        $scope.$watch('filter.date', function (newValue, oldValue) {
+            $timeout(function () {
+                if (newValue != oldValue) {
+                    $scope.getData();
+                }
+            }, 100);
+
+        });
+        $scope.filter.date = new Date();
+
         let hotInstance = "";
         let customerItem = {
             _id: "",
@@ -47,6 +58,15 @@
             },
             stretchH: "all",
             autoWrapRow: true
+        };
+
+        $scope.getData = function () {
+            ContractManager.one("circulation").one("all")
+                .getList("", {date: $scope.filter.date, type: 0})
+                .then(function (resp) {
+                    $scope.customers = resp;
+                    $scope.customers.push(angular.copy(customerItem));
+                });
         };
 
         $timeout(function () {
@@ -96,14 +116,15 @@
 
             ContractManager.post(customers)
                 .then((items) => {
-                    $scope.customers = [];
+                    $scope.customers = items;
                     $scope.customers.push(angular.copy(customerItem));
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-
         };
+
+        $scope.getData();
 
     }
 })();
