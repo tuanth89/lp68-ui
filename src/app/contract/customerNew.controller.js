@@ -28,10 +28,11 @@
                 phone: "",
                 _id: ""
             },
-            loanMoney: 0,
-            actuallyCollectedMoney: 0,
-            loanDate: 0
+            loanMoney: "",
+            actuallyCollectedMoney: "",
+            loanDate: ""
         };
+
         $scope.customers = [];
         $scope.customers.push(angular.copy(customerItem));
         // $scope.customers = angular.copy(Restangular.stripRestangular(contracts));
@@ -56,6 +57,13 @@
                 if (hotInstance.countRows() <= 1)
                     return false;
             },
+            // afterCreateRow: function (index) {
+            //     hotInstance.selectCell(index, 0);
+            // },
+            afterCreateRow: function (index) {                                // set focus to 1st cell in row
+                console.log("Index afterCreateRow=" + index);
+                this.selectCell(index, 0, 0, 0, true);
+            },
             stretchH: "all",
             autoWrapRow: true
         };
@@ -65,6 +73,8 @@
                 .getList("", {date: $scope.filter.date, type: 0})
                 .then(function (resp) {
                     $scope.customers = resp;
+
+                    customerItem.createdAt = $scope.filter.date;
                     $scope.customers.push(angular.copy(customerItem));
                 });
         };
@@ -89,9 +99,9 @@
             //         }
             //     }), hotInstance;
 
-            hotInstance.addHook('afterCreateRow', function (index, amount) {
-                hotInstance.selectCell(index, 0);
-            });
+            // hotInstance.addHook('afterCreateRow', function (index, amount) {
+            //     hotInstance.selectCell(index, 0);
+            // });
 
             document.addEventListener('keydown', function (e) {
                 if (e.which === 9 && hotInstance) {
@@ -102,8 +112,10 @@
                     let colIndex = hotInstance.getSelected()[1];
                     let totalCols = hotInstance.countCols();
                     let totalRows = hotInstance.countRows();
-                    if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1))
+                    if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
                         hotInstance.alter("insert_row", totalRows + 1);
+                        $scope.customers[totalRows] = angular.copy(customerItem);
+                    }
                 }
             }, true);
         }, 0);
@@ -125,6 +137,7 @@
         };
 
         $scope.getData();
+
 
     }
 })();
