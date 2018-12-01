@@ -19,9 +19,16 @@
                     isDefault: true,
                 },
                 {
-                    title: "Khách hàng",
+                    title: "Hợp đồng",
                     icon: "c-blue-500 ti-share",
                     state: "app.root.contract.cusNew",
+                    noneDropdown: true,
+                    visible: true
+                },
+                {
+                    title: "Khách hàng",
+                    icon: "c-blue-500 ti-share",
+                    state: "",
                     noneDropdown: true,
                     visible: true
                 },

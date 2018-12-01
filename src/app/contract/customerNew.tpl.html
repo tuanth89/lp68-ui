@@ -1,4 +1,4 @@
-<div class="row mtb-20">
+<div class="row mb-20">
     <div class="col-sm-1">
         <button type="button" class="btn btn-primary" ng-click="saveCustomer()">Lưu</button>
 
@@ -8,20 +8,11 @@
     </div>
 </div>
 
-<div style="margin-left: 5px;margin-bottom: 3px;">
-    <input type="checkbox" value="" id="defaultCheck1">
-    <label class="form-check-label" for="defaultCheck1">
-    </label>
-</div>
-
-
 <hot-table hot-id="my-handsontable"
            settings="settings"
            row-headers="settings.rowHeaders"
            min-spare-rows="settings.minSpareRows"
            datarows="customers">
-    <hot-column data="isActive" title="''" type="'checkbox'" checked-template="'Yes'"
-                unchecked-template="'No'" width="40"></hot-column>
     <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200"></hot-column>
     <hot-column data="loanMoney" title="'Tiền vay'" width="200" type="'numeric'" format="'#,###'"></hot-column>
     <hot-column data="actuallyCollectedMoney" title="'Thực thu (Tiền vay + lãi)'" width="200" type="'numeric'"

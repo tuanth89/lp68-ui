@@ -1,5 +1,5 @@
 .sidebar-menu li.active > a {
-    color: #333;
+    /*color: #333;*/
     /*background-color: #dedede;*/
     text-decoration: none;
 }
@@ -874,18 +874,56 @@ input.has-error, textarea.has-error, select.has-error {
 
 .handsontable th, .handsontable td {
     color: #333 !important;
-    font-size: 14px !important;
+    font-size: 15px !important;
 }
 
 .mt20 {
     margin-top: 20px;
 }
 
-.mtb-20 {
+.mt15 {
+    margin-top: 15px;
+}
+
+.mb-20 {
     margin-bottom: 20px;
 }
 
 .btnPay {
     padding: 6px;
     margin: 2px;
+    width: 20px;
+}
+
+.handsontable-td-red {
+    color: red !important;
+}
+
+.row-border .form-group {
+    border-top: 1px solid #ececec;
+    margin-bottom: 0 !important;
+}
+
+.label-style .form-group > label {
+    font-weight: bold;
+}
+
+.label-style .form-group {
+    color: #333333;
+}
+
+.label-style .form-group > div > input {
+    width: 100% !important;;
+}
+
+.ptb5 {
+    padding: 5px 0px !important;
+}
+
+input.textAlign {
+    text-align: right;
+}
+
+.widget-box {
+    border: 1px solid #d9d9d9;
 }

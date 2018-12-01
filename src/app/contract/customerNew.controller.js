@@ -17,6 +17,7 @@
             }, 100);
 
         });
+
         $scope.filter.date = new Date();
 
         let hotInstance = "";
@@ -130,6 +131,7 @@
                 .then((items) => {
                     $scope.customers = items;
                     $scope.customers.push(angular.copy(customerItem));
+                    toastr.success('Lưu thành công!');
                 })
                 .catch((error) => {
                     console.log(error);

@@ -4,7 +4,8 @@
     angular.module('ati.contract')
         .controller('ContractController', ContractController);
 
-    function ContractController($scope, $stateParams, $compile, $state, $window, $translate) {
+    function ContractController($scope, $stateParams, $state) {
+
 
     }
 })();
