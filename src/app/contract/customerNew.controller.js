@@ -131,10 +131,11 @@
                 .then((items) => {
                     $scope.customers = items;
                     $scope.customers.push(angular.copy(customerItem));
-                    toastr.success('Lưu thành công!');
+                    toastr.success('Tạo mới khách hàng thành công!');
                 })
                 .catch((error) => {
                     console.log(error);
+                    toastr.error("Tạo mới khách hàng thất bại!");
                 });
         };
 

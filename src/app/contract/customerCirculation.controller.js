@@ -12,10 +12,6 @@
         $scope.filter = {date: ""};
         $scope.selectedCirculation = {};
 
-        $scope.newLoanMoney = 0;
-        $scope.newActuallyCollectedMoney = 0;
-        $scope.newLoanDate = 0;
-
         $scope.checkedList = [];
         $scope.checkAll = false;
         $scope.$watch('checkAll', function (newValue, oldValue) {
@@ -200,6 +196,9 @@
                     if ($scope.checkedList.length === 1) {
                         let [value] = $scope.checkedList;
                         $scope.selectedCirculation = angular.copy($scope.contracts[value]);
+                        $scope.selectedCirculation.totalMoney = 0;
+                        $scope.selectedCirculation.newDailyMoney = 0;
+                        $scope.selectedCirculation.newDailyMoney = 0;
 
                         let nowDate = moment();
                         let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
@@ -268,7 +267,34 @@
         };
 
         $scope.saveDaoModal = () => {
+            if (!$scope.selectedCirculation.newLoanMoney
+                || parseInt($scope.selectedCirculation.newLoanMoney) <= 0) {
+                toastr.error("Số tiền vay không được <= 0");
+                return;
+            }
 
+            ContractManager
+                .one($scope.selectedCirculation._id)
+                .one('circulationContract')
+                .customPOST($scope.selectedCirculation)
+                .then((contract) => {
+                    toastr.success('Đáo hạn hợp đồng thành công!');
+
+                    _.map($scope.contracts, function (x) {
+                        x.isActive = false;
+                        return x;
+                    });
+                    $scope.checkedList = [];
+                    $scope.checkAll = false;
+                    $scope.selectedCirculation = {};
+                    $('#hopDongDaoModal').modal('hide');
+
+                    $scope.getData();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    toastr.error("Đáo hạn hợp đồng thất bại!");
+                });
         };
     }
 })();

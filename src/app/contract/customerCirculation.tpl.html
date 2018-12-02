@@ -84,7 +84,7 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                + ({{selectedCirculation.moneyContractOld}}) = {{selectedCirculation.totalMoney}}
+                                + ({{selectedCirculation.moneyContractOld | number}}) = {{selectedCirculation.totalMoney | number}} (VNĐ)
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
@@ -110,7 +110,7 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                Ngày => ( {{selectedCirculation.newDailyMoney}} / 1 ngày )
+                                Ngày => ( {{selectedCirculation.newDailyMoney | number}} / 1 ngày )
                             </div>
                         </div>
                     </form>
@@ -118,7 +118,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary">Lưu</button>
+                <button type="button" class="btn btn-primary" ng-click="saveDaoModal()">Lưu</button>
             </div>
         </div>
     </div>
