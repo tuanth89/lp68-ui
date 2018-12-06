@@ -873,8 +873,16 @@ input.has-error, textarea.has-error, select.has-error {
 }
 
 .handsontable th, .handsontable td {
-    color: #333 !important;
+    /*color: #333 !important;*/
     font-size: 15px !important;
+}
+
+.hot-read-only {
+    color: #333 !important;
+}
+
+.hot-normal {
+    color: #222 !important;
 }
 
 .mt20 {
@@ -890,13 +898,25 @@ input.has-error, textarea.has-error, select.has-error {
 }
 
 .btnPay {
-    padding: 6px;
+    padding: 2px;
     margin: 2px;
-    width: 20px;
+    font-size: 14px;
+}
+
+.btnAction {
+    padding: 2px;
+    margin: 2px;
+    font-size: 13px;
+    width: 50px;
 }
 
 .handsontable-td-red {
     color: red !important;
+    font-weight: bold;
+}
+
+.handsontable-cell-disable {
+    background: rgb(238, 238, 238) !important;
 }
 
 .row-border .form-group {

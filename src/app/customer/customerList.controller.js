@@ -1,40 +1,20 @@
 (function () {
     'use strict';
 
-    angular.module('ati.contract')
-        .controller('CustomerNewController', CustomerNewController);
+    angular.module('ati.customer')
+        .controller('CustomerListController', CustomerListController);
 
-    function CustomerNewController($scope, $stateParams, $timeout, $state, hotRegisterer, customerSource, ContractManager, Restangular) {
+    function CustomerListController($scope, $stateParams, $timeout, $state, hotRegisterer, CustomerManager, Restangular) {
+        $scope.settings = {rowHeaders: true, colHeaders: true, minSpareRows: 1};
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
-        let customerS = angular.copy(Restangular.stripRestangular(customerSource));
-        $scope.customerSource = _.map(customerS, 'name').join(',');
-
-        $scope.filter = {date: ""};
-        $scope.$watch('filter.date', function (newValue, oldValue) {
-            $timeout(function () {
-                if (newValue != oldValue) {
-                    $scope.getData();
-                }
-            }, 100);
-
-        });
-
-        $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
 
         let hotInstance = "";
         let customerItem = {
             _id: "",
-            contractNo: "",
-            customer: {
-                name: "",
-                phone: "",
-                _id: ""
-            },
-            loanMoney: "",
-            actuallyCollectedMoney: "",
-            loanDate: "",
-            createdAt: $scope.filter.date
+            name: "",
+            address: "",
+            phone: ""
         };
 
         $scope.customers = [];
@@ -63,73 +43,32 @@
             },
             afterCreateRow: function (index) {
                 setTimeout(function () {
-                    let colIndex = hotInstance.getSelected()[1];
-                    if (colIndex === 4)
-                        hotInstance.selectCell(index, 0);
+                    hotInstance.selectCell(index, 0);
                 }, 1);
             },
+            // afterCreateRow: function (index) {
+            //     setTimeout(function () {
+            //         this.selectCell(index, 0, 0, 0, true);
+            //     }, 1);
+            // },
             cells: function (row, col) {
                 let cellPrp = {};
+                // if (col === 6) {
                 cellPrp.className = "hot-normal";
                 // cellPrp.readOnly = true;
-
-                if (col === 0) {
-                    cellPrp.type = 'autocomplete';
-                    cellPrp.source = _.map(customerS, 'name');
-
-                    // hotInstance.updateSettings($scope.settings);
-                    // cellPrp.datarows = $scope.customerSource;
-                    // cellPrp.editor = 'select2';
-                    // cellPrp.renderer = customDropdownRenderer;
-                    // cellPrp.width = '200px';
-                    // cellPrp.select2Options = {
-                    //     data: optionsList,
-                    //     dropdownAutoWidth: true,
-                    //     width: 'resolve'
-                    // };
-                }
+                // }
 
                 return cellPrp;
             },
-            afterChange: function (source, changes) {
-                if (changes === 'edit') {
-                    if (source[0][1] === "customer.name") {
-                        let rowChecked = source[0][0];
-                        let newValue = source[0][3];
-                        let customerItem = _.find(customerS, {name: newValue});
-                        if (customerItem) {
-                            $scope.customers[rowChecked].customer._id = customerItem._id;
-                        }
-
-                        console.log($scope.customers[rowChecked]);
-
-                        // console.log('row: ' + source[0][0]);
-                        // console.log('col: ' + source[0][1]);
-                        // console.log('old value: ' + source[0][2]);
-                        // console.log('new value: ' + source[0][3]);
-                    }
-                }
-            },
-            /*afterCreateRow: function (index) {
-             setTimeout(function () {
-             this.selectCell(index, 0, 0, 0, true);
-             }, 1);
-             },*/
             stretchH: "all",
-            autoWrapRow: true,
-            rowHeaders: true,
-            colHeaders: true,
-            minSpareRows: 1
-            // strict: true
+            autoWrapRow: true
         };
 
         $scope.getData = function () {
-            ContractManager.one("circulation").one("all")
-                .getList("", {date: $scope.filter.date, type: 0})
+            CustomerManager
+                .getList("")
                 .then(function (resp) {
                     $scope.customers = resp;
-
-                    customerItem.createdAt = $scope.filter.date;
                     $scope.customers.push(angular.copy(customerItem));
                 });
         };
@@ -169,8 +108,6 @@
                     let totalRows = hotInstance.countRows();
                     if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
                         hotInstance.alter("insert_row", totalRows + 1);
-
-                        customerItem.createdAt = $scope.filter.date;
                         $scope.customers[totalRows] = angular.copy(customerItem);
                     }
                 }
@@ -180,24 +117,23 @@
         $scope.saveCustomer = () => {
             let customers = angular.copy($scope.customers);
             _.remove(customers, function (item) {
-                return !item.customer.name;
+                return !item.name;
             });
 
-            ContractManager.post(customers)
+            CustomerManager.one('insert').one('new').customPOST(customers)
                 .then((items) => {
-                    $scope.customers = items;
-
-                    customerItem.createdAt = $scope.filter.date;
+                    $scope.customers = angular.copy(Restangular.stripRestangular(items));
                     $scope.customers.push(angular.copy(customerItem));
-                    toastr.success('Tạo mới hợp đồng thành công!');
+                    toastr.success('Tạo mới khách hàng thành công!');
                 })
                 .catch((error) => {
                     console.log(error);
-                    toastr.error("Tạo mới hợp đồng thất bại. Hãy thử lại sau!");
+                    toastr.error("Tạo mới khách hàng thất bại!");
                 });
         };
 
         $scope.getData();
+
 
     }
 })();

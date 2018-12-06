@@ -5,7 +5,7 @@
         .controller('CustomerCirculationController', CustomerCirculationController)
     ;
 
-    function CustomerCirculationController($scope, $timeout, hotRegisterer, $state, ContractManager, moment) {
+    function CustomerCirculationController($scope, $timeout, hotRegisterer, $state, ContractManager, moment, Restangular, HdLuuThong) {
 
         let hotInstance = "";
         $scope.formProcessing = false;
@@ -56,7 +56,7 @@
             }, 1);
         });
 
-        $scope.filter.date = new Date();
+        $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
 
         $scope.contracts = [];
         $scope.rowHeaders = true;
@@ -69,22 +69,71 @@
             stretchH: "all",
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 3) {
+                if ($scope.contracts.length > 0) {
+                    let item = $scope.contracts[row];
+                    if (item && item.status > 0) {
+                        cellPrp.readOnly = true;
+                        cellPrp.className = "handsontable-cell-disable";
+                        return cellPrp;
+                    }
+                }
+
+                if (col === 5) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
 
-                // if (col === 4) {
-                //     cellPrp.renderer = myBtns;
-                // }
+                if (col === 4) {
+                    cellPrp.className = "hot-normal";
+                }
+
+                if (col === 3) {
+                    cellPrp.className = "handsontable-td-red";
+                }
 
                 return cellPrp;
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {
-                if (event.realTarget.className.indexOf('btnPay') < 0) {
+                // if (event.realTarget.className.indexOf('btnPay') >= 0) {
+                //     hotInstance.setDataAtCell(rowCol.row, 5, parseInt(event.realTarget.innerText) * 1000);
+                //     return;
+                // }
+
+                if (event.realTarget.className.indexOf('btnAction') >= 0) {
+                    $scope.selectedCirculation = {};
+
+                    switch (parseInt(event.realTarget.value)) {
+                        case 0:
+                            $scope.selectedCirculation = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
+                            $scope.selectedCirculation.totalMoney = 0;
+                            $scope.selectedCirculation.newDailyMoney = 0;
+                            $scope.selectedCirculation.newDailyMoney = 0;
+
+                            let nowDate = moment();
+                            let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
+                            let diffDays = nowDate.diff(dateContract, 'days');
+                            let {actuallyCollectedMoney, dailyMoney} = $scope.selectedCirculation;
+                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - (parseInt(dailyMoney) * diffDays);
+                            $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
+
+                            $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
+
+                            $scope.$apply();
+                            $('#hopDongDaoModal').modal('show');
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            break;
+
+                    }
+
                     return;
                 }
-                hotInstance.setDataAtCell(rowCol.row, 4, event.realTarget.innerText);
 
                 // $scope.clickPay(event.realTarget.innerText);
             },
@@ -132,23 +181,32 @@
 
         function myBtns(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
-            if (col === 3) {
-                td.innerHTML = '<div><button class="btnPay btn btn-success bt-' + row + '">' + 0 + '</button>&nbsp;&nbsp;' +
-                    '<button class="btnPay btn btn-success bt-' + row + '">' + 100 +
-                    '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 200 + '</button>' +
-                    '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 300 + '</button>' +
-                    '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 400 + '</button>' +
-                    '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 600 + '</button>' +
-                    '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 800 + '</button>' +
-                    '</div>';
+            // if (col === 4) {
+            //     td.innerHTML = '<div><button class="btnPay btn btn-success bt-' + row + '">' + 0 + '</button>&nbsp;&nbsp;' +
+            //         '<button class="btnPay btn btn-success bt-' + row + '">' + 100 +
+            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 200 + '</button>' +
+            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 300 + '</button>' +
+            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 400 + '</button>' +
+            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 600 + '</button>' +
+            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 800 + '</button>' +
+            //         '</div>';
+            // }
 
-                return;
+            if (col === 5) {
+                td.innerHTML = '<div><button class="btnAction btn btn-success btAction-' + row + '" value="' + 0 + '">' + 'Đáo' + '</button>&nbsp;&nbsp;' +
+                    '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' +
+                    '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' +
+                    '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>' +
+                    '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>' +
+                    '</div>';
             }
 
         }
 
         $scope.getData = function () {
-            ContractManager.one("circulation").one("all")
+            HdLuuThong
+                .one('listByDate')
+                .one('all')
                 .getList("", {date: $scope.filter.date})
                 .then(function (resp) {
                     $scope.contracts = resp;
@@ -162,20 +220,31 @@
         };
 
         $scope.saveCirculation = () => {
-            ContractManager.one("circulation").one("update")
-                .customPUT($scope.contracts)
+            let contracts = _.filter($scope.contracts, (item) => {
+                return item.isActive;
+            });
+
+            HdLuuThong.one("contract").one("updateMany")
+                .customPUT(contracts)
                 .then((items) => {
-                    _.map($scope.contracts, function (x) {
-                        x.isActive = false;
-                        return x;
+                    // _.map($scope.contracts, function (x) {
+                    //     x.isActive = false;
+                    //     return x;
+                    // });
+
+                    _.remove($scope.contracts, (item, index) => {
+                        if (item.isActive)
+                            $scope.checkedList.splice(index, 1);
+
+                        return item.isActive;
                     });
 
                     $scope.checkedList = [];
                     $scope.checkAll = false;
-                    toastr.success('Lưu thành công!');
+                    toastr.success('Cập nhật thành công!');
                 })
                 .catch((error) => {
-                    console.log(error);
+                    toastr.error('Cập nhật không thành công!');
                 });
         };
 
@@ -185,7 +254,6 @@
             $scope.onAfterInit = function () {
                 hotInstance.validateCells();
             };
-
         }, 0);
 
         $scope.getData();
@@ -195,7 +263,7 @@
                 case 0:
                     if ($scope.checkedList.length === 1) {
                         let [value] = $scope.checkedList;
-                        $scope.selectedCirculation = angular.copy($scope.contracts[value]);
+                        $scope.selectedCirculation = angular.copy(Restangular.stripRestangular($scope.contracts[value]));
                         $scope.selectedCirculation.totalMoney = 0;
                         $scope.selectedCirculation.newDailyMoney = 0;
                         $scope.selectedCirculation.newDailyMoney = 0;
@@ -214,7 +282,7 @@
 
                 case 1:
                     let [value] = $scope.checkedList;
-                    $scope.selectedCirculation = angular.copy($scope.contracts[value]);
+                    $scope.selectedCirculation = angular.copy(Restangular.stripRestangular($scope.contracts[value]));
 
                     let nowDate = moment();
                     let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
@@ -230,7 +298,7 @@
                 case 2:
                     if ($scope.checkedList.length === 1) {
                         let [value] = $scope.checkedList;
-                        $scope.selectedCirculation = angular.copy($scope.contracts[value]);
+                        $scope.selectedCirculation = angular.copy(Restangular.stripRestangular($scope.contracts[value]));
 
                         let nowDate = moment();
                         let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
@@ -248,7 +316,7 @@
                 case 3:
                     if ($scope.checkedList.length === 1) {
                         let [value] = $scope.checkedList;
-                        $scope.selectedCirculation = angular.copy($scope.contracts[value]);
+                        $scope.selectedCirculation = angular.copy(Restangular.stripRestangular($scope.contracts[value]));
 
                         let nowDate = moment();
                         let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");

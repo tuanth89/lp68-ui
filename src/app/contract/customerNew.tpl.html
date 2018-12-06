@@ -13,7 +13,10 @@
            row-headers="settings.rowHeaders"
            min-spare-rows="settings.minSpareRows"
            datarows="customers">
-    <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200"></hot-column>
+    <hot-column data="customer.name" title="'Họ và tên'" width="200" type="'autocomplete'">
+        <hot-autocomplete datarows="{{customerSource}}"></hot-autocomplete>
+    </hot-column>
+    <!--<hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200"></hot-column>-->
     <hot-column data="loanMoney" title="'Tiền vay'" width="200" type="'numeric'" format="'#,###'"></hot-column>
     <hot-column data="actuallyCollectedMoney" title="'Thực thu (Tiền vay + lãi)'" width="200" type="'numeric'"
                 format="'#,###'"></hot-column>

@@ -22,6 +22,11 @@
                         controller: 'CustomerNewController',
                         templateUrl: 'contract/customerNew.tpl.html'
                     }
+                },
+                resolve: {
+                    customerSource: function($stateParams, CustomerManager) {
+                        return CustomerManager.one('list').one('autoComplete').getList();
+                    }
                 }
             })
             .state('contract.cusCirculation', {

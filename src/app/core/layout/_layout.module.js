@@ -28,7 +28,7 @@
                 {
                     title: "Khách hàng",
                     icon: "c-blue-500 ti-share",
-                    state: "",
+                    state: "app.root.customer",
                     noneDropdown: true,
                     visible: true
                 },

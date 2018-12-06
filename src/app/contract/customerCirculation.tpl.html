@@ -1,6 +1,8 @@
 <div class="row mb-20">
     <div class="col-sm-1">
-        <button type="button" class="btn btn-primary" ng-click="saveCirculation()">Lưu</button>
+        <button type="button" class="btn btn-primary" ng-click="saveCirculation()"
+                ng-disabled="checkedList.length === 0">Lưu
+        </button>
 
     </div>
     <div class="col-sm-3">
@@ -9,18 +11,18 @@
 </div>
 
 <div class="row mb-20" style="align-items: center;">
-    <div class="col-sm-3">
+    <div class="col-sm-3" ng-if="contracts.length > 0">
         <input class="mt15" type="checkbox" ng-model="checkAll" value="" id="checkAll">
         <label class="form-check-label" for="checkAll">
         </label>
     </div>
 
-    <div class="col-sm-3" ng-if="checkedList.length > 0">
-        <button type="button" class="btn btn-success" ng-click="showModal(0)">Đáo</button>
-        <button type="button" class="btn btn-success" ng-click="showModal(1)">Thu về</button>
-        <button type="button" class="btn btn-success" ng-click="showModal(2)">Chốt</button>
-        <button type="button" class="btn btn-success" ng-click="showModal(3)">Bễ</button>
-    </div>
+    <!--<div class="col-sm-3" ng-if="checkedList.length > 0">-->
+    <!--<button type="button" class="btn btn-success" ng-click="showModal(0)">Đáo</button>-->
+    <!--<button type="button" class="btn btn-success" ng-click="showModal(1)">Thu về</button>-->
+    <!--<button type="button" class="btn btn-success" ng-click="showModal(2)">Chốt</button>-->
+    <!--<button type="button" class="btn btn-success" ng-click="showModal(3)">Bễ</button>-->
+    <!--</div>-->
 </div>
 
 <hot-table hot-id="my-handsontable"
@@ -29,13 +31,16 @@
            min-spare-rows="settings.minSpareRows"
            on-after-init="onAfterInit()"
            datarows="contracts">
-    <hot-column data="isActive" title="''" type="'checkbox'" checked-template="'true'"
-                unchecked-template="'false'" width="40"></hot-column>
+    <hot-column data="isActive" title="' '" type="'checkbox'" checked-template="true"
+                unchecked-template="false" width="40"></hot-column>
     <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="150" read-only></hot-column>
     <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200" read-only></hot-column>
-    <hot-column title="'Đóng nhanh'" type="'text'" width="140" read-only></hot-column>
-    <hot-column data="dailyMoney" title="'Tiền đóng trong ngày'" width="200" type="'numeric'"
+    <hot-column data="moneyHavePay" title="'Tiền phải đóng'" width="200" type="'numeric'"
+                format="'#,###'" read-only></hot-column>
+    <!--<hot-column title="'Đóng nhanh'" type="'text'" width="140" read-only></hot-column>-->
+    <hot-column data="moneyPaid" title="'Tiền đóng trong ngày'" width="200" type="'numeric'"
                 format="'#,###'"></hot-column>
+    <hot-column title="'Thao tác'" type="'text'" width="200" read-only></hot-column>
 
     <!--<hot-column data="loanEndDate" title="'Ngày hết hạn'" width="150" type="'date'" correct-format="true"-->
     <!--date-format="'DD/MM/YYYY'" read-only></hot-column>-->
@@ -84,7 +89,8 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                + ({{selectedCirculation.moneyContractOld | number}}) = {{selectedCirculation.totalMoney | number}} (VNĐ)
+                                + ({{selectedCirculation.moneyContractOld | number}}) = {{selectedCirculation.totalMoney
+                                | number}} (VNĐ)
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">

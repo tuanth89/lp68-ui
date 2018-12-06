@@ -4,6 +4,7 @@ angular.module('ati', [
     'ati.admin',
     'ati.dashboard',
     'ati.contract',
+    'ati.customer',
     'ati.adminManagement',
     'angularMoment'
 ]);
