@@ -62,6 +62,8 @@
                     return false;
             },
             afterCreateRow: function (index) {
+                if (hotInstance.getSelected().length === 0)
+                    return;
                 setTimeout(function () {
                     let colIndex = hotInstance.getSelected()[1];
                     if (colIndex === 4)
@@ -70,6 +72,14 @@
             },
             cells: function (row, col) {
                 let cellPrp = {};
+
+                // if (moment($scope.filter.date, "YYYY-MM-DD").isBefore(moment().format("YYYY-MM-DD"))) {
+                //     cellPrp.readOnly = true;
+                //     cellPrp.className = "handsontable-cell-disable";
+                //     return cellPrp;
+                // }
+
+
                 cellPrp.className = "hot-normal";
                 // cellPrp.readOnly = true;
 
@@ -101,8 +111,6 @@
                             $scope.customers[rowChecked].customer._id = customerItem._id;
                         }
 
-                        console.log($scope.customers[rowChecked]);
-
                         // console.log('row: ' + source[0][0]);
                         // console.log('col: ' + source[0][1]);
                         // console.log('old value: ' + source[0][2]);
@@ -119,7 +127,7 @@
             autoWrapRow: true,
             rowHeaders: true,
             colHeaders: true,
-            minSpareRows: 1
+            minSpareRows: 0
             // strict: true
         };
 
@@ -127,10 +135,13 @@
             ContractManager.one("circulation").one("all")
                 .getList("", {date: $scope.filter.date, type: 0})
                 .then(function (resp) {
-                    $scope.customers = resp;
+                    $scope.customers = angular.copy(Restangular.stripRestangular(resp));
 
                     customerItem.createdAt = $scope.filter.date;
+                    // if (!moment($scope.filter.date, "YYYY-MM-DD").isBefore(moment().format("YYYY-MM-DD"))) {
                     $scope.customers.push(angular.copy(customerItem));
+                    // }
+
                 });
         };
 
@@ -168,27 +179,28 @@
                     let totalCols = hotInstance.countCols();
                     let totalRows = hotInstance.countRows();
                     if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
-                        hotInstance.alter("insert_row", totalRows + 1);
-
                         customerItem.createdAt = $scope.filter.date;
-                        $scope.customers[totalRows] = angular.copy(customerItem);
+                        $scope.customers.push(angular.copy(customerItem));
+
+                        // hotInstance.alter("insert_row", totalRows + 1);
                     }
                 }
+
             }, true);
         }, 0);
 
         $scope.saveCustomer = () => {
             let customers = angular.copy($scope.customers);
             _.remove(customers, function (item) {
-                return !item.customer.name;
+                return !item.customer.name || item._id;
             });
 
             ContractManager.post(customers)
                 .then((items) => {
-                    $scope.customers = items;
-
-                    customerItem.createdAt = $scope.filter.date;
-                    $scope.customers.push(angular.copy(customerItem));
+                    // $scope.customers = items;
+                    // customerItem.createdAt = $scope.filter.date;
+                    // $scope.customers.push(angular.copy(customerItem));
+                    $scope.getData();
                     toastr.success('Tạo mới hợp đồng thành công!');
                 })
                 .catch((error) => {

@@ -2,15 +2,116 @@
     <ul class="nav nav-tabs">
         <li ui-sref-active="active"><a ui-sref=".cusNew">Hợp đồng mới</a></li>
         <li ui-sref-active="active"><a ui-sref=".cusCirculation">Lưu thông</a></li>
-        <li ui-sref-active="active"><a ui-sref=".doisoat">Đáo hạn</a></li>
-        <li ui-sref-active="active"><a ui-sref=".doisoat">Thu về</a></li>
-        <li ui-sref-active="active"><a ui-sref=".doisoat">Chốt</a></li>
-        <li ui-sref-active="active"><a ui-sref=".doisoat">Bễ</a></li>
-        <li ui-sref-active="active"><a ui-sref=".doisoat">Kết thúc</a></li>
+        <li ui-sref-active="active"><a ui-sref=".daoHan">Đáo hạn</a></li>
+        <li ui-sref-active="active"><a ui-sref=".thuVe">Thu về</a></li>
+        <li ui-sref-active="active"><a ui-sref=".chot">Chốt</a></li>
+        <li ui-sref-active="active"><a ui-sref=".be">Bễ</a></li>
+        <li ui-sref-active="active"><a ui-sref=".ketThuc">Kết thúc</a></li>
     </ul>
     <div class="tab-content">
         <div ui-view="content" class="tab-pane col-md-12 bgc-white p-20 active">
 
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customerContractModal">
+    <div class="modal-dialog" style="max-width: 95%;" role="document">
+        <div class="modal-content" style="background-color: #f7f8fa;">
+            <div class="modal-header">
+                <h4 class="modal-title">Thông tin khách hàng</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cold-md-12" style="text-align: center;" ng-show="formProcessing">
+                    <i class="fa fa-spinner fa-pulse fa-3x" style="text-align: center;"></i>
+                </div>
+
+                <div class="row" ng-show="!formProcessing">
+                    <div class="col-md-4">
+                        <div class="widget-box">
+                            <div class="col-md-12 form-inline row-border label-style">
+                                <div class="form-group col-md-12 ptb5">
+                                    <label class="col-md-6 control-label">
+                                        Họ và tên:
+                                    </label>
+                                    <div class="col-md-6 control-label">
+                                        <span> {{selectedCustomer.customer.name}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ptb5">
+                                    <label class="col-md-6 control-label">
+                                        Gói vay:
+                                    </label>
+                                    <div class="col-md-6 control-label">
+                                        <span class="handsontable-td-red"> {{contractInfo.loanMoney | number}}
+                                        </span>
+                                        <span> VNĐ</span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ptb5">
+                                    <label class="col-md-6 control-label">
+                                        Thực thu:
+                                    </label>
+                                    <div class="col-md-6 control-label">
+                                        <span class="handsontable-td-red"> {{contractInfo.actuallyCollectedMoney | number}}
+                                        </span>
+                                        <span> VNĐ</span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ptb5">
+                                    <label class="col-md-6 control-label">
+                                        Ngày vay:
+                                    </label>
+                                    <div class="col-md-6 control-label">
+                                        <span>
+                                            {{contractInfo.createdAt}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ptb5 mt20">
+                            <ui-select ng-model="filter.contractNo" theme="bootstrap" on-select="fromSelected($item, $model)">
+                                <ui-select-match placeholder="Số hợp đồng">
+                                    <span ng-bind="$select.selected.contractNo"></span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item._id as item in contracts">
+                                    <span ng-bind="item.contractNo"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+
+                    </div>
+                    <div class="col-md-8">
+                        <div class="btn-group">
+                            <button class="btn btn-success" ng-class="{active: currentView === 'basicDay'}"
+                                    ng-click="changeView('basicDay', 'myCalendar1')">Theo ngày
+                            </button>
+                            <button class="btn btn-success" ng-class="{active: currentView === 'basicWeek'}"
+                                    ng-click="changeView('basicWeek', 'myCalendar1')">Theo Tuần
+                            </button>
+                            <button class="btn btn-success" ng-class="{active: currentView === 'month'}"
+                                    ng-click="changeView('month', 'myCalendar1')">Theo Tháng
+                            </button>
+                        </div>
+                        <div class="col-md-12 widget-box">
+                            <div class="calendar" ng-model="eventSources" calendar="myCalendar1"
+                                 ui-calendar="uiConfig.calendar">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>-->
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
         </div>
     </div>
 </div>

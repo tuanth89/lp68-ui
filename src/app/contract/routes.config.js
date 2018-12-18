@@ -13,7 +13,7 @@
                         controller: 'ContractController',
                         templateUrl: 'contract/contract.tpl.html'
                     }
-                },
+                }
             })
             .state('contract.cusNew', {
                 url: '/customer-new',
@@ -35,6 +35,85 @@
                     'content@app.root.contract': {
                         controller: 'CustomerCirculationController',
                         templateUrl: 'contract/customerCirculation.tpl.html'
+                    }
+                }
+            })
+            .state('contract.daoHan', {
+                url: '/dao-han',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'ContractDaoHanController',
+                        templateUrl: 'contract/daoHan/contractDaoHan.tpl.html',
+                        resolve: {
+                            contracts: function($stateParams, ContractManager) {
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 1});
+                            }
+                        }
+                    }
+                }
+            })
+            .state('contract.thuVe', {
+                url: '/thu-ve',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'ContractThuVeController',
+                        templateUrl: 'contract/thuVe/contractThuVe.tpl.html',
+                        resolve: {
+                            contracts: function($stateParams, ContractManager) {
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 2});
+                            }
+                        }
+                    }
+                }
+            })
+            .state('contract.chot', {
+                url: '/chot',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'ContractChotController',
+                        templateUrl: 'contract/chot/contractChot.tpl.html',
+                        resolve: {
+                            contracts: function($stateParams, ContractManager) {
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 3});
+                            }
+                        }
+                    }
+                }
+            })
+            .state('contract.be', {
+                url: '/be',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'ContractBeController',
+                        templateUrl: 'contract/be/contractBe.tpl.html',
+                        resolve: {
+                            contracts: function($stateParams, ContractManager) {
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 4});
+                            }
+                        }
+                    }
+                }
+            })
+            .state('contract.ketThuc', {
+                url: '/ket-thuc',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'ContractKetThucController',
+                        templateUrl: 'contract/ketThuc/contractKetThuc.tpl.html',
+                        resolve: {
+                            contracts: function($stateParams, ContractManager) {
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 5});
+                            }
+                        }
+                    }
+                }
+            })
+            .state('contract.test', {
+                url: '/calendar-test',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'CalendarTestController',
+                        templateUrl: 'contract/test/calendarTest.tpl.html'
                     }
                 }
             })

@@ -12,8 +12,8 @@
 
 <div class="row mb-20" style="align-items: center;">
     <div class="col-sm-3" ng-if="contracts.length > 0">
-        <input class="mt15" type="checkbox" ng-model="checkAll" value="" id="checkAll">
-        <label class="form-check-label" for="checkAll">
+        <input class="mt15" type="checkbox" ng-model="checkbox.checkAll" id="checkAll">
+        <label class="form-check-label">
         </label>
     </div>
 
@@ -33,14 +33,19 @@
            datarows="contracts">
     <hot-column data="isActive" title="' '" type="'checkbox'" checked-template="true"
                 unchecked-template="false" width="40"></hot-column>
-    <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="150" read-only></hot-column>
-    <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200" read-only></hot-column>
-    <hot-column data="moneyHavePay" title="'Tiền phải đóng'" width="200" type="'numeric'"
+    <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="100" read-only></hot-column>
+    <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>
+    <hot-column data="totalHavePay" title="'Nợ'" width="130" type="'numeric'"
+                format="'#,###'" read-only></hot-column>
+    <hot-column data="totalMoneyPaid" title="'Đã đóng'" width="130" type="'numeric'"
+                format="'#,###'" read-only></hot-column>
+    <hot-column data="moneyHavePay" title="'Tiền phải đóng/ ngày'" width="150" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
     <!--<hot-column title="'Đóng nhanh'" type="'text'" width="140" read-only></hot-column>-->
-    <hot-column data="moneyPaid" title="'Tiền đóng trong ngày'" width="200" type="'numeric'"
+    <hot-column data="moneyPaid" title="'Đóng trong ngày'" width="150" type="'numeric'"
                 format="'#,###'"></hot-column>
-    <hot-column title="'Thao tác'" type="'text'" width="200" read-only></hot-column>
+    <hot-column title="'Thao tác'" type="'text'" width="150" read-only></hot-column>
+    <hot-column data="contractStatus" title="'Trạng thái'" type="'text'" width="80" read-only></hot-column>
 
     <!--<hot-column data="loanEndDate" title="'Ngày hết hạn'" width="150" type="'date'" correct-format="true"-->
     <!--date-format="'DD/MM/YYYY'" read-only></hot-column>-->
@@ -53,7 +58,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Hợp đồng đáo hạn</h4>
+                <h4 class="modal-title">Đáo hạn</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -89,8 +94,8 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                + ({{selectedCirculation.moneyContractOld | number}}) = {{selectedCirculation.totalMoney
-                                | number}} (VNĐ)
+                                + (<span style="color:red;">{{selectedCirculation.moneyContractOld | number}}</span>) = <span style="color:red;">{{selectedCirculation.totalMoney
+                                | number}}</span> (VNĐ)
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
@@ -116,7 +121,7 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                Ngày => ( {{selectedCirculation.newDailyMoney | number}} / 1 ngày )
+                                Ngày => ( <span style="color:red;">{{selectedCirculation.newDailyMoney | number}} </span> VNĐ / 1 ngày )
                             </div>
                         </div>
                     </form>
@@ -134,7 +139,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Hợp đồng đáo hạn</h4>
+                <h4 class="modal-title">Thu về</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -165,7 +170,7 @@
                             </label>
                             <div class="col-md-7">
                                 <input type="text" name="dailyMoney"
-                                       ng-model="selectedCirculation.dailyMoney"
+                                       ng-model="selectedCirculation.dailyMoneyPay"
                                        class="form-control textAlign" readonly/>
                             </div>
                         </div>
@@ -194,7 +199,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary">Lưu</button>
+                <button type="button" class="btn btn-primary" ng-click="saveThuVeModal()">Lưu</button>
             </div>
         </div>
     </div>
@@ -204,7 +209,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Hợp đồng Bễ</h4>
+                <h4 class="modal-title">Bễ</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -254,7 +259,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary">Lưu</button>
+                <button type="button" class="btn btn-primary" ng-click="saveBeModal()">Lưu</button>
             </div>
         </div>
     </div>
@@ -264,7 +269,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Hợp đồng chốt</h4>
+                <h4 class="modal-title">Chốt</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -324,7 +329,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary">Lưu</button>
+                <button type="button" class="btn btn-primary" ng-click="saveChotModal()">Lưu</button>
             </div>
         </div>
     </div>

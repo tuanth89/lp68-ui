@@ -43,10 +43,7 @@
         'angular-loading-bar',
         'ui.bootstrap',
         'ui.select',
-        // 'textAngular',
-        'angular-table',
         'daterangepicker',
-        'ngJsonExportExcel',
         'base64'
 
     ]);

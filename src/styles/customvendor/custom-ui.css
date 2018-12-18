@@ -274,9 +274,9 @@ table tbody td {
 /* class-hightlight */
 
 tbody .linkable {
-    color: #0f9aee;
-    text-decoration: underline;
-    cursor: pointer;
+    color: #0f9aee !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
 }
 
 .form-inline > label, .form-inline > input, .form-inline > select {
@@ -908,6 +908,51 @@ input.has-error, textarea.has-error, select.has-error {
     margin: 2px;
     font-size: 13px;
     width: 50px;
+    font-weight: bold;
+}
+
+.btnStatus {
+    padding: 2px;
+    margin: 2px;
+    font-size: 13px;
+    /*width: 50px;*/
+    font-weight: bold;
+}
+
+.btnStatus.status-0 {
+    color: #fff;
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.btnStatus.status-1 {
+    color: #fff;
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.btnStatus.status-2 {
+    color: #fff;
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.btnStatus.status-3 {
+    color: #fff;
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.btnStatus.status-4 {
+    color: #fff;
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.btnStatus.status-5 {
+    color: #fff;
+    background-color: #d50a0a;
+    border-color: #d50a0a;
 }
 
 .handsontable-td-red {
@@ -946,4 +991,8 @@ input.textAlign {
 
 .widget-box {
     border: 1px solid #d9d9d9;
+}
+
+.fc-event{
+    color: #fff !important;
 }

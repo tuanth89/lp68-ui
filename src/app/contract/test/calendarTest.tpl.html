@@ -1,0 +1,44 @@
+<div class="page-header">
+    <h1>UI-Calendar</h1>
+
+</div>
+<form class="form-horizontal clearfix">
+    <label for="dateFrom" class="col-sm-2 control-label">FROM</label>
+    <div class="col-sm-10">
+        <input type="date" class="form-control" id="dateFrom" ng-model="ev.from">
+    </div>
+    <label for="dateTo" class="col-sm-2 control-label">TO</label>
+    <div class="col-sm-10">
+        <input type="date" class="form-control" id="dateTo" ng-model="ev.to">
+    </div>
+    <label for="dateTitle" class="col-sm-2 control-label">TITLE</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" id="dateTitle" ng-model="ev.title" placeholder="your title">
+    </div>
+    <button type="submit" class="btn btn-primary pull-right" ng-click="addEvent()">Create Event</button>
+</form>
+<div class="well calWell">
+    <div class="row-fluid">
+        <div class="span8">
+            <div class="alert alert-success" ng-show="alertMessage != undefined && alertMessage != ''">
+                {{alertMessage}}
+            </div>
+            <div class="alert alert-info">title: {{ev.title}}, from: {{ev.from}}, to: {{ev.to}}</div>
+            <div class="btn-toolbar">
+                <p class="pull-right lead">Calendar One View Options</p>
+                <div class="btn-group">
+                    <button class="btn btn-success" ng-class="{active: currentView === 'agendaDay'}"
+                            ng-click="changeView('basicDay', 'myCalendar1')">AgendaDay
+                    </button>
+                    <button class="btn btn-success" ng-class="{active: currentView === 'agendaWeek'}"
+                            ng-click="changeView('basicWeek', 'myCalendar1')">AgendaWeek
+                    </button>
+                    <button class="btn btn-success" ng-class="{active: currentView === 'month'}"
+                            ng-click="changeView('month', 'myCalendar1')">Month
+                    </button>
+                </div>
+            </div>
+            <div class="calendar" ng-model="eventSources" calendar="myCalendar1" ui-calendar="uiConfig.calendar" ng-if="eventSources.length > 0"></div>
+        </div>
+    </div>
+</div>
