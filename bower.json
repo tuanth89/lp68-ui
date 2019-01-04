@@ -31,7 +31,8 @@
     "twbs-pagination": "^1.4.2",
     "ngHandsontable": "^0.13.0",
     "angular-ui-calendar": "^1.0.2",
-    "fullcalendar": "^3.9.0"
+    "fullcalendar": "^3.9.0",
+    "ng-file-upload": "^12.2.13"
   },
   "resolutions": {
     "angular": "1.6.9"

@@ -24,9 +24,9 @@
                     cellPrp.readOnly = true;
                 }
 
-                if (col === 2 || col === 3) {
-                    cellPrp.className = "handsontable-td-red";
-                }
+                // if (col === 2 || col === 3) {
+                //     cellPrp.className = "handsontable-td-red";
+                // }
                 return cellPrp;
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {

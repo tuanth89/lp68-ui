@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('ati.contract')
-        .controller('ContractDaoHanController', ContractDaoHanController);
+        .controller('ContractLaiDungController', ContractLaiDungController);
 
-    function ContractDaoHanController($scope, $stateParams, $timeout, $state, hotRegisterer, Restangular, contracts) {
+    function ContractLaiDungController($scope, $stateParams, $timeout, $state, hotRegisterer, Restangular, contracts) {
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
         $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));

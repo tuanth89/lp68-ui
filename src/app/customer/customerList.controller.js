@@ -4,10 +4,8 @@
     angular.module('ati.customer')
         .controller('CustomerListController', CustomerListController);
 
-    function CustomerListController($scope, $stateParams, $timeout, $state, hotRegisterer, CustomerManager, Restangular) {
+    function CustomerListController($scope, Upload, $timeout, IMGUR_API, hotRegisterer, CustomerManager, Restangular) {
         $scope.settings = {rowHeaders: true, colHeaders: true, minSpareRows: 1};
-        $scope.rowHeaders = true;
-        $scope.colHeaders = true;
 
         let hotInstance = "";
         let customerItem = {
@@ -58,18 +56,48 @@
                 // cellPrp.readOnly = true;
                 // }
 
+                if (col === 5)
+                    cellPrp.renderer = avatarRenderer;
+
                 return cellPrp;
+            },
+            afterOnCellMouseDown: function (event, rowCol, TD) {
+                if (event.realTarget.className.indexOf('avaRow') >= 0) {
+                    if (!$scope.customers[rowCol.row].name) {
+                        toastr.error("Bạn hãy nhập Họ và tên trước!");
+                        return;
+                    }
+
+                    $scope.updateAvatar = angular.copy($scope.customers[rowCol.row]);
+                    $scope.$apply();
+                    $('#avatarModal').modal('show');
+                }
             },
             stretchH: "all",
             autoWrapRow: true
         };
 
+        function avatarRenderer(instance, td, row, col, prop, value, cellProperties) {
+            Handsontable.renderers.TextRenderer.apply(this, arguments);
+            if (col === 5) {
+                if (value)
+                    td.innerHTML = '<img src="' + value + '" style="width: 50px; height: 50px"/>&nbsp;&nbsp;<u><a class="linkable avaRow" value="' + value + '">Tải lên</a></u>';
+                else
+                    td.innerHTML = '<u><a class="linkable avaRow" value="' + value + '">Tải lên</a></u>';
+
+            }
+        }
+
         $scope.getData = function () {
             CustomerManager
                 .getList("")
                 .then(function (resp) {
-                    $scope.customers = resp;
+                    $scope.customers = angular.copy(Restangular.stripRestangular(resp));
                     $scope.customers.push(angular.copy(customerItem));
+
+                    setTimeout(function () {
+                        hotInstance.render();
+                    }, 0);
                 });
         };
 
@@ -134,6 +162,53 @@
 
         $scope.getData();
 
+        $('#avatarModal').on('hidden.bs.modal', function () {
+            $scope.fileUp = "";
+            $scope.updateAvatar = {};
+        });
+
+        $scope.fileUp = "";
+        $scope.formProcessing = false;
+        $scope.saveAvatarModal = () => {
+            if (!$scope.fileUp || $scope.formProcessing)
+                return;
+
+            $scope.formProcessing = true;
+            Upload.http({
+                url: IMGUR_API.URL,
+                data: $scope.fileUp,
+                headers: {'Authorization': IMGUR_API.CLIENT_ID, 'Content-Type': $scope.fileUp.type},
+            })
+                .progress(function (evt) {
+                    // let progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                    // $scope.log = 'progress: ' + progressPercentage + '% ' + evt.config.file.name + '\n' + $scope.log;
+                    // console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                })
+                .success(function (data, status, headers, config) {
+                    CustomerManager
+                        .one($scope.updateAvatar._id)
+                        .customPUT({photo: data.data.link})
+                        .then((item) => {
+                            $scope.updateAvatar.photo = data.data.link;
+                            toastr.success("Cập nhật Ảnh đại diện thành công!");
+
+                            $('#avatarModal').modal('hide');
+                            $scope.getData();
+                        })
+                        .catch((error) => {
+                            toastr.error("Có lỗi xảy ra!");
+                            // console.log(error);
+                        });
+
+                    // $scope.log = 'File ' + config.file.name + ' uploaded.';
+                })
+                .error(function (data, status, headers, config) {
+                    // console.log("Error: " + data);
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
+                });
+        };
 
     }
 })();

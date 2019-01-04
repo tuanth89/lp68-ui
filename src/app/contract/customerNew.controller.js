@@ -5,8 +5,6 @@
         .controller('CustomerNewController', CustomerNewController);
 
     function CustomerNewController($scope, $stateParams, $timeout, $state, hotRegisterer, customerSource, ContractManager, Restangular) {
-        $scope.rowHeaders = true;
-        $scope.colHeaders = true;
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
         $scope.customerSource = _.map(customerS, 'name').join(',');
 
@@ -34,7 +32,8 @@
             loanMoney: "",
             actuallyCollectedMoney: "",
             loanDate: "",
-            createdAt: $scope.filter.date
+            createdAt: $scope.filter.date,
+            isHdLaiDung: false
         };
 
         $scope.customers = [];
@@ -79,11 +78,10 @@
                 //     return cellPrp;
                 // }
 
-
                 cellPrp.className = "hot-normal";
                 // cellPrp.readOnly = true;
 
-                if (col === 0) {
+                if (col === 1) {
                     cellPrp.type = 'autocomplete';
                     cellPrp.source = _.map(customerS, 'name');
 
@@ -125,7 +123,6 @@
              },*/
             stretchH: "all",
             autoWrapRow: true,
-            rowHeaders: true,
             colHeaders: true,
             minSpareRows: 0
             // strict: true
@@ -142,6 +139,9 @@
                     $scope.customers.push(angular.copy(customerItem));
                     // }
 
+                    setTimeout(function () {
+                        hotInstance.render();
+                    }, 0);
                 });
         };
 
@@ -185,7 +185,6 @@
                         // hotInstance.alter("insert_row", totalRows + 1);
                     }
                 }
-
             }, true);
         }, 0);
 

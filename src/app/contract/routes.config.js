@@ -52,6 +52,20 @@
                     }
                 }
             })
+            .state('contract.laiDung', {
+                url: '/lai-dung',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'ContractLaiDungController',
+                        templateUrl: 'contract/laiDung/contractLaiDung.tpl.html',
+                        resolve: {
+                            contracts: function($stateParams, ContractManager) {
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 2});
+                            }
+                        }
+                    }
+                }
+            })
             .state('contract.thuVe', {
                 url: '/thu-ve',
                 views: {
@@ -60,7 +74,7 @@
                         templateUrl: 'contract/thuVe/contractThuVe.tpl.html',
                         resolve: {
                             contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 2});
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 3});
                             }
                         }
                     }
@@ -74,7 +88,7 @@
                         templateUrl: 'contract/chot/contractChot.tpl.html',
                         resolve: {
                             contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 3});
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 4});
                             }
                         }
                     }
@@ -88,7 +102,7 @@
                         templateUrl: 'contract/be/contractBe.tpl.html',
                         resolve: {
                             contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 4});
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 5});
                             }
                         }
                     }
@@ -102,7 +116,7 @@
                         templateUrl: 'contract/ketThuc/contractKetThuc.tpl.html',
                         resolve: {
                             contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 5});
+                                return ContractManager.one('allContract').one('byType').getList("",{type: 6});
                             }
                         }
                     }

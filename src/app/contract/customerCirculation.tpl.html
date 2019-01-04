@@ -5,8 +5,19 @@
         </button>
 
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <input input-value="filter.date" e-datepicker class="form-control" type="text" placeholder="Chọn ngày">
+    </div>
+
+    <div class="col-sm-3">
+        <ui-select ng-model="filter.status" theme="bootstrap" search-enabled="false">
+            <ui-select-match placeholder="Trạng thái">
+                <span ng-bind="$select.selected.title"></span>
+            </ui-select-match>
+            <ui-select-choices repeat="i.value as i in status">
+                <span ng-bind="i.title"></span>
+            </ui-select-choices>
+        </ui-select>
     </div>
 </div>
 
@@ -44,7 +55,7 @@
     <!--<hot-column title="'Đóng nhanh'" type="'text'" width="140" read-only></hot-column>-->
     <hot-column data="moneyPaid" title="'Đóng trong ngày'" width="150" type="'numeric'"
                 format="'#,###'"></hot-column>
-    <hot-column title="'Thao tác'" type="'text'" width="150" read-only></hot-column>
+    <hot-column data="contractStatus" title="'Thao tác'" type="'text'" width="150" read-only></hot-column>
     <hot-column data="contractStatus" title="'Trạng thái'" type="'text'" width="80" read-only></hot-column>
 
     <!--<hot-column data="loanEndDate" title="'Ngày hết hạn'" width="150" type="'date'" correct-format="true"-->
@@ -157,11 +168,29 @@
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
-                                Ngày vay:
+                                Số hợp đồng:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.contractNo}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Gói vay:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.loanMoney | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Ngày chuyển:
                             </label>
                             <div class="col-md-7 control-label">
                                 <label>
-                                    {{selectedCirculation.createdAt}}
+                                    {{selectedCirculation.newTransferDate}}
                                 </label>
                             </div>
                         </div>
@@ -169,18 +198,16 @@
                             <label class="col-md-5 control-label">Đóng hàng ngày:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" name="dailyMoney"
-                                       ng-model="selectedCirculation.dailyMoneyPay"
+                                <input type="text" ng-model="selectedCirculation.dailyMoneyPay" currency-input
                                        class="form-control textAlign" readonly/>
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
-                                Còn:
+                                Dư nợ:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" name="dailyMoney"
-                                       ng-model="selectedCirculation.moneyContractOld"
+                                <input type="text" ng-model="selectedCirculation.moneyContractOld" currency-input
                                        class="form-control textAlign" readonly/>
                             </div>
                         </div>
@@ -227,31 +254,46 @@
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
+                                Số hợp đồng:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.contractNo}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Gói vay:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.loanMoney | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
                                 Ngày vay:
                             </label>
                             <div class="col-md-7 control-label">
                                 <label>
-                                    {{selectedCirculation.createdAt}}
+                                    {{selectedCirculation.newBeLoanDate}}
                                 </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Đóng:
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" ng-model="selectedCirculation.newPayMoney" currency-input
+                                       class="form-control textAlign"/>
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">Ngày hẹn:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" name="planDate"
-                                       ng-model="planDate"
-                                       class="form-control textAlign"/>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-12 ptb5">
-                            <label class="col-md-5 control-label">
-                                Đóng bao nhiêu:
-                            </label>
-                            <div class="col-md-7">
-                                <input type="text" name="money"
-                                       ng-model="money"
-                                       class="form-control textAlign"/>
+                                <input input-value="selectedCirculation.newAppointmentDate" e-datepicker class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
                             </div>
                         </div>
                     </form>
@@ -287,22 +329,30 @@
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
-                                Ngày vay:
+                                Số hợp đồng:
                             </label>
                             <div class="col-md-7 control-label">
-                                <label>
-                                    {{selectedCirculation.createdAt}}
+                                <label> {{selectedCirculation.contractNo}}
                                 </label>
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
-                                Ngày hẹn:
+                                Gói vay:
                             </label>
-                            <div class="col-md-7">
-                                <input type="text" name="planDate"
-                                       ng-model="planDate"
-                                       class="form-control textAlign"/>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.loanMoney | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Ngày chuyển:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label>
+                                    {{selectedCirculation.newTransferDate}}
+                                </label>
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
@@ -310,18 +360,24 @@
                                 Đóng:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" name="planDate"
-                                       ng-model="planDate"
+                                <input type="text" ng-model="selectedCirculation.newPayMoney" currency-input
                                        class="form-control textAlign"/>
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
-                            <label class="col-md-5 control-label">Ngày:
+                            <label class="col-md-5 control-label">
+                                Ngày vay:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" name="planDate"
-                                       ng-model="planDate"
-                                       class="form-control textAlign"/>
+                                <input input-value="selectedCirculation.newChotLoanDate" e-datepicker class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Ngày hẹn:
+                            </label>
+                            <div class="col-md-7">
+                                <input input-value="selectedCirculation.newAppointmentDate" e-datepicker class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
                             </div>
                         </div>
                     </form>

@@ -457,8 +457,8 @@ table th {
 }
 
 .imageAvatar {
-    width: 120px;
-    height: 120px;
+    /*width: 100px;*/
+    height: 100px;
     object-fit: cover;
 }
 
@@ -995,4 +995,8 @@ input.textAlign {
 
 .fc-event{
     color: #fff !important;
+}
+
+.fileuploadButton {
+    width: 100%;
 }
