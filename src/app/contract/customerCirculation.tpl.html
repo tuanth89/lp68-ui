@@ -46,9 +46,9 @@
                 unchecked-template="false" width="40"></hot-column>
     <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="100" read-only></hot-column>
     <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>
-    <hot-column data="totalHavePay" title="'Nợ'" width="130" type="'numeric'"
+    <hot-column data="totalHavePay" title="'Nợ'" width="100" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
-    <hot-column data="totalMoneyPaid" title="'Đã đóng'" width="130" type="'numeric'"
+    <hot-column data="totalMoneyPaid" title="'Đã đóng'" width="100" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
     <hot-column data="moneyHavePay" title="'Tiền phải đóng/ ngày'" width="150" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
@@ -56,7 +56,8 @@
     <hot-column data="moneyPaid" title="'Đóng trong ngày'" width="150" type="'numeric'"
                 format="'#,###'"></hot-column>
     <hot-column data="contractStatus" title="'Thao tác'" type="'text'" width="150" read-only></hot-column>
-    <hot-column data="contractStatus" title="'Trạng thái'" type="'text'" width="80" read-only></hot-column>
+    <hot-column data="status" title="'Trạng thái'" type="'text'" width="80" read-only></hot-column>
+    <hot-column data="contractStatus" title="'Hợp đồng'" type="'text'" width="80" read-only></hot-column>
 
     <!--<hot-column data="loanEndDate" title="'Ngày hết hạn'" width="150" type="'date'" correct-format="true"-->
     <!--date-format="'DD/MM/YYYY'" read-only></hot-column>-->
@@ -64,6 +65,76 @@
     <!--<hot-autocomplete datarows="description in product.options"></hot-autocomplete>-->
     <!--</hot-column>-->
 </hot-table>
+
+<div class="modal fade" id="laiDungModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Lãi Đứng</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="widget-box">
+                    <form class="form-inline row-border label-style">
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Họ và tên:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.customer.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Số hợp đồng:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.contractNo}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Gói vay:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.loanMoney | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Dư nợ:
+                            </label>
+                            <div class="col-md-7">
+                                <label> {{selectedCirculation.moneyContractOld | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Đóng:
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" ng-model="selectedCirculation.newPayMoney" currency-input
+                                       class="form-control textAlign"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary" ng-click="saveLaiDungModal()"
+                        ng-disabled="selectedCirculation.newPayMoney === 0 || selectedCirculation.newPayMoney > selectedCirculation.moneyContractOld">
+                    <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="hopDongDaoModal">
     <div class="modal-dialog modal-lg" role="document">
@@ -105,7 +176,8 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                + (<span style="color:red;">{{selectedCirculation.moneyContractOld | number}}</span>) = <span style="color:red;">{{selectedCirculation.totalMoney
+                                - (<span style="color:red;">{{selectedCirculation.moneyContractOld | number}}</span>) =
+                                <span style="color:red;">{{selectedCirculation.totalMoney
                                 | number}}</span> (VNĐ)
                             </div>
                         </div>
@@ -132,7 +204,9 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                Ngày => ( <span style="color:red;">{{selectedCirculation.newDailyMoney | number}} </span> VNĐ / 1 ngày )
+                                Ngày => ( <span
+                                    style="color:red;">{{selectedCirculation.newDailyMoney | number}} </span> VNĐ / 1
+                                ngày )
                             </div>
                         </div>
                     </form>
@@ -140,14 +214,17 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary" ng-click="saveDaoModal()">Lưu</button>
+                <button type="button" class="btn btn-primary"
+                        ng-disabled="selectedCirculation.totalMoney < 0"
+                        ng-click="saveDaoModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="hopDongThuVeModal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Thu về</h4>
@@ -226,14 +303,16 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary" ng-click="saveThuVeModal()">Lưu</button>
+                <button type="button" class="btn btn-primary"
+                        ng-disabled="selectedCirculation.newActuallyCollectedMoney <= 0"
+                        ng-click="saveThuVeModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu</button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="hopDongBeModal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Bễ</h4>
@@ -293,7 +372,8 @@
                             <label class="col-md-5 control-label">Ngày hẹn:
                             </label>
                             <div class="col-md-7">
-                                <input input-value="selectedCirculation.newAppointmentDate" e-datepicker class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
+                                <input input-value="selectedCirculation.newAppointmentDate" e-datepicker
+                                       class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
                             </div>
                         </div>
                     </form>
@@ -301,14 +381,16 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary" ng-click="saveBeModal()">Lưu</button>
+                <button type="button" class="btn btn-primary"
+                        ng-disabled="!selectedCirculation.newAppointmentDate || selectedCirculation.newPayMoney <= 0"
+                        ng-click="saveBeModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu</button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="hopDongChotModal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Chốt</h4>
@@ -369,7 +451,8 @@
                                 Ngày vay:
                             </label>
                             <div class="col-md-7">
-                                <input input-value="selectedCirculation.newChotLoanDate" e-datepicker class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
+                                <input input-value="selectedCirculation.newChotLoanDate" e-datepicker
+                                       class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
@@ -377,7 +460,8 @@
                                 Ngày hẹn:
                             </label>
                             <div class="col-md-7">
-                                <input input-value="selectedCirculation.newAppointmentDate" e-datepicker class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
+                                <input input-value="selectedCirculation.newAppointmentDate" e-datepicker
+                                       class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
                             </div>
                         </div>
                     </form>
@@ -385,7 +469,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary" ng-click="saveChotModal()">Lưu</button>
+                <button type="button" class="btn btn-primary"
+                        ng-disabled="!selectedCirculation.newAppointmentDate || selectedCirculation.newPayMoney <= 0"
+                        ng-click="saveChotModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu</button>
             </div>
         </div>
     </div>

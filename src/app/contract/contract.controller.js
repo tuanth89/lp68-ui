@@ -212,14 +212,13 @@
         /* event sources array*/
         $scope.eventSources = [$scope.events, $scope.eventsF];
 
-        // $scope.filePreview = "";
         $scope.uploadNew = function (fileUpload) {
             if (!fileUpload)
                 return;
-            // $scope.filePreview = fileUpload;
 
             // Upload.resize(fileUpload, {width: 500, height: 500, centerCrop: true})
             //     .then(function (resizedFile) {
+
             Upload.http({
                 url: IMGUR_API.URL,
                 data: fileUpload,
@@ -234,12 +233,13 @@
                     CustomerManager
                         .one($scope.selectedCustomer.customer._id)
                         .customPUT({photo: data.data.link})
-                        .then((item)=> {
+                        .then((item) => {
                             $scope.selectedCustomer.customer.photo = data.data.link;
-
                         })
-                        .catch((error)=>{
-                            console.log(error);
+                        .catch((error) => {
+                            // console.log(error);
+                        })
+                        .finally(() => {
                         });
 
                     // $scope.log = 'File ' + config.file.name + ' uploaded.';

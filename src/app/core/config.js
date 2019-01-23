@@ -11,7 +11,8 @@
             COLLECT: 3,
             CLOSE_DEAL: 4,
             ESCAPE: 5,
-            END: 6
+            END: 6,
+            ACCOUNTANT_END: 7
         })
         .constant('IMGUR_API', {
             URL: 'https://api.imgur.com/3/image',

@@ -50,6 +50,8 @@
                                 scope.inputValue = undefined;
                             }
 
+                            $(element).datepicker("hide");
+
                             setTimeout(function(){
                                 scope.$apply();
                             },1);

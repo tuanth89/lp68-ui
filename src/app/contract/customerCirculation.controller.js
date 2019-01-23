@@ -6,11 +6,11 @@
     ;
 
     function CustomerCirculationController($scope, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThong) {
-
         let hotInstance = "";
         $scope.formProcessing = false;
         $scope.filter = {date: "", status: ""};
         $scope.selectedCirculation = {};
+        // $('#lai-dung-dp').datepicker({startDate: new Date()});
 
         $scope.status = [
             {
@@ -50,7 +50,7 @@
         $scope.checkedList = [];
         $scope.checkbox = {checkAll: false};
         $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
-            if (newValue != oldValue) {
+            if (newValue !== oldValue) {
                 _.map($scope.contracts, function (x, index) {
                     if (x.status === 0) {
                         x.isActive = newValue;
@@ -88,7 +88,7 @@
         });
 
         $scope.$watch("selectedCirculation.newLoanMoney", function (newValue, oldValue) {
-            $scope.selectedCirculation.totalMoney = parseInt(newValue) + parseInt($scope.selectedCirculation.moneyContractOld);
+            $scope.selectedCirculation.totalMoney = parseInt(newValue) - parseInt($scope.selectedCirculation.moneyContractOld);
             setTimeout(function () {
                 $scope.$apply();
             }, 1);
@@ -100,6 +100,7 @@
                 $scope.$apply();
             }, 1);
         });
+
         $scope.$watch("selectedCirculation.newLoanDate", function (newValue, oldValue) {
             $scope.selectedCirculation.newDailyMoney = parseInt($scope.selectedCirculation.newActuallyCollectedMoney) / parseInt(newValue);
             setTimeout(function () {
@@ -121,40 +122,55 @@
             cells: function (row, col) {
                 let cellPrp = {};
                 let item = $scope.contracts[row];
-                if (typeof item === 'object' && item.contractStatus !== CONTRACT_STATUS.STAND && (item.status > 0 || item.contractStatus > 0)) {
+                if (typeof item === 'object' && (item.status > 0)) {
                     cellPrp.readOnly = true;
                     // cellPrp.className = "handsontable-cell-disable";
+                    switch (col) {
+                        case 0:
+                            cellPrp.type = "text";
+                            break;
+                        case 2:
+                            cellPrp.renderer = myBtns;
+                            break;
 
-                    if (col === 2) {
-                        cellPrp.renderer = myBtns;
+                        case 7:
+                            cellPrp.renderer = myBtnsRemove;
+                            break;
+
+                        case 8:
+                        case 9:
+                            cellPrp.renderer = myBtns;
+                            break;
                     }
-
-                    if (col === 7) {
-                        cellPrp.renderer = myBtnsRemove;
-                    }
-
-                    if (col === 8) {
-                        cellPrp.renderer = myBtns;
-                    }
-
-                    // if (col === 3 || col === 4 || col === 5) {
-                    //     cellPrp.className = "handsontable-td-red";
-                    // }
 
                     return cellPrp;
                 }
 
-                if (col === 2) {
-                    cellPrp.renderer = myBtns;
-                }
-
-                if (col === 7 || col === 8) {
-                    cellPrp.renderer = myBtns;
-                    cellPrp.readOnly = true;
-                }
-
-                if (col === 6) {
-                    cellPrp.className = "hot-normal";
+                switch (col) {
+                    case 2:
+                        cellPrp.renderer = myBtns;
+                        break;
+                    case 6:
+                        if (typeof item === 'object' && item.contractStatus === CONTRACT_STATUS.COLLECT) {
+                            cellPrp.readOnly = true;
+                        }
+                        else
+                            cellPrp.className = "hot-normal";
+                        break;
+                    case 7:
+                        if (typeof item === 'object' && item.status > 0) {
+                            cellPrp.renderer = myBtnsRemove;
+                        }
+                        else {
+                            cellPrp.renderer = myBtns;
+                            cellPrp.readOnly = true;
+                        }
+                        break;
+                    case 8:
+                    case 9:
+                        cellPrp.renderer = myBtns;
+                        cellPrp.readOnly = true;
+                        break;
                 }
 
                 if (typeof item === 'object' && item.contractStatus === CONTRACT_STATUS.STAND) {
@@ -187,13 +203,12 @@
                         case 0:
                             $scope.selectedCirculation.totalMoney = 0;
                             $scope.selectedCirculation.newDailyMoney = 0;
-                            $scope.selectedCirculation.newDailyMoney = 0;
                             // $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - (parseInt(dailyMoney) * diffDays);
-                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid) - parseInt(moneyPaid);
+                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
                             let createdAt = moment(nowDate).add(1, "days");
                             $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
                             $scope.selectedCirculation.contractDate = createdAt;
-                            $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
+                            $scope.selectedCirculation.totalMoney = -$scope.selectedCirculation.moneyContractOld;
 
                             $('#hopDongDaoModal').modal('show');
                             break;
@@ -202,25 +217,22 @@
                             // let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
                             // let diffDays = nowDate.diff(dateContract, 'days');
                             // let {actuallyCollectedMoney, dailyMoney} = $scope.selectedCirculation;
-                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid) - parseInt(moneyPaid);
+                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
                             $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
                             $scope.selectedCirculation.newTransferDate = nowDate.format("DD/MM/YYYY");
                             $scope.selectedCirculation.newChotLoanDate = "";
-                            $scope.selectedCirculation.newAppointmentDate = "";
+                            $scope.selectedCirculation.newActuallyCollectedMoney = 0;
 
                             $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
                             $('#hopDongThuVeModal').modal('show');
                             break;
                         case 2:
                             nowDate = moment();
-                            // let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
-                            // let diffDays = nowDate.diff(dateContract, 'days');
-                            // let {actuallyCollectedMoney, dailyMoney} = $scope.selectedCirculation;
-                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid) - parseInt(moneyPaid);
-                            $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
+                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
                             $scope.selectedCirculation.newTransferDate = nowDate.format("DD/MM/YYYY");
                             $scope.selectedCirculation.newChotLoanDate = "";
                             $scope.selectedCirculation.newAppointmentDate = "";
+                            $scope.selectedCirculation.newPayMoney = 0;
                             $('.datepicker-ui').val('');
 
                             $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
@@ -229,19 +241,32 @@
                             break;
                         case 3:
                             nowDate = moment();
-                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid) - parseInt(moneyPaid);
+                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); //- parseInt(moneyPaid);
                             $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
                             $scope.selectedCirculation.newBeLoanDate = nowDate.format("DD/MM/YYYY");
                             $scope.selectedCirculation.newAppointmentDate = "";
+                            $scope.selectedCirculation.newPayMoney = 0;
                             $('.datepicker-ui').val('');
 
                             $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
                             $('#hopDongBeModal').modal('show');
                             break;
+
                         case 4:
                             $scope.saveKetThucModal();
                             break;
 
+                        case 5:
+                            nowDate = moment();
+                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid);
+                            $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
+                            $scope.selectedCirculation.newPayMoney = 0;
+                            $('.datepicker-ui').val('');
+
+                            $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
+
+                            $('#laiDungModal').modal('show');
+                            break;
                     }
 
                     $scope.$apply();
@@ -274,17 +299,6 @@
 
         function myBtns(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
-            // if (col === 4) {
-            //     td.innerHTML = '<div><button class="btnPay btn btn-success bt-' + row + '">' + 0 + '</button>&nbsp;&nbsp;' +
-            //         '<button class="btnPay btn btn-success bt-' + row + '">' + 100 +
-            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 200 + '</button>' +
-            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 300 + '</button>' +
-            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 400 + '</button>' +
-            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 600 + '</button>' +
-            //         '</button>&nbsp;&nbsp;<button class="btnPay btn btn-success bt-' + row + '">' + 800 + '</button>' +
-            //         '</div>';
-            // }
-
             if (col === 2) {
                 td.innerHTML = '<u><a class="linkable cusRow" value="' + value + '">' + value + '</a></u>';
             }
@@ -307,6 +321,19 @@
                 switch (value) {
                     case 0:
                         statusName = "Lưu thông";
+                        break;
+                    case 1:
+                        statusName = "Kết thúc";
+                        break;
+                }
+                td.innerHTML = '<button class="btnStatus btn status-lt-' + value + '" value="' + 0 + '">' + statusName + '</button>';
+            }
+
+            if (col === 9) {
+                let statusName = "";
+                switch (value) {
+                    case 0:
+                        statusName = "Mới tạo";
                         break;
                     case 1:
                         statusName = "Đáo";
@@ -357,6 +384,11 @@
         };
 
         $scope.saveCirculation = () => {
+            if ($scope.formProcessing)
+                return;
+
+            $scope.formProcessing = true;
+
             let contracts = _.filter($scope.contracts, (item) => {
                 return item.isActive || !item.customer;
             });
@@ -390,6 +422,9 @@
                 })
                 .catch((error) => {
                     toastr.error('Cập nhật không thành công!');
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
                 });
         };
 
@@ -403,7 +438,52 @@
 
         $scope.getData();
 
+        $scope.saveLaiDungModal = () => {
+            if ($scope.formProcessing)
+                return;
+
+            $scope.formProcessing = true;
+
+            if (!$scope.selectedCirculation.newPayMoney
+                || parseInt($scope.selectedCirculation.newPayMoney) <= 0) {
+                toastr.error("Số tiền đóng không được <= 0");
+                return;
+            }
+
+            // if (!$scope.selectedCirculation.newAppointmentDate) {
+            //     toastr.error("Chưa chọn ngày hẹn!");
+            //     return;
+            // }
+
+            delete $scope.selectedCirculation.moneyHavePay;
+            delete $scope.selectedCirculation.moneyPaid;
+
+            HdLuuThong
+                .one($scope.selectedCirculation.contractId)
+                .one('updateLaiDung')
+                .customPUT($scope.selectedCirculation)
+                .then((contract) => {
+                    toastr.success('Chốt lãi hợp đồng thành công!');
+
+                    $scope.selectedCirculation = {};
+                    $('#laiDungModal').modal('hide');
+                    $scope.getData();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    toastr.error("Chốt lãi hợp đồng thất bại!");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
+                });
+        };
+
         $scope.saveDaoModal = () => {
+            if ($scope.formProcessing)
+                return;
+
+            $scope.formProcessing = true;
+
             if (!$scope.selectedCirculation.newLoanMoney
                 || parseInt($scope.selectedCirculation.newLoanMoney) <= 0) {
                 toastr.error("Số tiền vay không được <= 0");
@@ -432,16 +512,27 @@
                 .catch((error) => {
                     console.log(error);
                     toastr.error("Đáo hạn hợp đồng thất bại!");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
                 });
         };
 
         $scope.saveThuVeModal = () => {
-            ContractManager
+            if ($scope.formProcessing)
+                return;
+
+            $scope.formProcessing = true;
+
+            $scope.selectedCirculation.statusContract = CONTRACT_STATUS.COLLECT;
+            $scope.selectedCirculation.moneyPaid = $scope.selectedCirculation.newActuallyCollectedMoney;
+
+            HdLuuThong
                 .one($scope.selectedCirculation.contractId)
-                .one('changeStatus')
-                .customPUT({status: CONTRACT_STATUS.COLLECT})
+                .one('updateThuve')
+                .customPUT($scope.selectedCirculation)
                 .then((contract) => {
-                    toastr.success('Thu về hợp đồng thành công!');
+                    toastr.success('Chuyển hợp đồng Thu Về thành công!');
 
                     $scope.checkedList = [];
                     $scope.checkbox.checkAll = false;
@@ -452,20 +543,30 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                    toastr.error("Thu về hợp đồng thất bại!");
+                    toastr.error("Chuyển hợp đồng Thu Về thất bại!");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
                 });
         };
 
         $scope.saveChotModal = () => {
-            ContractManager
-                .one($scope.selectedCirculation.contractId)
-                .one('changeStatus')
-                .customPUT({status: CONTRACT_STATUS.CLOSE_DEAL})
-                .then((contract) => {
-                    toastr.success('Chốt hợp đồng thành công!');
+            if ($scope.formProcessing)
+                return;
 
-                    $scope.checkedList = [];
-                    $scope.checkbox.checkAll = false;
+            $scope.formProcessing = true;
+
+            $scope.selectedCirculation.statusContract = CONTRACT_STATUS.CLOSE_DEAL;
+            $scope.selectedCirculation.newAppointmentDate = moment($scope.selectedCirculation.newAppointmentDate).format("DD/MM/YYYY");
+            $scope.selectedCirculation.moneyHavePay = $scope.selectedCirculation.moneyPaid = $scope.selectedCirculation.newPayMoney;
+
+            HdLuuThong
+                .one($scope.selectedCirculation.contractId)
+                .one('updateChot')
+                .customPUT($scope.selectedCirculation)
+                .then((contract) => {
+                    toastr.success('Chuyển hợp đồng Chốt thành công!');
+
                     $scope.selectedCirculation = {};
                     $('#hopDongChotModal').modal('hide');
 
@@ -473,20 +574,30 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                    toastr.error("Chốt hợp đồng thất bại!");
+                    toastr.error("Chuyển hợp đồng Chốt thất bại!");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
                 });
         };
 
         $scope.saveBeModal = () => {
-            ContractManager
-                .one($scope.selectedCirculation.contractId)
-                .one('changeStatus')
-                .customPUT({status: CONTRACT_STATUS.ESCAPE})
-                .then((contract) => {
-                    toastr.success('Thu về hợp đồng thành công!');
+            if ($scope.formProcessing)
+                return;
 
-                    $scope.checkedList = [];
-                    $scope.checkbox.checkAll = false;
+            $scope.formProcessing = true;
+
+            $scope.selectedCirculation.statusContract = CONTRACT_STATUS.ESCAPE;
+            $scope.selectedCirculation.newAppointmentDate = moment($scope.selectedCirculation.newAppointmentDate).format("DD/MM/YYYY");
+            $scope.selectedCirculation.moneyHavePay = $scope.selectedCirculation.moneyPaid = $scope.selectedCirculation.newPayMoney;
+
+            HdLuuThong
+                .one($scope.selectedCirculation.contractId)
+                .one('updateBe')
+                .customPUT($scope.selectedCirculation)
+                .then((contract) => {
+                    toastr.success('Chuyển hợp đồng Bễ thành công!');
+
                     $scope.selectedCirculation = {};
                     $('#hopDongBeModal').modal('hide');
 
@@ -494,17 +605,25 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                    toastr.error("Thu về hợp đồng thất bại!");
+                    toastr.error("Chuyển hợp đồng Bễ thất bại!");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
                 });
         };
 
         $scope.saveKetThucModal = () => {
+            if ($scope.formProcessing)
+                return;
+
+            $scope.formProcessing = true;
+
             ContractManager
                 .one($scope.selectedCirculation.contractId)
                 .one('changeStatus')
                 .customPUT({status: CONTRACT_STATUS.END})
                 .then((contract) => {
-                    toastr.success('Kết thúc hợp đồng thành công!');
+                    toastr.success('Chuyển hợp đồng Kết Thúc thành công!');
 
                     $scope.checkedList = [];
                     $scope.checkbox.checkAll = false;
@@ -514,7 +633,10 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                    toastr.error("Kết thúc hợp đồng thất bại!");
+                    toastr.error("Chuyển hợp đồng Kết Thúc thất bại!");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
                 });
         };
 

@@ -15,6 +15,7 @@
             phone: ""
         };
 
+        $scope.showResource = false;
         $scope.customers = [];
         $scope.customers.push(angular.copy(customerItem));
         // $scope.customers = angular.copy(Restangular.stripRestangular(contracts));
@@ -51,13 +52,10 @@
             // },
             cells: function (row, col) {
                 let cellPrp = {};
-                // if (col === 6) {
                 cellPrp.className = "hot-normal";
-                // cellPrp.readOnly = true;
-                // }
 
-                if (col === 5)
-                    cellPrp.renderer = avatarRenderer;
+                if (col === 5 || col === 6 || col === 7)
+                    cellPrp.renderer = columnRenderer;
 
                 return cellPrp;
             },
@@ -65,6 +63,7 @@
                 if (event.realTarget.className.indexOf('avaRow') >= 0) {
                     if (!$scope.customers[rowCol.row].name) {
                         toastr.error("Bạn hãy nhập Họ và tên trước!");
+                        hotInstance.selectCell(rowCol.row, 0);
                         return;
                     }
 
@@ -72,19 +71,40 @@
                     $scope.$apply();
                     $('#avatarModal').modal('show');
                 }
+
+                if (event.realTarget.className.indexOf('resourceRow') >= 0) {
+                    if (!$scope.customers[rowCol.row].name) {
+                        toastr.error("Bạn hãy nhập Họ và tên trước!");
+                        hotInstance.selectCell(rowCol.row, 0);
+                        return;
+                    }
+
+                    $scope.infoCus = angular.copy($scope.customers[rowCol.row]);Fw
+                    $scope.$apply();
+                }
             },
             stretchH: "all",
             autoWrapRow: true
         };
 
-        function avatarRenderer(instance, td, row, col, prop, value, cellProperties) {
+        function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             if (col === 5) {
                 if (value)
-                    td.innerHTML = '<img src="' + value + '" style="width: 50px; height: 50px"/>&nbsp;&nbsp;<u><a class="linkable avaRow" value="' + value + '">Tải lên</a></u>';
+                    td.innerHTML = '<img src="' + value + '" style="width: 50px; height: 50px"/>&nbsp;&nbsp;<button class="btnAction btn btn-success avaRow" value="' + value + '">Tải lên</button>';
                 else
-                    td.innerHTML = '<u><a class="linkable avaRow" value="' + value + '">Tải lên</a></u>';
+                    td.innerHTML = '<button class="btnAction btn btn-success avaRow" value="' + value + '">Tải lên</button>';
+                return;
+            }
 
+            if (col === 6) {
+                td.innerHTML = '<u><a class="linkable resourceRow" value="' + value + '">Xem</a></u>';
+                return;
+            }
+
+
+            if (col === 7) {
+                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '">Xóa</button>';
             }
         }
 

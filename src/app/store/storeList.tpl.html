@@ -1,0 +1,30 @@
+<h4 class="title-page">Danh sách cửa hàng</h4>
+<div class="bgc-white bd bdrs-3 p-20 mB-20">
+    <div e-table datatable-config="tableConfig" filter="filter">
+        <div class="filter-region">
+            <div class="row col-sm-12">
+                <!--<div class="col-sm-2 search-box">-->
+                    <!--<div class="input-group">-->
+                        <!--<input class="form-control" ng-model="filter.search" autocomplete="off" name="search" type="text"-->
+                               <!--placeholder="Tìm kiếm">-->
+                        <!--<div class="input-group-addon">-->
+                            <!--<i class="fa fa-search"></i>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="col-sm-2 right-button">
+                    <button ui-sref="^.new" class="btn btn-sm btn-primary" type="button">
+                        Thêm cửa hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row col-sm-12" style="margin-bottom: 15px;">
+            <div class="search-result" ng-show="keyword && total !== ''">Có {{total}} hiển thị phù hợp với tiêu chí
+                tìm kiếm</div>
+        </div>
+        <table class="table table-hover table-bordered" style="width: 100%;">
+
+        </table>
+    </div>
+</div>

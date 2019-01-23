@@ -1,0 +1,120 @@
+<h4 class="title-page" ng-if="mode=='add'"> Thêm mới cửa hàng </h4>
+<h4 class="title-page" ng-if="mode=='edit'"> Cập nhật cửa hàng </h4>
+<h4 class="title-page" ng-if="mode=='detail'"> Thông tin cửa hàng </h4>
+
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-item col-md-12">
+        <div class="bgc-white p-20 bd">
+            <div class="col-sm-12">
+                <span class="glyphicon glyphicon-th"></span>
+                <strong current-page-title></strong>
+
+                <div class="row col-sm-12">
+                    <div class="col-sm-4 button-bar hidden-xs">
+                        <button ui-sref="^.list" class="btn no-padding-top" type="button"
+                                title="Quay lại trang danh sách">
+                            <span class="fa fa-arrow-circle-o-left btn-back"></span>
+
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-12">
+                <form style="margin-top:50px " id="storeForm" name="storeForm"
+                      class="form-validation col-md-10 form-horizontal"
+                      role="form" ng-submit="submit()" novalidate>
+                    <div class="form-group row col-sm-12">
+                        <label class="col-sm-4 col-md-4 control-label">
+                            <b>Mã cửa hàng</b><strong class="text-danger">*</strong>:
+                        </label>
+                        <div class="col-sm-8 col-md-8" ng-if="mode!='detail'">
+                            <input ng-model="store.storeId" ng-required="true"
+                                   type="text" autocomplete="off" class="form-control" name="storeId"
+                                   placeholder="Mã cửa hàng" ng-blur="visitedStore = true"
+                                   ng-focus="visitedStore = false"
+                                   ng-class="{'has-error': (storeForm.storeId.$touched || !storeForm.storeId.$pristine)  && storeForm.storeId.$invalid && visitedStore}">
+                            <div ng-show="storeForm.storeId.$invalid && visitedStore && !storeForm.storeId.$untouched"
+                                 style="color:red"
+                                 role="alert">
+                                <span ng-show="storeForm.storeId.$error.required">Mã cửa hàng không được để trống</span>
+                            </div>
+                        </div>
+                        <span class="col-sm-8 col-md-8" ng-if="mode=='detail'"
+                              ng-bind-html="store.storeId"></span>
+                        <span></span>
+                    </div>
+
+                    <div class="form-group row col-sm-12">
+                        <label class="col-sm-4 col-md-4 control-label">
+                            <b>Tên cửa hàng</b><strong class="text-danger">*</strong>:
+                        </label>
+                        <div class="col-sm-8 col-md-8" ng-if="mode!='detail'">
+                            <input ng-model="store.name" ng-required="true"
+                                   type="text" autocomplete="off" class="form-control" name="name"
+                                   placeholder="Tên cửa hàng" ng-blur="visitedName = true"
+                                   ng-focus="visitedName = false"
+                                   ng-class="{'has-error': (storeForm.name.$touched || !storeForm.name.$pristine)  && storeForm.name.$invalid && visitedName}">
+                            <div ng-show="storeForm.name.$invalid && visitedName && !storeForm.name.$untouched"
+                                 style="color:red"
+                                 role="alert">
+                                <span ng-show="storeForm.name.$error.required">Tên cửa hàng không được để trống</span>
+                            </div>
+                        </div>
+                        <span class="col-sm-8 col-md-8" ng-if="mode=='detail'"
+                              ng-bind-html="store.name"></span>
+                        <span></span>
+                    </div>
+
+                    <div class="form-group row col-sm-12">
+                        <label class="col-sm-4 col-md-4 control-label">
+                            <b>Mô tả</b>:
+                        </label>
+                        <div class="col-sm-8 col-md-8" ng-if="mode!='detail'">
+                            <textarea ng-model="store.description"
+                                   type="text" autocomplete="off" class="form-control" name="desc"
+                                   placeholder="Mô tả">
+                        </div>
+                        <span class="col-sm-8 col-md-8" ng-if="mode=='detail'"
+                              ng-bind-html="store.description"></span>
+                        <span></span>
+                    </div>
+
+                    <div class="form-group row col-sm-12">
+                        <label class="col-sm-4 col-md-4 control-label"><b>Trạng thái</b>:</label>
+                        <div class="col-sm-8 col-md-8" ng-if="mode=='edit' || mode==='add'">
+                            <label class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" ng-model="store.isActive">
+                                <span class="custom-control-indicator"></span>
+                            </label>
+                        </div>
+                        <span class="col-sm-8 col-md-8" ng-if="mode=='detail'">{{store.isActive ? "Hoạt động": "Không hoạt động"}}</span>
+                    </div>
+
+                </form>
+            </div>
+            <div class="col-sm-12" style="text-align: center;">
+                <button type="button" ng-click="submit()" ng-if="mode=='add'" ng-disabled="!isFormValid() || formProcessing"
+                        class="btn btn-sm btn-primary"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>
+                    Gửi
+                </button>
+                <button type="button" ng-click="submit()" ng-if="mode=='edit'" ng-disabled="!isFormValid()"
+                        class="btn btn-sm btn-primary">
+                    Lưu
+                </button>
+                <button ui-sref="^.edit({ id: store._id })" ng-if="mode=='detail'"
+                        class="btn btn-sm btn-primary" type="button">
+                    Sửa
+                </button>
+                <button ui-sref="^.list" class="btn btn-sm btn-primary" ng-if="mode!='detail'" type="button">
+                    Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <script type="text/javascript">
+    var todayDate = new Date();
+    $('#datepicker').datepicker('setStartDate', todayDate);
+    $('#datepicker').datepicker('setStartDate', todayDate);
+</script> -->
