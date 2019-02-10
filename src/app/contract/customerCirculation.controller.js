@@ -7,8 +7,9 @@
 
     function CustomerCirculationController($scope, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThong) {
         let hotInstance = "";
+        let hotHideColumn = "";
         $scope.formProcessing = false;
-        $scope.filter = {date: "", status: ""};
+        $scope.filter = {date: "", status: "", storeId: $scope.$parent.storeSelected.storeId};
         $scope.selectedCirculation = {};
         // $('#lai-dung-dp').datepicker({startDate: new Date()});
 
@@ -128,6 +129,7 @@
                     switch (col) {
                         case 0:
                             cellPrp.type = "text";
+                            cellPrp.renderer = myBtnsRemove;
                             break;
                         case 2:
                             cellPrp.renderer = myBtns;
@@ -272,7 +274,6 @@
                     $scope.$apply();
 
                 }
-
                 // $scope.clickPay(event.realTarget.innerText);
             },
             afterChange: function (source, changes) {
@@ -283,6 +284,8 @@
 
                         if (checkedIndex >= 0) {
                             $scope.checkedList.splice(checkedIndex, 1);
+                            if ($scope.checkedList.length === 0)
+                                $scope.checkbox.checkAll = false;
                         }
                         else
                             $scope.checkedList.push(rowChecked);
@@ -323,7 +326,7 @@
                         statusName = "Lưu thông";
                         break;
                     case 1:
-                        statusName = "Kết thúc";
+                        statusName = "Đã đóng";
                         break;
                 }
                 td.innerHTML = '<button class="btnStatus btn status-lt-' + value + '" value="' + 0 + '">' + statusName + '</button>';
@@ -362,7 +365,7 @@
 
         function myBtnsRemove(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
-            if (col === 7) {
+            if (col === 7 || col === 0) {
                 td.innerHTML = '';
             }
         }
@@ -408,17 +411,17 @@
                     //     return item.isActive;
                     // });
 
-                    _.each($scope.checkedList, (rowValue) => {
-                        $scope.contracts[rowValue].status = 1;
-                        $scope.contracts[rowValue].isActive = false;
-                    });
+                    // _.each($scope.checkedList, (rowValue) => {
+                    //     $scope.contracts[rowValue].status = 1;
+                    //     $scope.contracts[rowValue].isActive = false;
+                    // });
+                    //
+                    // $scope.checkedList = [];
+                    // $scope.checkbox.checkAll = false;
+                    hotHideColumn.hideColumn(2);
 
-
-                    $scope.checkedList = [];
-                    $scope.checkbox.checkAll = false;
+                    $scope.getData();
                     toastr.success('Cập nhật thành công!');
-
-                    // $state.reload();
                 })
                 .catch((error) => {
                     toastr.error('Cập nhật không thành công!');
@@ -434,6 +437,8 @@
             $scope.onAfterInit = function () {
                 hotInstance.validateCells();
             };
+
+            hotHideColumn = hotInstance.getPlugin('hiddenColumns');
         }, 0);
 
         $scope.getData();
@@ -639,6 +644,7 @@
                     $scope.formProcessing = false;
                 });
         };
+
 
     }
 })();

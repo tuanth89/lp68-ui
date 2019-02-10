@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractController', ContractController);
 
-    function ContractController($scope, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, Restangular, CustomerManager) {
+    function ContractController($scope, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, Restangular, CustomerManager, CONTRACT_EVENT) {
 
         $scope.showInfoCus = false;
 
@@ -46,10 +46,29 @@
             $scope.selectedCustomer = {};
             $scope.formProcessing = false;
             $scope.contracts = [];
+            $scope.filter.contractNo = "";
             $scope.contractInfo = {};
             _.remove($scope.events, function (item) {
                 return item;
             });
+        };
+
+        $scope.contractSelected = {};
+
+        $scope.dongTienFunc = () => {
+            ContractManager
+                .one($scope.contractSelected._id)
+                .one('ContractManager')
+                .customPUT({totalMoneyPaid: $scope.contractSelected.newPayMoney})
+                .then((contract) => {
+                    toastr.success('Cập nhật thành công!');
+
+                    $('#dongTienModal').modal('hide');
+                    $scope.$broadcast(CONTRACT_EVENT.UPDATE_SUCCESS);
+                })
+                .catch((error) => {
+                    toastr.error('Cập nhật không thành công!');
+                });
         };
 
         // $('#customerContractModal').on('hidden.bs.modal', function () {

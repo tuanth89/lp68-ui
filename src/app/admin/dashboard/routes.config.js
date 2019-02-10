@@ -8,7 +8,7 @@
     function addRoutes($stateProvider) {
         $stateProvider
             .state('app.admin.dashboard', {
-                url: '/dashboard?{startDate}&{endDate}',
+                url: '/dashboard',
                 views: {
                     'content@app': {
                         controller: 'AdminDashboard',
@@ -16,14 +16,14 @@
                     }
                 },
                 resolve: {
-                    results: function (AdminManager, userSession) {
-                        // return AdminManager.oneone(userSession.username).getList("dashboard");
-                        return [];
+                    dashboard: function (Restangular) {
+                        return Restangular.all("admins").one("dashboard").get();
                     }
                 },
                 ncyBreadcrumb: {
                     label: 'Dashboard'
                 }
             });
+
     }
 })();

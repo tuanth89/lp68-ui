@@ -11,11 +11,14 @@
             url: '/dashboard?{startDate}&{endDate}',
             views: {
                 'content@app': {
-                    controller: 'AdminDashboard',
-                    templateUrl: 'admin/dashboard/dashboard.tpl.html'
+                    controller: 'RootDashboard',
+                    templateUrl: 'root/dashboard/dashboard.tpl.html'
                 }
             },
             resolve: {
+                dashboard: function (AdminManager) {
+                    return AdminManager.one("dashboard").get();
+                }
                 // results: function (AdminManager, userSession) {
                 //     return AdminManager.one(userSession.username).getList("dashboard");
                 // }

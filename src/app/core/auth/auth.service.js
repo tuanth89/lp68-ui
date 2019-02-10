@@ -20,6 +20,7 @@
             setSession: _setSession,
             getSession: getSession,
             setSessionPropery: setSessionPropery,
+            setSessionPropertyStoreId: setSessionProperty_StoreId,
             isAuthenticated: isAuthenticated,
             isAuthorized: isAuthorized,
             getAuthorizationHeaderValue: getAuthorizationHeaderValue,
@@ -44,8 +45,8 @@
             return angular.isObject(result) &&
                 result.hasOwnProperty('token') &&
                 result.hasOwnProperty('id') &&
-                result.hasOwnProperty('username') &&
                 result.hasOwnProperty('userRoles');
+            // result.hasOwnProperty('username') &&
         }
 
         /**
@@ -113,10 +114,10 @@
 
                     return session;
                 })
-            // .catch(function (e) {
-            //     // handle errors in processing or in error.
-            // });
-            ;
+                // .catch(function (e) {
+                //     // handle errors in processing or in error.
+                // });
+                ;
         }
 
         /**
@@ -128,6 +129,7 @@
             var dfd = $q.defer();
 
             var token = sessionStorage.getCurrentToken();
+            let selectedStoreId = sessionStorage.getStoreId();
 
             if (!token) {
                 dfd.reject(new Error(authErrors.noToken));
@@ -135,17 +137,19 @@
             }
 
             $http.post(API_BASE_URL + '/checkToken', {}, {
-                    headers: {
-                        'Content-Type': 'application/json;charset=utf-8',
-                        'Authorization': getAuthorizationHeaderValue(token)
-                    }
-                })
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Authorization': getAuthorizationHeaderValue(token)
+                }
+            })
                 .then(
                     function (response) {
-                        var data = response.data;
+                        let data = response.data;
 
                         // use existing token
                         data.token = token;
+                        // use selected storeId
+                        data.selectedStoreId = selectedStoreId;
 
                         dfd.resolve(data);
                     },
@@ -153,16 +157,16 @@
                         sessionStorage.clearStorage();
                         dfd.reject(new Error(authErrors.invalidToken));
                     }
-                );;
+                );
 
             return dfd.promise;
         }
 
         function logout() {
-           var favicon =  localStorage.getItem("favicon") ? localStorage.getItem("favicon"): null;
+            var favicon = localStorage.getItem("favicon") ? localStorage.getItem("favicon") : null;
             _$currentSession = null;
             sessionStorage.clearStorage();
-            localStorage.setItem("favicon",favicon);
+            localStorage.setItem("favicon", favicon);
         }
 
         function getSession() {
@@ -177,6 +181,13 @@
             if (isAuthenticated()) {
                 _$currentSession.name = name;
                 _$currentSession.photo = photo;
+            }
+        }
+
+        function setSessionProperty_StoreId(storeId) {
+            if (isAuthenticated()) {
+                _$currentSession.selectedStoreId = storeId;
+                sessionStorage.setStoreId(storeId);
             }
         }
 
@@ -199,7 +210,7 @@
         function isAdmin() {
             // If the admin is currently logged in as a content manager
             // they will have a previous token set
-            return isAuthorized(USER_ROLES.admin) && !sessionStorage.getPreviousToken();
+            return isAuthorized(USER_ROLES.root) && !sessionStorage.getPreviousToken();
         }
 
         function isRoot() {

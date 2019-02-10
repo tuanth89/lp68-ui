@@ -3,10 +3,10 @@
 
     angular.module('ati.core.auth')
         .factory('sessionFactory', sessionFactory)
-        ;
+    ;
 
     function sessionFactory(USER_ROLES) {
-        var api = {
+        let api = {
             /**
              * @param {String|Object} token
              * @param {String} id
@@ -15,9 +15,10 @@
              * @param {String} email
              * @param {String} photo
              * @param {Array} [userRoles]
+             * @param {String} [selectedStoreId]
              */
-            createNew: function(token, id, fullName, username, email, userRoles, photo) {
-                return new Session(token, id, fullName, username, email, userRoles, photo);
+            createNew: function (token, id, fullName, username, email, userRoles, photo, selectedStoreId) {
+                return new Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId);
             },
 
             /**
@@ -32,9 +33,9 @@
                     throw new Error('missing id');
                 }
 
-                if (!data.username) {
-                    throw new Error('missing username');
-                }
+                // if (!data.username) {
+                //     throw new Error('missing username');
+                // }
 
                 if (!data.email) {
                     throw new Error('missing email');
@@ -44,11 +45,11 @@
                     throw new Error('missing name');
                 }
 
-                if(!data.photo) {
+                if (!data.photo) {
                     data.photo = '/assets/images/45611310_7ad3.jpg';
                 }
 
-                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo);
+                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo, data.selectedStoreId);
             },
 
             isSession: function (session) {
@@ -56,12 +57,13 @@
             }
         };
 
-        function Session(token, id, fullName, username, email, userRoles, photo) {
+        function Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId) {
             this.token = token;
             this.id = id || null;
             this.username = username;
             this.fullName = fullName;
             this.email = email;
+            this.selectedStoreId = selectedStoreId;
 
             if (!angular.isArray(userRoles)) {
                 userRoles = [];

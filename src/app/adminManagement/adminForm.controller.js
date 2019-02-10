@@ -5,11 +5,25 @@
         .controller('AdminForm', AdminForm)
     ;
 
-    function AdminForm($scope, $translate, $state, FileUploader, AlertService, StudentManager, ServerErrorProcessor, Auth,
-                       admin, $anchorScroll, API_END_POINT, API_UPDATE_IMAGES, SPECIAL_CHARACTER_PATTERN, moment, USER_ROLES, UserManager, $timeout, admins) {
+    function AdminForm($scope, $translate, $state, FileUploader, AlertService, userProfile, Auth,
+                       $anchorScroll, moment, $timeout, adminRestangular, isNew, AdminManager) {
         let user = Auth.getSession();
-        let adminList = angular.copy(admins);
+        $scope.visitedBirthday = false;
+        $scope.isNew = isNew;
+        $scope.admin = !$scope.isNew ? userProfile : {
+            fullName: null,
+            email: null,
+            enabled: true,
+            phone: null,
+            photo: null,
+            gender: 1,
+            dateIn: null,
+            title: null,
+            password: null,
+            isAccountant: false
+        };
 
+        $scope.userRole = {friendlyName: ""};
         $scope.fieldNameTranslations = {
             username: 'Username',
             password: 'Password',
@@ -52,37 +66,32 @@
             // }
         };
 
-        $scope.isNew = admin === null;
         $scope.formProcessing = false;
         $scope.repeatPassword = null;
 
-        if (admin) {
-            admin.password = null;
-            if (admin.dateIn)
-                admin.dateIn = moment(admin.dateIn).format("DD/MM/YYYY");
-            if (admin.dob)
-                admin.dob = moment(admin.dob).format("DD/MM/YYYY");
-            if (admin.dateOfIssue)
-                admin.dateOfIssue = moment(admin.dateOfIssue).format("DD/MM/YYYY");
-        }
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            adminRestangular
+                .all("roles")
+                .one("listRole")
+                .get()
+                .then(function (resp) {
+                    let roles = resp.plain();
+                    if (roles.length > 0) {
+                        $scope.roleApprove = roles;
+                        if ($scope.isNew)
+                            $scope.userRole.friendlyName = $scope.roleApprove[0].friendlyName;
+                        else {
+                            let roleFindIndex = _.findIndex($scope.roleApprove, {friendlyName: $scope.admin.roles[0]});
+                            if (roleFindIndex >= 0)
+                                $scope.userRole.friendlyName = $scope.roleApprove[roleFindIndex].friendlyName;
+                        }
+                    }
+                });
+        });
 
-        $scope.admin = admin || {
-            name: null,
-            username: null,
-            email: null,
-            enabled: true,
-            phone: null,
-            photo: null,
-            gender: "0",
-            dateIn: null,
-            dob: null,
-            hometown: null,
-            numberId: null,
-            dateOfIssue: null,
-            placeOfIssue: null,
-            title: null,
-            password: null
-        };
+        // (function () {
+        //
+        // })();
 
         $scope.isFormValid = function () {
             return $scope.editForm.$valid && !$scope.invalidExtension;
@@ -94,97 +103,74 @@
                 return;
             }
 
-            if ($scope.admin.name.match(SPECIAL_CHARACTER_PATTERN)) {
-                AlertService.replaceAlerts({
-                    type: 'error',
-                    message: 'Tên không được chứa ký tự đặc biệt!'
-                });
+            // if ($scope.admin.name.match(SPECIAL_CHARACTER_PATTERN)) {
+            //     AlertService.replaceAlerts({
+            //         type: 'error',
+            //         message: 'Tên không được chứa ký tự đặc biệt!'
+            //     });
+            //
+            //     $anchorScroll();
+            //     return false;
+            // }
 
-                $anchorScroll();
-                return false;
+            // let birdthday = moment($scope.admin.birthday, "dd/MM/yyyy").toDate();
+            let birdthday = new Date($scope.admin.birthday);
+            let today = moment();
+            if (birdthday > today) {
+                toastr.error("Ngày sinh không được lớn hơn ngày hiện tại!");
+                return;
             }
 
-            let date;
-
-            date = moment($scope.admin.dateIn);
-            if ($scope.admin.dateIn && date.isValid()) {
-                $scope.admin.dateIn = date.format("YYYY-DD-MM");
-            }
-            else
-                $scope.admin.dateIn = "";
-
-            date = moment($scope.admin.dob);
-            if ($scope.admin.dob && date.isValid()) {
-                $scope.admin.dob = date.format("YYYY-DD-MM");
-            }
-            else
-                $scope.admin.dob = "";
-
-            date = moment($scope.admin.dateOfIssue);
-            if ($scope.admin.dateOfIssue && date.isValid()) {
-                $scope.admin.dateOfIssue = date.format("YYYY-DD-MM");
-            }
-            else
-                $scope.admin.dateOfIssue = "";
-
-            if ($scope.isNew) {
-                $scope.admin.roles = [USER_ROLES.admin];
-            }
+            $scope.admin.roles = [$scope.userRole.friendlyName];
 
             if (!$scope.admin.password) {
                 delete $scope.admin.password;
             }
 
-            let exist = adminList.filter(admin => {
-                if ($scope.isNew) {
-                    return admin.username.toLowerCase() === $scope.admin.username.toLowerCase();
-                }
-
-                return admin.username.toLowerCase() === $scope.admin.username.toLowerCase() && admin._id !== $scope.admin._id;
-            });
-
-            if (exist.length > 0) {
-                AlertService.replaceAlerts({
-                    type: 'error',
-                    message: $translate.instant('ADDNEW_MODULE.DUPLICATE_USERNAME')
-                });
-
-                return false;
-            }
-
             $scope.formProcessing = true;
-
-            var saveUser = $scope.isNew ? UserManager.post($scope.admin) : StudentManager.one(admin._id).customPUT($scope.admin);
-            ;
+            let saveUser = $scope.isNew ? AdminManager.post($scope.admin) :
+                AdminManager.one($scope.admin._id).customPUT($scope.admin);
 
             saveUser
-                .then(
-                    function () {
-                        AlertService.addFlash({
-                            type: 'success',
-                            message: $scope.isNew ? $translate.instant('USERS_MANAGEMENT_MODULE.ADD_NEW_SUCCESS') : $translate.instant('USERS_MANAGEMENT_MODULE.UPDATE_SUCCESS')
-                        });
-                    })
-                .then(function () {
-                    $state.go('^.list');
-                })
-                .catch(function (response) {
+                .then(function (data) {
                     $scope.formProcessing = false;
-                    document.documentElement.scrollTop = 0;
-
-                    if (response.data.message) {
+                    if (data && data.message) {
+                        document.documentElement.scrollTop = 0;
                         AlertService.replaceAlerts({
                             type: 'error',
-                            message: response.data.message
+                            message: data.message
                         });
 
                         return;
                     }
 
-                    var errorCheck = ServerErrorProcessor.setFormValidationErrors(response, $scope.editForm, $scope.fieldNameTranslations);
+                    $scope.form_original_data = $("#editForm").serialize();
 
-                    return errorCheck;
-                });
+                    AlertService.addFlash({
+                        type: 'success',
+                        message: $scope.isNew ? "Thêm mới tài khoản thành công" : "Cập nhật tài khoản thành công"
+                    });
+
+                    $state.go('^.list');
+                })
+            // .catch(function (response) {
+            //     $scope.formProcessing = false;
+            //     document.documentElement.scrollTop = 0;
+            //
+            //     // if (response.data.message) {
+            //     AlertService.replaceAlerts({
+            //         type: 'error',
+            //         message: "Có lỗi xảy ra! Hãy thử cập nhật lại."
+            //     });
+            //
+            //     // return;
+            //     // }
+            //
+            //     // var errorCheck = ServerErrorProcessor.setFormValidationErrors(response, $scope.editForm, $scope.fieldNameTranslations);
+            //     //
+            //     // return errorCheck;
+            //
+            // });
         };
 
         $scope.backToList = function () {
@@ -207,7 +193,7 @@
 
         let imageChange = false;
         let uploader = $scope.uploader = new FileUploader({
-            url: API_UPDATE_IMAGES,
+            // url: API_UPDATE_IMAGES,
             headers: {Authorization: 'Bearer ' + user.token},
             removeAfterUpload: true,
             alias: 'image'
@@ -255,9 +241,14 @@
             $scope.uploaded = true;
         };
 
+        $scope.clearAllSelected = () => {
+
+        };
+
         $timeout(function () {
-            Inputmask().mask(document.querySelectorAll("input"));
+            // Inputmask().mask(document.querySelectorAll("input"));
             $scope.form_original_data = $("#editForm").serialize();
         }, 0);
+
     }
 })();

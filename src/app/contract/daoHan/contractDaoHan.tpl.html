@@ -1,16 +1,17 @@
 <hot-table hot-id="my-handsontable"
            settings="settings"
-           row-headers="settings.rowHeaders"
-           min-spare-rows="settings.minSpareRows"
            datarows="contracts">
-    <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="150" read-only></hot-column>
-    <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="200" read-only></hot-column>
-    <hot-column data="loanMoney" title="'Tiền vay'" width="200" type="'numeric'" format="'#,###'"
+    <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="100" read-only></hot-column>
+    <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>
+    <hot-column data="createdAt" title="'Ngày vay'" type="'text'" width="90" read-only></hot-column>
+    <hot-column data="loanMoney" title="'Gói vay'" width="100" type="'numeric'" format="'#,###'"
                 read-only></hot-column>
-    <hot-column data="actuallyCollectedMoney" title="'Thực thu (Tiền vay + lãi)'" width="200" type="'numeric'"
+    <hot-column data="actuallyCollectedMoney" title="'Thực thu'" width="100" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
     <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100" read-only></hot-column>
-    <hot-column data="customer.phone" title="'Điện thoại'" type="'text'" width="150" read-only></hot-column>
+    <hot-column data="customer.phone" title="'Điện thoại'" type="'text'" width="70" read-only></hot-column>
+    <hot-column data="transferDate" title="'Ngày đáo'" type="'text'" width="90" read-only></hot-column>
+    <!--<hot-column data="daoDate" title="'Ngày đáo'" type="'text'" width="100" read-only></hot-column>-->
 </hot-table>
 
 <!--<div class="modal fade" id="customerContractModal">-->

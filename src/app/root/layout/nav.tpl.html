@@ -29,8 +29,7 @@
 
     <!-- ### $Sidebar Menu ### -->
     <ul class="sidebar-menu scrollable pos-r ps">
-        <!--ng-class="{'nav-item dropdown':item.noneDropdown, 'nav-item dropdown': !item.noneDropdown }"-->
-        <li ng-repeat="item in menuItems"
+        <li ng-repeat="item in menuItems" ng-class="{'nav-item dropdown':item.noneDropdown, 'nav-item dropdown': !item.noneDropdown }"
             class="nav-item mT-30 active"
             ng-show="item.visible">
             <a ng-if="item.noneDropdown" class="sidebar-link" ui-sref="{{item.state}}">
@@ -53,13 +52,12 @@
                 </span>
             </a>
             <ul ng-if="!item.noneDropdown" class="dropdown-menu">
-                <li ui-sref-active="active" ng-repeat="child in item.children" ng-show="child.visible">
+                <li ng-repeat="child in item.children" ng-show="child.visible">
                     <a class="sidebar-link" ui-sref="{{child.state}}">
                         {{child.title}} <span ng-if="child.countNumber" class="badge badge-danger" style="margin-left: 5px">{{countInfo[child.countNumber]}}</span>
                     </a>
                 </li>
             </ul>
         </li>
-
     </ul>
 </div>

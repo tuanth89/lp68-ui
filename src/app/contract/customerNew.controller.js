@@ -4,9 +4,12 @@
     angular.module('ati.contract')
         .controller('CustomerNewController', CustomerNewController);
 
-    function CustomerNewController($scope, $stateParams, $timeout, $state, hotRegisterer, customerSource, ContractManager, Restangular) {
+    function CustomerNewController($scope, $stateParams, $timeout, $state, hotRegisterer, customerSource, ContractManager, Restangular, Auth) {
+        let currentUser = Auth.getSession();
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
         $scope.customerSource = _.map(customerS, 'name').join(',');
+
+        let selectedStoreId = $scope.$parent.storeSelected.storeId;
 
         $scope.filter = {date: ""};
         $scope.$watch('filter.date', function (newValue, oldValue) {
@@ -15,7 +18,10 @@
                     $scope.getData();
                 }
             }, 100);
+        });
 
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            $scope.getData();
         });
 
         $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
@@ -33,7 +39,10 @@
             actuallyCollectedMoney: "",
             loanDate: "",
             createdAt: $scope.filter.date,
-            isHdLaiDung: false
+            isHdLaiDung: false,
+            isCustomerNew: true,
+            storeId: selectedStoreId,
+            creator: currentUser._id
         };
 
         $scope.customers = [];
@@ -41,21 +50,21 @@
         // $scope.customers = angular.copy(Restangular.stripRestangular(contracts));
 
         $scope.settings = {
-            contextMenu: {
-                items: {
-                    'row_above': {name: 'Thêm dòng trên'},
-                    'row_below': {name: 'Thêm dòng dưới'},
-                    'remove_row': {name: 'Xóa'}
-                }
-                // callback: function (key, options) {
-                //     if (key === 'remove_row') {
-                //         if (hotInstance.countRows() > 1) {
-                //             var indexArr = hot.getSelected();
-                //             var selectedData = hot.getDataAtRow(indexArr[0]);
-                //         }
-                //     }
-                // }
-            },
+            // contextMenu: {
+            //     items: {
+            //         'row_above': {name: 'Thêm dòng trên'},
+            //         'row_below': {name: 'Thêm dòng dưới'},
+            //         'remove_row': {name: 'Xóa'}
+            //     }
+            //     // callback: function (key, options) {
+            //     //     if (key === 'remove_row') {
+            //     //         if (hotInstance.countRows() > 1) {
+            //     //             var indexArr = hot.getSelected();
+            //     //             var selectedData = hot.getDataAtRow(indexArr[0]);
+            //     //         }
+            //     //     }
+            //     // }
+            // },
             beforeRemoveRow: function (index, amount) {
                 if (hotInstance.countRows() <= 1)
                     return false;
@@ -108,6 +117,8 @@
                         if (customerItem) {
                             $scope.customers[rowChecked].customer._id = customerItem._id;
                         }
+                        else
+                            $scope.customers[rowChecked].customer._id = "";
 
                         // console.log('row: ' + source[0][0]);
                         // console.log('col: ' + source[0][1]);
@@ -130,7 +141,7 @@
 
         $scope.getData = function () {
             ContractManager.one("circulation").one("all")
-                .getList("", {date: $scope.filter.date, type: 0})
+                .getList("", {date: $scope.filter.date, type: 0, storeId: selectedStoreId})
                 .then(function (resp) {
                     $scope.customers = angular.copy(Restangular.stripRestangular(resp));
 
@@ -181,7 +192,6 @@
                     if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
                         customerItem.createdAt = $scope.filter.date;
                         $scope.customers.push(angular.copy(customerItem));
-
                         // hotInstance.alter("insert_row", totalRows + 1);
                     }
                 }
@@ -189,10 +199,28 @@
         }, 0);
 
         $scope.saveCustomer = () => {
+            if (!selectedStoreId) {
+                toastr.error("Chưa chọn cửa hàng!");
+                return;
+            }
+
             let customers = angular.copy($scope.customers);
-            _.remove(customers, function (item) {
-                return !item.customer.name || item._id;
+            let checkValid = true;
+            _.filter(customers, (item) => {
+                if (!item.customer.name || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate) {
+                    checkValid = false;
+                    return false;
+                }
             });
+
+            // _.remove(customers, function (item) {
+            //     return !item.customer.name || item._id;
+            // });
+
+            if (!checkValid) {
+                toastr.error("Chưa nhập đủ thông tin khách hàng!");
+                return;
+            }
 
             ContractManager.post(customers)
                 .then((items) => {
@@ -207,8 +235,5 @@
                     toastr.error("Tạo mới hợp đồng thất bại. Hãy thử lại sau!");
                 });
         };
-
-        $scope.getData();
-
     }
 })();

@@ -12,13 +12,17 @@
             CLOSE_DEAL: 4,
             ESCAPE: 5,
             END: 6,
-            ACCOUNTANT_END: 7
+            MATURITY_END: 7,
+            ACCOUNTANT_END: 8
         })
         .constant('IMGUR_API', {
             URL: 'https://api.imgur.com/3/image',
             CLIENT_ID: 'Client-ID 5039840147cebbb'
         })
         .constant('IMGUR_CLIENT_ID', 'Client-ID 5039840147cebbb')
+        .constant('CONTRACT_EVENT', {
+            UPDATE_SUCCESS: 'UPDATE_SUCCESS'
+        })
     ;
 
     function config($httpProvider) {

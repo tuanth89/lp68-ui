@@ -16,7 +16,7 @@
                 }
             })
             .state('contract.cusNew', {
-                url: '/customer-new',
+                url: '/hop-dong-moi',
                 views: {
                     'content@app.root.contract': {
                         controller: 'CustomerNewController',
@@ -30,7 +30,7 @@
                 }
             })
             .state('contract.cusCirculation', {
-                url: '/customer-circulation',
+                url: '/luu-thong',
                 views: {
                     'content@app.root.contract': {
                         controller: 'CustomerCirculationController',
@@ -43,12 +43,12 @@
                 views: {
                     'content@app.root.contract': {
                         controller: 'ContractDaoHanController',
-                        templateUrl: 'contract/daoHan/contractDaoHan.tpl.html',
-                        resolve: {
-                            contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 1});
-                            }
-                        }
+                        templateUrl: 'contract/daoHan/contractDaoHan.tpl.html'
+                        // resolve: {
+                        //     contracts: function($stateParams, ContractManager) {
+                        //         return ContractManager.one('allContract').one('byType').getList("",{type: 1});
+                        //     }
+                        // }
                     }
                 }
             })
@@ -58,11 +58,11 @@
                     'content@app.root.contract': {
                         controller: 'ContractLaiDungController',
                         templateUrl: 'contract/laiDung/contractLaiDung.tpl.html',
-                        resolve: {
-                            contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 2});
-                            }
-                        }
+                        // resolve: {
+                        //     contracts: function($stateParams, ContractManager) {
+                        //         return ContractManager.one('allContract').one('byType').getList("",{type: 2});
+                        //     }
+                        // }
                     }
                 }
             })
@@ -72,11 +72,11 @@
                     'content@app.root.contract': {
                         controller: 'ContractThuVeController',
                         templateUrl: 'contract/thuVe/contractThuVe.tpl.html',
-                        resolve: {
-                            contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 3});
-                            }
-                        }
+                        // resolve: {
+                        //     contracts: function($stateParams, ContractManager) {
+                        //         return ContractManager.one('allContract').one('byType').getList("",{type: 3});
+                        //     }
+                        // }
                     }
                 }
             })
@@ -86,11 +86,11 @@
                     'content@app.root.contract': {
                         controller: 'ContractChotController',
                         templateUrl: 'contract/chot/contractChot.tpl.html',
-                        resolve: {
-                            contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 4});
-                            }
-                        }
+                        // resolve: {
+                        //     contracts: function($stateParams, ContractManager) {
+                        //         return ContractManager.one('allContract').one('byType').getList("",{type: 4});
+                        //     }
+                        // }
                     }
                 }
             })
@@ -100,11 +100,11 @@
                     'content@app.root.contract': {
                         controller: 'ContractBeController',
                         templateUrl: 'contract/be/contractBe.tpl.html',
-                        resolve: {
-                            contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 5});
-                            }
-                        }
+                        // resolve: {
+                        //     contracts: function($stateParams, ContractManager) {
+                        //         return ContractManager.one('allContract').one('byType').getList("",{type: 5});
+                        //     }
+                        // }
                     }
                 }
             })
@@ -114,22 +114,36 @@
                     'content@app.root.contract': {
                         controller: 'ContractKetThucController',
                         templateUrl: 'contract/ketThuc/contractKetThuc.tpl.html',
-                        resolve: {
-                            contracts: function($stateParams, ContractManager) {
-                                return ContractManager.one('allContract').one('byType').getList("",{type: 6});
-                            }
-                        }
+                        // resolve: {
+                        //     contracts: function($stateParams, ContractManager) {
+                        //         return ContractManager.one('allContract').one('byType').getList("",{type: 6});
+                        //     }
+                        // }
                     }
                 }
             })
-            .state('contract.test', {
-                url: '/calendar-test',
+            .state('contract.hetHo', {
+                url: '/het-ho',
                 views: {
                     'content@app.root.contract': {
-                        controller: 'CalendarTestController',
-                        templateUrl: 'contract/test/calendarTest.tpl.html'
+                        controller: 'ContractHetHoController',
+                        templateUrl: 'contract/hetHo/contractHetHo.tpl.html',
+                        // resolve: {
+                        //     contracts: function($stateParams, ContractManager) {
+                        //         return ContractManager.one('allContract').one('byType').getList("",{type: 6});
+                        //     }
+                        // }
                     }
                 }
             })
+            // .state('contract.test', {
+            //     url: '/calendar-test',
+            //     views: {
+            //         'content@app.root.contract': {
+            //             controller: 'CalendarTestController',
+            //             templateUrl: 'contract/test/calendarTest.tpl.html'
+            //         }
+            //     }
+            // })
     }
 })();

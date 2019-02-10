@@ -70,14 +70,67 @@
                         <label class="col-sm-4 col-md-4 control-label">
                             <b>Mô tả</b>:
                         </label>
-                        <div class="col-sm-8 col-md-8" ng-if="mode!='detail'">
+                        <div class="col-sm-8 col-md-8" ng-if="mode != 'detail'">
                             <textarea ng-model="store.description"
                                    type="text" autocomplete="off" class="form-control" name="desc"
-                                   placeholder="Mô tả">
+                                   placeholder="Mô tả"></textarea>
                         </div>
-                        <span class="col-sm-8 col-md-8" ng-if="mode=='detail'"
+                        <span class="col-sm-8 col-md-8" ng-if="mode == 'detail'"
                               ng-bind-html="store.description"></span>
-                        <span></span>
+                    </div>
+
+                    <div class="form-group row col-sm-12">
+                        <label class="col-sm-4 col-md-4 control-label"><b>Chủ cửa hàng:</b>
+                        </label>
+
+                        <div class="col-sm-8 col-md-8">
+                            <ui-select remove-selected="false"
+                                       ng-model="store.ownStore" theme="bootstrap" search-enabled="true">
+                                <ui-select-match allow-clear="true" placeholder="Chủ cửa hàng">
+                                    <span ng-bind-html="$select.selected.name"></span>
+                                </ui-select-match>
+                                <ui-select-choices
+                                        repeat="item._id as item in users | filter : {normalTitle: $select.search} ">
+                                    <span ng-bind-html="item.name | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row col-sm-12">
+                        <label class="col-sm-4 col-md-4 control-label"><b>Kế toán:</b>
+                        </label>
+
+                        <div class="col-sm-8 col-md-8">
+                            <ui-select ng-model="store.accountant" theme="bootstrap" search-enabled="true">
+                                <ui-select-match allow-clear placeholder="Kế toán">
+                                    <span ng-bind-html="$select.selected.name"></span>
+                                </ui-select-match>
+                                <ui-select-choices
+                                        repeat="item._id as item in accountants | filter : {normalTitle: $select.search} ">
+                                    <span ng-bind-html="item.name | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row col-sm-12">
+                        <label class="col-sm-4 col-md-4 control-label"><b>Nhân viên:</b>
+                        </label>
+
+                        <div class="col-sm-8 col-md-8">
+                            <ui-select remove-selected="false" multiple
+                                       ng-model="store.staffs" theme="bootstrap" search-enabled="true">
+                                <ui-select-match allow-clear placeholder="Nhân viên"
+                                                 remove-selected="false">
+                                    <span ng-bind-html="$item.name"></span>
+                                </ui-select-match>
+                                <ui-select-choices
+                                        repeat="item._id as item in users | filter : {normalTitle: $select.search} ">
+                                    <span ng-bind-html="item.name | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
                     </div>
 
                     <div class="form-group row col-sm-12">
@@ -113,8 +166,3 @@
         </div>
     </div>
 </div>
-<!-- <script type="text/javascript">
-    var todayDate = new Date();
-    $('#datepicker').datepicker('setStartDate', todayDate);
-    $('#datepicker').datepicker('setStartDate', todayDate);
-</script> -->

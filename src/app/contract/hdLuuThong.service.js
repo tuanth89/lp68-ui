@@ -5,10 +5,10 @@
         .module('ati.contract')
         .factory('HdLuuThong', HdLuuThong);
 
-    function HdLuuThong(Restangular) {
+    function HdLuuThong(adminRestangular) {
         let RESOURCE_NAME = 'hdLuuThongs';
 
-        return Restangular.service(RESOURCE_NAME);
+        return adminRestangular.service(RESOURCE_NAME);
     }
 
 })();

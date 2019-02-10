@@ -6,23 +6,50 @@
 
     function StoreFormController($scope, $stateParams, $state, $timeout, StoreManager, Restangular) {
         $scope.store = {storeId: "", name: "", description: "", isActive: true};
+        $scope.users = [];
+        $scope.accountants = [];
         $scope.formProcessing = false;
         let storeObjectId = $stateParams.id;
 
         $scope.$on('$viewContentLoaded', function (event, data) {
-            var stateName = $state.current.name;
-            if (stateName.indexOf("store.edit") != -1) {
+            let stateName = $state.current.name;
+            if (stateName.indexOf("store.edit") !== -1) {
                 $scope.mode = 'edit';
 
                 $scope.getById();
-            } else if (stateName.indexOf("store.detail") != -1) {
+            } else if (stateName.indexOf("store.detail") !== -1) {
                 $scope.mode = 'detail';
 
                 $scope.getById();
             } else {
                 $scope.mode = "add";
             }
+
+            $scope.searchUsers();
         });
+
+        $scope.searchUsers = function (w) {
+            StoreManager.one("listUser").getList().then(function (resp) {
+                let users = resp.plain();
+                $scope.users = users.map(item => {
+                    return {
+                        _id: item._id,
+                        name: item.fullName,
+                        isAccountant: item.isAccountant,
+                        normalTitle: item.fullName
+                    };
+                });
+
+                $scope.accountants = _.filter($scope.users, (item)=> {
+                    return item.isAccountant;
+                });
+
+                setTimeout(function () {
+                    $scope.$apply();
+                }, 1);
+
+            });
+        };
 
         $scope.getById = function () {
             StoreManager
@@ -90,5 +117,6 @@
         $timeout(function () {
             $scope.form_original_data = $("#storeForm").serialize();
         }, 0);
-    };
+
+    }
 })();

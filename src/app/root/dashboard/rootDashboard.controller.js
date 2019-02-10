@@ -6,8 +6,7 @@
         .controller('RootDashboard', RootDashboard)
     ;
 
-    function RootDashboard($scope, $translate, $filter, $stateParams, UserStateHelper, AlertService) {
-
-
+    function RootDashboard($scope, $translate, $filter, dashboard, UserStateHelper) {
+        $scope.dashboard = angular.copy(dashboard) || {};
     }
 })();

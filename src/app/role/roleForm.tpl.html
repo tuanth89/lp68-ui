@@ -1,0 +1,115 @@
+<h4 class="title-page" ng-if="mode=='add'"> Thêm mới nhóm quyền </h4>
+
+<h4 class="title-page" ng-if="mode=='edit'"> Cập nhật nhóm quyền </h4>
+<div class="gap-20 masonry pos-r">
+    <div class="masonry-item col-md-12">
+        <div class="bgc-white p-20 bd">
+            <div class="">
+                <form name="editForm" ng-model-options="{ updateOn: 'blur'}" id="editForm" class="form-validation form-horizontal userForm"
+                    role="form" ng-submit="submit()" novalidate>
+                    <div class="">
+                        <div class="button-bar hidden-xs">
+                            <button ui-sref="^.list" class="btn no-padding-top" type="button" title="Quay lại trang danh sách">
+                                <span class="fa fa-arrow-circle-o-left btn-back"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="clear: both">
+                        <label for="inputFullName" class="col-sm-12 control-label">
+                            Tên nhóm quyền
+                            <strong class="text-danger">*</strong>
+                        </label>
+                        <div class="col-sm-12">
+                            <input ng-disabled="role.isDefault" ng-required="true" name="fullName" ng-blur="visitedFullName = true"
+                                ng-focus="visitedFullName = false" ng-maxlength="25" maxlength="25" ng-model="role.name"
+                                type="text" class="form-control" id="inputFullName" placeholder="Tên nhóm quyền"
+                                ng-class="{'has-error': (editForm.fullName.$touched || !editForm.fullName.$pristine)  && editForm.fullName.$invalid && visitedFullName}"
+                                autocomplete="off">
+                            <div ng-show="editForm.fullName.$invalid && visitedFullName && !editForm.fullName.$untouched"
+                                style="color:red" role="alert">
+                                <span ng-show="editForm.fullName.$error.required">Không được để trống</span>
+                                <span ng-show="editForm.fullName.$error.maxlength">Không được nhập quá 30 ký tự</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputDescription" class="col-sm-12 control-label">
+                            Mô tả
+                        </label>
+                        <div class="col-sm-12">
+                            <textarea ng-disabled="role.isDefault" name="description" ng-blur="visitedDescription = true"
+                                ng-focus="visitedDescription = false" ng-maxlength="255" maxlength="255" ng-model="role.description"
+                                type="text" class="form-control" id="inputDescription" placeholder="Mô tả nhóm quyền"
+                                ng-class="{'has-error': (editForm.description.$touched || !editForm.description.$pristine)  && editForm.description.$invalid && visitedDescription}"
+                                autocomplete="off"></textarea>
+
+                            <div ng-show="editForm.description.$invalid && visitedDescription && !editForm.description.$untouched"
+                                style="color:red" role="alert">
+                                <span ng-show="editForm.description.$error.required">Không được để trống</span>
+                                <span ng-show="editForm.description.$error.maxlength">Không được nhập quá 30 ký tự</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-offset-2 col-sm-10 col-md-offset-2 col-md-10">
+                            <button e-route-name="role.create,role.update" ng-show="!role.isDefault && mode=='edit'" ng-disabled="!isFormValid()" ng-click="updateRole()"
+                                type="button" class="btn btn-w-md btn-primary">Lưu thay đổi</button>
+                            <button e-route-name="role.create,role.update" ng-disabled="!isFormValid()" ng-click="addNewRole()" ng-if="mode=='add'" type="button"
+                                class="btn btn-w-md btn-primary">Lưu </button>
+                            <button e-route-name="role.create,role.update" ng-show="!role.isDefault" ng-click="resetForm()" type="button" class="btn btn-w-md btn-secondary">Hủy
+                                bỏ</button>
+                            <!-- <button type="button" ng-click="backToList()" class="btn btn-w-md btn-primary" ui-sref="^.list">Quay lại </button> -->
+                            <div ng-show="!isFormValid()" class="callout callout-info">
+                                <p>{{ 'VALID_FORM' | translate }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div ng-if="mode=='edit'">
+                <div class="row form-group" style="align-items:baseline">
+                    <label class="col-sm-1">Nhóm:</label>
+                    <div class="col-sm-3">
+                        <ui-select ng-model="selectedGroupName" theme="bootstrap" search-enabled="false" on-select="selectGroupName($item)" append-to-body="true">
+                            <ui-select-match placeholder="Nhóm chức năng">
+                                <span ng-bind="$select.selected"></span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="groupName in groupNames">
+                                <span ng-bind="groupName"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <div class="row col-sm-12" style="padding: 0 0 !important; overflow: auto">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th style="min-width:300px">Tên chức năng</th>
+                                <th ng-repeat="action in actions">{{action.title}}</th>
+                                <th ng-if="!role.isDefault" e-route-name='role.remove'>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="f in features | filter: {groupName: selectedGroupName}:strict">
+                                <td class="text-center">{{$index + 1 }}</td>
+                                <td>{{f.name}}</td>
+                                <td class="text-center" ng-repeat="action in actions">
+                                    <input ng-if="f.actionNames.indexOf(action.name)>=0" type="checkbox" ng-disabled="role.isDefault"
+                                        ng-checked="f.hasPermissions.indexOf(action.name)>=0" ng-click="updateFeatureAccess(action.name,f,$event)" />
+                                </td>
+                                <td class="text-center" ng-if="!role.isDefault" e-route-name="role.remove">
+                                    <div class="btn btn-sm btn-danger" ng-click="removeAllPermission(f)" e-route-name="role.remove">Mặc định</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

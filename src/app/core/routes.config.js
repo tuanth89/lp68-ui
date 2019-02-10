@@ -18,6 +18,9 @@
                 resolve: {
                     userSession: function(Auth) {
                         return Auth.getSession();
+                    },
+                    storeList: function(StoreManager) {
+                        return StoreManager.one("listForUser").getList();
                     }
                 },
                 ncyBreadcrumb: {

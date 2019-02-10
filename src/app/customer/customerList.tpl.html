@@ -13,12 +13,12 @@
                datarows="customers">
         <hot-column data="name" title="'Họ và tên'" type="'text'" width="100"></hot-column>
         <hot-column data="numberId" title="'Số CMT'" type="'text'" width="60"></hot-column>
-        <hot-column data="address" title="'Địa chỉ'" width="150" type="'text'"></hot-column>
         <hot-column data="houseHolderNo" title="'Số sổ HK'" type="'text'" width="60"></hot-column>
+        <hot-column data="address" title="'Địa chỉ'" width="150" type="'text'"></hot-column>
         <hot-column data="phone" title="'Số điện thoại'" type="'text'" width="60"></hot-column>
         <hot-column data="photo" title="'Ảnh đại diện'" type="'text'" width="100" read-only></hot-column>
         <hot-column data="imgResource" title="'Tài liệu'" type="'text'" width="100" read-only></hot-column>
-        <hot-column title=" " type="'text'" width="40" read-only></hot-column>
+        <!--<hot-column title=" " type="'text'" width="40" read-only></hot-column>-->
 
 
         <!--<hot-column data="product.description" title="'Favorite food'" type="'autocomplete'">-->
@@ -43,7 +43,7 @@
                         <img ng-src="{{updateAvatar.photo || '/assets/images/anonymous.png'}}"
                              class="bdrs-50p imageAvatar" ng-if="!fileUp">
 
-                        <div class="fileuploadButton">
+                        <div>
                             <!--<input class="fileInput" type="file" title=" " nv-file-select-->
                             <!--uploader="uploader" onclick="this.value=null"-->
                             <!--accept=".gif,.jpg,.jpeg,.png"-->
@@ -72,82 +72,206 @@
     </div>
 </div>
 
-<div ng-show="showResource">
-    <div class="col-md-9" style="margin-bottom: 40px">
-        <h2>Uploads only images (with canvas preview)</h2>
-        <h3>The queue</h3>
-        <p>Queue length: {{ uploader.queue.length }}</p>
+<!--<div ng-show="showResource">-->
+<!--<ul class="nav nav-tabs">-->
+<!--<li class="active"><a data-target="#InfoCus" data-toggle="tab">-->
+<!--<button ng-click="hideInfoCus()" class="close closeTab" type="button">×</button>-->
+<!--Tài liệu ảnh</a></li>-->
+<!--</ul>-->
 
-        <table class="table">
-            <thead>
-            <tr>
-                <th width="50%">Name</th>
-                <th ng-show="uploader.isHTML5">Size</th>
-                <th ng-show="uploader.isHTML5">Progress</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="item in uploader.queue">
-                <td>
-                    <strong>{{ item.file.name }}</strong>
-                    <!-- Image preview -->
-                    <!--auto height-->
-                    <!--<div ng-thumb="{ file: item.file, width: 100 }"></div>-->
-                    <!--auto width-->
-                    <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
-                    <!--fixed width and height -->
-                    <!--<div ng-thumb="{ file: item.file, width: 100, height: 100 }"></div>-->
-                </td>
-                <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
-                <td ng-show="uploader.isHTML5">
-                    <div class="progress" style="margin-bottom: 0;">
-                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+<!--&lt;!&ndash; Tab panes &ndash;&gt;-->
+<!--<div class="tab-content">-->
+<!--<div class="row">-->
+
+<!--&lt;!&ndash;<div class="col-md-12">&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash; Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}" &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;<input type="file" nv-file-select="" uploader="uploader" multiple/><br/>&ndash;&gt;-->
+
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--<div class="col-md-12" style="margin-bottom: 40px">-->
+<!--<p>Queue length: {{ uploader.queue.length }}</p>-->
+
+<!--<table class="table">-->
+<!--<thead>-->
+<!--<tr>-->
+<!--<th width="50%">Name</th>-->
+<!--<th ng-show="uploader.isHTML5">Size</th>-->
+<!--<th ng-show="uploader.isHTML5">Progress</th>-->
+<!--<th>Status</th>-->
+<!--<th>Actions</th>-->
+<!--</tr>-->
+<!--</thead>-->
+<!--<tbody>-->
+<!--<tr ng-repeat="item in uploader.queue">-->
+<!--<td>-->
+<!--<strong>{{ item.file.name }}</strong>-->
+<!--&lt;!&ndash; Image preview &ndash;&gt;-->
+<!--&lt;!&ndash;auto height&ndash;&gt;-->
+<!--&lt;!&ndash;<div ng-thumb="{ file: item.file, width: 100 }"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;auto width&ndash;&gt;-->
+<!--<div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>-->
+<!--&lt;!&ndash;fixed width and height &ndash;&gt;-->
+<!--&lt;!&ndash;<div ng-thumb="{ file: item.file, width: 100, height: 100 }"></div>&ndash;&gt;-->
+<!--</td>-->
+<!--<td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>-->
+<!--<td ng-show="uploader.isHTML5">-->
+<!--<div class="progress" style="margin-bottom: 0;">-->
+<!--<div class="progress-bar" role="progressbar"-->
+<!--ng-style="{ 'width': item.progress + '%' }"></div>-->
+<!--</div>-->
+<!--</td>-->
+<!--<td class="text-center">-->
+<!--<span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>-->
+<!--<span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>-->
+<!--<span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>-->
+<!--</td>-->
+<!--<td nowrap>-->
+<!--<button type="button" class="btn btn-success btn-xs" ng-click="item.upload()"-->
+<!--ng-disabled="item.isReady || item.isUploading || item.isSuccess">-->
+<!--<span class="glyphicon glyphicon-upload"></span> Upload-->
+<!--</button>-->
+<!--<button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()"-->
+<!--ng-disabled="!item.isUploading">-->
+<!--<span class="glyphicon glyphicon-ban-circle"></span> Cancel-->
+<!--</button>-->
+<!--<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">-->
+<!--<span class="glyphicon glyphicon-trash"></span> Remove-->
+<!--</button>-->
+<!--</td>-->
+<!--</tr>-->
+<!--</tbody>-->
+<!--</table>-->
+
+<!--<div>-->
+<!--<div>-->
+<!--Queue progress:-->
+<!--<div class="progress" style="">-->
+<!--<div class="progress-bar" role="progressbar"-->
+<!--ng-style="{ 'width': uploader.progress + '%' }"></div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()"-->
+<!--ng-disabled="!uploader.getNotUploadedItems().length">-->
+<!--<span class="glyphicon glyphicon-upload"></span> Upload all-->
+<!--</button>-->
+<!--<button type="button" class="btn btn-warning btn-s" ng-click="uploader.cancelAll()"-->
+<!--ng-disabled="!uploader.isUploading">-->
+<!--<span class="glyphicon glyphicon-ban-circle"></span> Cancel all-->
+<!--</button>-->
+<!--<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()"-->
+<!--ng-disabled="!uploader.queue.length">-->
+<!--<span class="glyphicon glyphicon-trash"></span> Remove all-->
+<!--</button>-->
+<!--</div>-->
+
+<!--</div>-->
+
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+<div class="modal fade" id="imageDoc">
+    <div class="modal-dialog" style="max-width: 70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tài liệu ảnh</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12 selectFile" style="text-align: center; margin-bottom: 20px;">
+                    <input type="file" accept=".gif,.jpg,.jpeg,.png" nv-file-select=""
+                           uploader="imgDocUploader"
+                           multiple title=" "/>
+                    <br/>
+                </div>
+                <div class="cold-md-12" style="text-align: center;" ng-show="formProcessing">
+                    <i class="fa fa-spinner fa-pulse fa-3x" style="text-align: center;"></i>
+                </div>
+                <div class="col-md-12 changeFile"
+                     style="display: none;text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                    <div class="progress" style="margin-bottom: 0; height: 15px;">
+                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': progressUpload + '%' }">{{progressUpload}}%</div>
                     </div>
-                </td>
-                <td class="text-center">
-                    <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
-                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
-                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
-                </td>
-                <td nowrap>
-                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()"
-                            ng-disabled="item.isReady || item.isUploading || item.isSuccess">
-                        <span class="glyphicon glyphicon-upload"></span> Upload
-                    </button>
-                    <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()"
-                            ng-disabled="!item.isUploading">
-                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
-                    </button>
-                    <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
-                        <span class="glyphicon glyphicon-trash"></span> Remove
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                </div>
 
-        <div>
-            <div>
-                Queue progress:
-                <div class="progress" style="">
-                    <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+                <div class="row">
+                    <!--<div class="col-md-12">-->
+                    <!--<table class="table">-->
+                    <!--<thead>-->
+                    <!--</thead>-->
+                    <!--<tbody>-->
+                    <!--<tr ng-repeat="item in imgDocUploader.queue">-->
+                    <!--<td>-->
+                    <!--<strong>{{ item.file.name }}</strong>-->
+                    <!--<div ng-show="imgDocUploader.isHTML5"-->
+                    <!--ng-thumb="{ file: item._file, height: 100 }"></div>-->
+                    <!--</td>-->
+                    <!--<td nowrap style="max-width: 50px;">-->
+                    <!--<button type="button" class="btn btn-danger btn-xs" ng-click="removeImgDoc(item, $index)">-->
+                    <!--<span class="fa fa-trash"></span> Xóa-->
+                    <!--</button>-->
+                    <!--</td>-->
+                    <!--</tr>-->
+                    <!--</tbody>-->
+                    <!--</table>-->
+                    <!--</div>-->
+
+                    <!--<div class="col-md-12">-->
+                    <!--<table class="table">-->
+                    <!--<thead>-->
+                    <!--</thead>-->
+                    <!--<tbody>-->
+                    <!--<tr ng-repeat="item in imgDocUploader.queue">-->
+                    <!--<td>-->
+                    <!--<strong>{{ item.file.name }}</strong>-->
+                    <!--<div ng-show="imgDocUploader.isHTML5"-->
+                    <!--ng-thumb="{ file: item._file, height: 100 }"></div>-->
+                    <!--</td>-->
+                    <!--<td nowrap style="max-width: 50px;">-->
+                    <!--<button type="button" class="btn btn-danger btn-xs"-->
+                    <!--ng-click="removeImgDoc(item, $index)">-->
+                    <!--<span class="fa fa-trash"></span> Xóa-->
+                    <!--</button>-->
+                    <!--</td>-->
+                    <!--</tr>-->
+                    <!--</tbody>-->
+                    <!--</table>-->
+                    <!--</div>-->
+
+                    <div class="col-md-12">
+                        <table class="table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in infoCus.imgDocs">
+                                <td>
+                                    <strong>{{ item.name }}</strong>
+                                    <div>
+                                        <img ng-src="{{item.link}}" style="height: 100px"/>
+                                    </div>
+                                </td>
+                                <td nowrap style="max-width: 50px;">
+                                    <button type="button" class="btn btn-danger btn-xs"
+                                            ng-click="removeImgDoc(item, $index)">
+                                        <span class="fa fa-trash"></span> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
-            <button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()"
-                    ng-disabled="!uploader.getNotUploadedItems().length">
-                <span class="glyphicon glyphicon-upload"></span> Upload all
-            </button>
-            <button type="button" class="btn btn-warning btn-s" ng-click="uploader.cancelAll()"
-                    ng-disabled="!uploader.isUploading">
-                <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
-            </button>
-            <button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()"
-                    ng-disabled="!uploader.queue.length">
-                <span class="glyphicon glyphicon-trash"></span> Remove all
-            </button>
+            <!--<div class="modal-footer">-->
+            <!--<button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>-->
+            <!--<button type="button" class="btn btn-primary"-->
+            <!--ng-disabled="!selectedCirculation.newAppointmentDate || selectedCirculation.newPayMoney <= 0"-->
+            <!--ng-click="saveChotModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu-->
+            <!--</button>-->
+            <!--</div>-->
         </div>
-
     </div>
 </div>

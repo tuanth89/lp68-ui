@@ -4,16 +4,10 @@
     angular.module('ati.core.auth')
         .constant('AUTH_TOKEN_NAME', 'atiToken')
         .constant('PREVIOUS_AUTH_TOKEN_NAME', 'atiPreviousAuthTokenRaw')
+        .constant('SELECTED_STORE_ID', 'selectedStoreId')
 
         .constant('USER_ROLES', {
-            root: 'ROLE_ROOT',
-            admin: 'ROLE_ADMIN',
-            contentManager: 'ROLE_CONTENT_MANAGER',
-            accountant: 'ROLE_ACCOUNTANT',
-            customerManager: 'ROLE_CUSTOMER_MANAGER',
-            lecturerManager: 'ROLE_LECTURER_MANAGER',
-            student: 'ROLE_STUDENT',
-            lecturer: 'ROLE_LECTURER',
+            root: 'ROLE_ROOT'
         })
 
         .constant('AUTH_EVENTS', {

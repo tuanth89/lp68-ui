@@ -5,10 +5,10 @@
         .module('ati.customer')
         .factory('StoreManager', StoreManager);
 
-    function StoreManager(Restangular) {
+    function StoreManager(adminRestangular) {
         let RESOURCE_NAME = 'stores';
 
-        return Restangular.service(RESOURCE_NAME);
+        return adminRestangular.service(RESOURCE_NAME);
     }
 
 })();

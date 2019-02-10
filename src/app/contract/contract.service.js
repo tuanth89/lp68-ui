@@ -5,10 +5,10 @@
         .module('ati.contract')
         .factory('ContractManager', ContractManager);
 
-    function ContractManager(Restangular) {
+    function ContractManager(adminRestangular) {
         let RESOURCE_NAME = 'contracts';
 
-        return Restangular.service(RESOURCE_NAME);
+        return adminRestangular.service(RESOURCE_NAME);
     }
 
 })();

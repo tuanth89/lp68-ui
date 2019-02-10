@@ -4,30 +4,31 @@
     angular.module('ati.adminManagement')
         .config(addStates);
 
-    function addStates(UserStateHelperProvider, USER_ROLES) {
+    function addStates(UserStateHelperProvider) {
         UserStateHelperProvider.state('adminManagement', {
-                abstract: true,
-                url: '/admin',
-                ncyBreadcrumb: {
-                    skip: true
-                },
-                data: {
-                    requiredUserRole: USER_ROLES.root
-                },
-            })
+            abstract: true,
+            url: '/adminManagement',
+            ncyBreadcrumb: {
+                skip: true
+            },
+            // data: {
+            //     requiredUserRole: USER_ROLES.root
+            // },
+        })
             .state('adminManagement.list', {
-                url: '/list?page&sortField&orderBy&search',
+                // url: '/list?page&sortField&orderBy&search',
+                url: '/list?page&search',
                 views: {
                     'content@app': {
                         controller: 'AdminList',
                         templateUrl: 'adminManagement/adminList.tpl.html'
                     }
                 },
-                resolve: {
-                    admins: function (AdminManager) {
-                        return AdminManager.getList();
-                    }
-                },
+                // resolve: {
+                //     admins: function (AdminManager) {
+                //         return AdminManager.one("listAdmin").getList();
+                //     }
+                // },
                 // ncyBreadcrumb: {
                 //     label: '{{ "NAV_MODULE.ASSISTANTS" | translate }}'
                 // },
@@ -43,13 +44,13 @@
                     }
                 },
                 resolve: {
-                    admin: function () {
-                        return null;
+                    isNew: function () {
+                        return true;
                     },
-                    admins: function (AdminManager) {
-                        return AdminManager.getList();
+                    userProfile: function () {
+                        return null;
                     }
-                },
+                }
                 // customResolve: {
                 //     admin: {
                 //         doctors: /* @ngInject */ function(doctorRestangular) {
@@ -72,13 +73,13 @@
                     }
                 },
                 resolve: {
-                    admin: function ($stateParams, UserManager) {
-                        return UserManager.one($stateParams.id).get();
+                    isNew: function () {
+                        return false;
                     },
-                    admins: function (AdminManager) {
-                        return AdminManager.getList();
+                    userProfile: function (AdminManager, $stateParams) {
+                        return AdminManager.one($stateParams.id).get();
                     }
-                },
+                }
                 // customResolve: {
                 //     admin: {
                 //         doctors: /* @ngInject */ function(doctorRestangular) {

@@ -6,110 +6,109 @@
                     <div class="button-bar hidden-xs float-right">
                         <button ng-click="backToList()" class="btn btn-sm btn-primary" type="button">
                             <span class="ti ti-angle-left"></span>
-                            {{ 'ADMIN_MODULE.BACK_TO_LIST' | translate }}
+                            Quay lại danh sách
                         </button>
                     </div>
                 </div>
                 <div class="mT-30">
                     <form name="editForm" id="editForm" class="col-lg-12 form-validation form-horizontal userForm"
                           role="form" ng-submit="submit()" novalidate>
+                        <!--<div class="form-group">-->
+                        <!--<label class="col-sm-2 col-md-2 col-lg-2 control-label">Ảnh đại diện-->
+                        <!--</label>-->
+                        <!--<div class="col-sm-10">-->
+                        <!--<img src="{{admin.photo ? admin.photo : '/assets/images/anonymous.png'}}"-->
+                        <!--class="bdrs-50p imageAvatar">-->
+                        <!--<div class="fileuploadButton">-->
+                        <!--<input class="fileInput" type="file" title=" " nv-file-select uploader="uploader"-->
+                        <!--onclick="this.value=null" accept=".gif,.jpg,.jpeg,.png"-->
+                        <!--id="FileUploader">-->
+                        <!--<a href="javascript:void(0)">-->
+                        <!--<i class="fa fa-upload"></i>-->
+                        <!--<span>Thay ảnh</span>-->
+                        <!--</a>-->
+                        <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<div class="text-danger" ng-show="invalidExtension">-->
+                        <!--<span class="udi-small udi udi-exclamation-triangle"></span>-->
+                        <!--{{invalidFileName}} {{'UPLOAD_FILE_VALID' | translate}}-->
+                        <!--{{filters.join(', ')}}.-->
+                        <!--</div>-->
+                        <!--</div>-->
+
                         <div class="form-group">
-                            <label class="col-sm-2 col-md-2 col-lg-2 control-label">{{ 'DOCTOR_MODULE.AVATAR' |
-                                translate }}
+                            <label for="inputFullName" class="col-sm-2 control-label">Họ và tên
+                                <strong class="text-danger">*</strong>
                             </label>
                             <div class="col-sm-10">
-                                <img src="{{admin.photo ? admin.photo : '/assets/images/anonymous.png'}}"
-                                     class="bdrs-50p imageAvatar">
-                                <div class="fileuploadButton">
-                                    <input class="fileInput" type="file" title=" " nv-file-select uploader="uploader"
-                                           onclick="this.value=null" accept=".gif,.jpg,.jpeg,.png"
-                                           id="FileUploader">
-                                    <a href="javascript:void(0)">
-                                        <i class="fa fa-upload"></i>
-                                        <span>{{ 'DOCTOR_MODULE.CHANGE_AVATAR' | translate }}</span>
-                                    </a>
+                                <input server-error ng-required="true" name="fullName" ng-model="admin.fullName"
+                                       type="text"
+                                       ng-blur="visitedFullname = true"
+                                       ng-focus="visitedFullname = false"
+                                       ng-model-onblur
+                                       ng-class="{'has-error': (editForm.fullName.$touched || !editForm.fullName.$pristine) && editForm.fullName.$invalid && visitedFullname}"
+                                       class="form-control" id="inputFullName"
+                                       placeholder="Họ và tên" autocomplete="off"
+                                       maxlength="35">
+
+                                <div ng-show="editForm.fullName.$invalid && visitedFullname && !editForm.fullName.$untouched"
+                                     style="color:red" role="alert">
+                                    <span ng-show="editForm.fullName.$error.required">Họ và tên không được để trống</span>
                                 </div>
                             </div>
-
-                            <div class="text-danger" ng-show="invalidExtension">
-                                <span class="udi-small udi udi-exclamation-triangle"></span>
-                                {{invalidFileName}} {{'UPLOAD_FILE_VALID' | translate}}
-                                {{filters.join(', ')}}.
-                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputFullName" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.FULL_NAME' |
-                                translate }}
+                            <label for="inputEmail" class="col-sm-2 control-label">Email
                                 <strong class="text-danger">*</strong>
                             </label>
                             <div class="col-sm-10">
-                                <input server-error ng-required="true" name="fullName" ng-model="admin.name" type="text"
+                                <input server-error name="email" ng-model="admin.email" type="text"
+                                       ng-blur="visitedEmail = true"
+                                       ng-focus="visitedEmail = false"
+                                       ng-pattern='/^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/'
                                        ng-model-onblur
-                                       class="form-control" id="inputFullName"
-                                       placeholder="{{ 'DOCTOR_MODULE.FULL_NAME' | translate }}" autocomplete="off"
-                                       ng-maxlength="35">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputUsername" class="col-sm-2 control-label"> {{ 'USERNAME' | translate }}
-                                <strong class="text-danger">*</strong>
-                            </label>
-
-                            <div class="col-sm-10">
-                                <input server-error name="username" ng-model="admin.username" ng-required="true"
-                                       type="text" autocomplete="off"
-                                       ng-minlength="6"
-                                       ng-class="{'has-error': editForm.username.$error.minlength}"
-                                       class="form-control" id="inputUsername"
-                                       placeholder=" {{ 'ADDNEW_MODULE.USERNAME' | translate }}" autocomplete="off" ng-maxlength="35">
-                            </div>
-                            <div class="col-sm-10 text-danger"
-                                 ng-show="editForm.username.$error.minlength">{{'ENTER_USERNAME_INVALID'
-                                | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputEmail" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.EMAIL' | translate
-                                }}
-                                <strong class="text-danger">*</strong>
-                            </label>
-                            <div class="col-sm-10">
-                                <input server-error ng-required="true" name="email" ng-model="admin.email" type="text"
-                                       ng-pattern='/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'
-                                       ng-model-onblur
-                                       ng-class="{'has-error': editForm.email.$invalid && !editForm.email.$pristine}"
+                                       ng-class="{'has-error': (editForm.email.$touched || !editForm.email.$pristine)  && editForm.email.$invalid && visitedEmail}"
                                        class="form-control" id="inputEmail"
-                                       placeholder="{{ 'DOCTOR_MODULE.EMAIL' | translate }}" autocomplete="off">
-                            </div>
-                            <div class="col-sm-10 text-danger"
-                                 ng-show="editForm.email.$invalid && !editForm.email.$pristine">{{'ENTER_EMAIL_INVALID'
-                                | translate}}
-                            </div>
+                                       placeholder="Email" autocomplete="off"
+                                       ng-required="true">
 
+                                <div ng-show="editForm.email.$invalid && visitedEmail && !editForm.email.$untouched"
+                                     style="color:red" role="alert">
+                                    <span ng-show="editForm.email.$error.required">Email không được để trống</span>
+                                    <span ng-show="editForm.email.$error.pattern">Email không đúng định dạng.</span>
+                                </div>
+                            </div>
                         </div>
-
                         <div class="form-group">
-                            <label for="inputPassword" class="col-sm-2 control-label"> {{ 'DOCTOR_MODULE.PASSWORD' |
-                                translate }}
+                            <label for="inputPassword" class="col-sm-2 control-label"> Mật khẩu
                                 <strong class="text-danger" ng-if="isNew">*</strong>
                             </label>
                             <div class="col-sm-10">
                                 <input server-error name="password" ng-model="admin.password" ng-required="isNew"
+                                       ng-blur="visitedPassword = true"
+                                       ng-focus="visitedPassword = false"
                                        ng-model-onblur
                                        ng-keydown="$event.keyCode !== 32 ? $event:$event.preventDefault()"
-                                       ng-minlength="3"
-                                       ng-class="{'has-error': editForm.password.$error.minlength}"
-                                       ng-cut="$event.preventDefault()" ng-copy="$event.preventDefault()" ng-paste="$event.preventDefault()"
+                                       ng-minlength="6"
+                                       ng-class="{'has-error': (editForm.password.$touched || !editForm.password.$pristine) && editForm.password.$invalid && visitedPassword}"
+                                       ng-cut="$event.preventDefault()" ng-copy="$event.preventDefault()"
+                                       ng-paste="$event.preventDefault()"
                                        type="password" autocomplete="off"
                                        class="form-control" id="inputPassword"
-                                       placeholder=" {{ 'ADDNEW_MODULE.PASSWORD' | translate }}">
-                                <span ng-if="!isNew" class="help-block">{{ 'DOCTOR_MODULE.HELP_BLOCK_REPEAT_PASSWORD' | translate }}</span>
+                                       placeholder="Mật khẩu">
+
+                                <span ng-if="!isNew"
+                                      class="help-block">Để trống nếu bạn không muốn thay đổi mật khẩu.</span>
+
+                                <div ng-show="editForm.password.$invalid && visitedPassword && !editForm.password.$untouched"
+                                     style="color:red" role="alert">
+                                    <span ng-show="editForm.password.$error.required && isNew">Mật khẩu không được để trống</span>
+                                    <span ng-show="editForm.password.$error.minlength">Mật khẩu phải nhập ít nhất 6 ký tự.</span>
+                                </div>
+
                             </div>
 
-                            <div class="col-sm-10 text-danger"
-                                 ng-show="editForm.password.$error.minlength">{{'ADDNEW_MODULE.ENTER_PASSWORD_INVALID'
-                                | translate}}
-                            </div>
                         </div>
                         <!-- <div class="form-group">
                             <label for="inputRepeatPassword" class="col-sm-2 control-label"> {{ 'DOCTOR_MODULE.REPEAT_PASSWORD' | translate }}
@@ -122,127 +121,73 @@
                             </div>
                         </div> -->
                         <div class="form-group">
-                            <label for="inputTitle" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.TITLE' | translate
-                                }}
+                            <label for="inputTitle" class="col-sm-2 control-label">Chức vụ
                             </label>
                             <div class="col-sm-10">
                                 <input server-error name="title" ng-model="admin.title" type="text" class="form-control"
                                        ng-model-onblur
-                                       id="inputTitle" placeholder="{{ 'DOCTOR_MODULE.TITLE' | translate }}"
+                                       id="inputTitle" placeholder="Chức vụ"
                                        autocomplete="off">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="inputDateIn" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.DATE_IN' |
-                                translate }}
-                            </label>
+                            <label for="inputDob" class="col-sm-2 control-label">Ngày sinh<strong
+                                    class="text-danger">*</strong></label>
                             <div class="col-sm-10">
-                                <input server-error type="text"
+                                <input e-datepicker
+                                       on-focus="visitedBirthday"
+                                       ng-class="{'has-error': (editForm.birthday.$touched || !editForm.birthday.$pristine) && editForm.birthday.$invalid && visitedBirthday}"
+                                       ng-model-options="{ updateOn: 'default'}"
                                        data-inputmask="'alias': 'dd/mm/yyyy', 'clearIncomplete': true"
-                                       ng-model="admin.dateIn"
-                                       class="form-control" name="dateIn" id="inputDateIn"
-                                       placeholder="{{ 'DOCTOR_MODULE.DATE_IN' | translate }}"
-                                       autocomplete="off">
+                                       class="form-control" input-value="admin.birthday" id="inputDob"
+                                       name="birthday"
+                                       placeholder="Ngày sinh"
+                                       autocomplete="off" ng-required="true">
                             </div>
+                            <div ng-show="!editForm.birthday.$invalid && visitedBirthday && !editForm.birthday.$untouched"
+                                 style="color:red"
+                                 role="alert">
+                                <span ng-show="editForm.password.$error.required">Ngày sinh không được để trống.</span>
+                            </div>
+
                         </div>
                         <div class="form-group">
-                            <label for="inputDob" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.DOB' | translate
-                                }}</label>
-                            <div class="col-sm-10">
-                                <input server-error type="text"
-                                       data-inputmask="'alias': 'dd/mm/yyyy', 'clearIncomplete': true"
-                                       ng-model="admin.dob"
-                                       class="form-control" name="dob" id="inputDob"
-                                       placeholder="{{ 'DOCTOR_MODULE.DOB' | translate }}"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.GENDER' | translate }}
+                            <label class="col-sm-12 control-label">Giới tính
                                 <strong class="text-danger">*</strong>
                             </label>
-                            <div class="col-sm-10">
+                            <div class="col-sm-12">
                                 <label class="ui-radio">
-                                    <input name="radio1" ng-model="admin.gender" type="radio"
-                                           ng-value="0">
-                                    <label>{{ 'DOCTOR_MODULE.MALE' | translate }}</label>
-                                </label>
+                                    <input name="radio1" ng-model="admin.gender" type="radio" ng-value="1">&nbsp;&nbsp;
+                                    <label>Nam </label>
+                                </label>&nbsp;&nbsp;
                                 <label class="ui-radio">
-                                    <input name="radio1" ng-model="admin.gender" type="radio"
-                                           ng-value="1">
-                                    <label>{{ 'DOCTOR_MODULE.FEMALE' | translate }}</label>
+                                    <input name="radio1" ng-model="admin.gender" type="radio" ng-value="0">&nbsp;&nbsp;
+                                    <label>Nữ</label>
                                 </label>
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="inputHometown" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.HOMETOWN' |
-                                translate }}
-                            </label>
-                            <div class="col-sm-10">
-                                <input server-error name="hometown" ng-model="admin.hometown" type="text"
-                                       ng-model-onblur
-                                       class="form-control" id="inputHometown"
-                                       placeholder="{{ 'DOCTOR_MODULE.HOMETOWN' | translate }}"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputAddress" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.ADDRESS' |
-                                translate }}
+                            <label for="inputAddress" class="col-sm-2 control-label">Địa chỉ
                             </label>
                             <div class="col-sm-10">
                                 <input server-error name="address" ng-model="admin.address" type="text"
                                        ng-model-onblur
                                        class="form-control" id="inputAddress"
-                                       placeholder="{{ 'DOCTOR_MODULE.ADDRESS' | translate }}"
+                                       placeholder="Địa chỉ"
                                        autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputNumberId" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.NUMBER_ID' |
-                                translate }}
-                            </label>
-                            <div class="col-sm-10">
-                                <input server-error name="numberId" ng-model="admin.numberId" type="text"
-                                       ng-model-onblur
-                                       class="form-control" id="inputNumberId"
-                                       placeholder="{{ 'DOCTOR_MODULE.NUMBER_ID' | translate }}"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputDateOfIssue" class="col-sm-2 control-label">{{
-                                'DOCTOR_MODULE.DATE_OF_ISSUE' | translate }}</label>
-                            <div class="col-sm-10">
-                                <input server-error type="text"
-                                       data-inputmask="'alias': 'dd/mm/yyyy', 'clearIncomplete': true"
-                                       ng-model="admin.dateOfIssue"
-                                       class="form-control" name="dateOfIssue" id="inputDateOfIssue"
-                                       placeholder="{{ 'DOCTOR_MODULE.DATE_OF_ISSUE' | translate }}"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPlaceOfIssue" class="col-sm-2 control-label">{{
-                                'DOCTOR_MODULE.PLACE_OF_ISSUE' | translate }}</label>
-                            <div class="col-sm-10">
-                                <input server-error name="placeOfIssue" ng-model="admin.placeOfIssue" type="text"
-                                       class="form-control" id="inputPlaceOfIssue"
-                                       placeholder="{{ 'DOCTOR_MODULE.PLACE_OF_ISSUE' | translate }}"
-                                       autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPhone" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.PHONE' | translate
-                                }}
+                            <label for="inputPhone" class="col-sm-2 control-label">Số điện thoại
                             </label>
                             <div class="col-sm-10">
                                 <input server-error name="phone" ng-model="admin.phone"
                                        ng-model-onblur
                                        ng-class="{'has-error': editForm.phone.$invalid}"
                                        type="text" class="form-control"
-                                       id="inputPhone" placeholder="{{ 'DOCTOR_MODULE.PHONE' | translate }}"
+                                       id="inputPhone" placeholder="Số điện thoại"
                                        autocomplete="off" ng-pattern="/^[0-9]*$/">
                             </div>
                             <div class="col-sm-10 text-danger" ng-show="editForm.phone.$invalid">{{'ENTER_PHONE_INVALID'
@@ -250,17 +195,41 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputEnabled" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.ENABLED' |
-                                translate }}</label>
+                            <label class="col-sm-2 control-label">Cấp quyền</label>
+                            <div class="col-sm-10">
+                                <ui-select ng-model="userRole.friendlyName" theme="bootstrap" search-enabled="false">
+                                    <ui-select-match placeholder="Quyền sử dụng">
+                                        <span ng-bind="$select.selected.name"></span>
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="i.friendlyName as i in roleApprove">
+                                        <span ng-bind="i.name"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+
+                        <!--<div class="form-group">-->
+                        <!--<label class="col-sm-2 control-label">Kích hoạt</label>-->
+                        <!--<div class="col-sm-10">-->
+                        <!--<label class="custom-control custom-checkbox">-->
+                        <!--<input type="checkbox" class="custom-control-input" ng-model="admin.enabled">-->
+                        <!--<span class="custom-control-indicator"></span>-->
+                        <!--</label>-->
+                        <!--</div>-->
+                        <!--</div>-->
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Là kế toán</label>
                             <div class="col-sm-10">
                                 <label class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" ng-model="admin.enabled">
+                                    <input type="checkbox" class="custom-control-input" ng-model="admin.isAccountant">
                                     <span class="custom-control-indicator"></span>
                                 </label>
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
+                            <div class="col-sm-offset-2 col-sm-10" e-route-name="admin.update">
                                 <button ng-disabled="!isFormValid() || formProcessing" type="submit"
                                         class="btn btn-success">{{ 'SUBMIT' | translate }}
                                 </button>

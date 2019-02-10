@@ -18,3 +18,37 @@
         <span>Copyright © 2018 Loc Phat. All rights reserved.</span>
     </footer>
 </div>
+
+<div class="modal fade" id="storeModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Chọn cửa hàng</h4>
+            </div>
+            <div class="modal-body">
+                <form name="storeForm">
+                    <div class="form-group">
+                        <ui-select ng-model="storeSelected.storeId" theme="bootstrap" search-enabled="true">
+                            <ui-select-match allow-clear="true" placeholder="Cửa hàng">
+                                <span ng-bind-html="$select.selected.name"></span>
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="item._id as item in storeList | filter : {name: $select.search} ">
+                                <span ng-bind-html="item.name | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"
+                            ng-disabled="!storeSelected.storeId"
+                            ng-click="saveStore()">
+                        <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Hoàn tất
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

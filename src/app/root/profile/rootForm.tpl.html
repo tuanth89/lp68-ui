@@ -13,164 +13,152 @@
                         <div class="row">
                             <form name="adminForm" class="col-lg-12 form-validation form-horizontal userForm"
                                   role="form" ng-submit="submit()" novalidate>
-                                <div class="form-group">
-                                    <label class="col-sm-2 col-md-2 col-lg-2 control-label">{{ 'DOCTOR_MODULE.AVATAR' |
-                                        translate }}
-                                    </label>
-                                    <div class="col-sm-10">
-                                        <!--<div ng-repeat="item in uploader.queue"-->
-                                        <!--ng-thumb="{ file: item._file }">-->
+                                <!--<div class="form-group">-->
+                                    <!--<label class="col-sm-2 col-md-2 col-lg-2 control-label">{{ 'DOCTOR_MODULE.AVATAR' |-->
+                                        <!--translate }}-->
+                                    <!--</label>-->
+                                    <!--<div class="col-sm-10">-->
+                                        <!--&lt;!&ndash;<div ng-repeat="item in uploader.queue"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;ng-thumb="{ file: item._file }">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                        <!--<img src="{{admin.photo ? admin.photo : '/assets/images/anonymous.png'}}"-->
+                                             <!--class="bdrs-50p imageAvatar">-->
+                                        <!--<div class="fileuploadButton">-->
+                                            <!--<input class="fileInput" type="file" title=" " nv-file-select-->
+                                                   <!--uploader="uploader" onclick="this.value=null"-->
+                                                   <!--accept=".gif,.jpg,.jpeg,.png"-->
+                                                   <!--id="FileUploader">-->
+                                            <!--<a href="#">-->
+                                                <!--<i class="fa fa-upload"></i>-->
+                                                <!--<span>{{ 'DOCTOR_MODULE.CHANGE_AVATAR' | translate }}</span>-->
+                                            <!--</a>-->
                                         <!--</div>-->
-                                        <img src="{{admin.photo ? admin.photo : '/assets/images/anonymous.png'}}"
-                                             class="bdrs-50p imageAvatar">
-                                        <div class="fileuploadButton">
-                                            <input class="fileInput" type="file" title=" " nv-file-select
-                                                   uploader="uploader" onclick="this.value=null"
-                                                   accept=".gif,.jpg,.jpeg,.png"
-                                                   id="FileUploader">
-                                            <a href="#">
-                                                <i class="fa fa-upload"></i>
-                                                <span>{{ 'DOCTOR_MODULE.CHANGE_AVATAR' | translate }}</span>
-                                            </a>
-                                        </div>
-                                    </div>
+                                    <!--</div>-->
 
-                                    <div class="text-danger" ng-show="invalidExtension">
-                                        <span class="udi-small udi udi-exclamation-triangle"></span>
-                                        {{invalidFileName}} {{'UPLOAD_FILE_VALID' | translate}}
-                                        {{filters.join(', ')}}.
-                                    </div>
-                                </div>
+                                    <!--<div class="text-danger" ng-show="invalidExtension">-->
+                                        <!--<span class="udi-small udi udi-exclamation-triangle"></span>-->
+                                        <!--{{invalidFileName}} {{'UPLOAD_FILE_VALID' | translate}}-->
+                                        <!--{{filters.join(', ')}}.-->
+                                    <!--</div>-->
+                                <!--</div>-->
                                 <div class="form-group">
-                                    <label for="inputFullName" class="col-sm-2 control-label">{{
-                                        'DOCTOR_MODULE.FULL_NAME' | translate }}
+                                    <label for="inputFullName" class="col-sm-2 control-label">Họ và tên
                                         <strong class="text-danger">*</strong>
                                     </label>
                                     <div class="col-sm-10">
                                         <input server-error ng-required="true" name="fullName" ng-model="admin.name"
                                                type="text" class="form-control" id="inputFullName"
-                                               placeholder="{{ 'DOCTOR_MODULE.FULL_NAME' | translate }}">
+                                               placeholder="Họ và tên">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputEmail" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.EMAIL' |
-                                        translate }}</label>
+                                    <label for="inputEmail" class="col-sm-2 control-label">Email</label>
                                     <div class="col-sm-10">
                                         <input name="email" type="email" value="{{admin.email}}" class="form-control"
                                                id="inputEmail" readonly
-                                               placeholder="{{ 'DOCTOR_MODULE.EMAIL' | translate }}">
+                                               placeholder="Email">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputTitle" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.TITLE' |
-                                        translate }}
+                                    <label for="inputTitle" class="col-sm-2 control-label">Chức vụ
                                     </label>
                                     <div class="col-sm-10">
                                         <input server-error name="title" ng-model="admin.title" type="text"
                                                class="form-control" id="inputTitle"
-                                               placeholder="{{ 'DOCTOR_MODULE.TITLE' | translate }}">
+                                               placeholder="Chức vụ">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="inputDateIn" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.DATE_IN' |
-                                        translate }}
+                                    <label for="inputDateIn" class="col-sm-2 control-label">Ngày vào làm
                                     </label>
                                     <div class="col-sm-10">
                                         <input server-error
                                                data-inputmask="'alias': 'dd/mm/yyyy', 'clearIncomplete': true"
                                                ng-model="admin.dateIn"
                                                class="form-control" name="dateIn" id="inputDateIn"
-                                               placeholder="{{ 'DOCTOR_MODULE.DATE_IN' | translate }}">
+                                               placeholder="Ngày vào làm">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputDob" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.DOB' |
-                                        translate }}</label>
+                                    <label for="inputDob" class="col-sm-2 control-label">Ngày sinh</label>
                                     <div class="col-sm-10">
                                         <input server-error
                                                data-inputmask="'alias': 'dd/mm/yyyy', 'clearIncomplete': true"
                                                ng-model="admin.dob" class="form-control"
                                                name="dob" id="inputDob"
-                                               placeholder="{{ 'DOCTOR_MODULE.DOB' | translate }}">
+                                               placeholder="Ngày sinh">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.GENDER' | translate }}
+
+                                 <div class="form-group">
+                                    <label class="col-sm-12 control-label">Giới tính
+                                        <strong class="text-danger">*</strong>
                                     </label>
+                                    <div class="col-sm-12">
+                                        <label class="ui-radio">
+                                            <input name="radio1" ng-model="admin.gender" type="radio" ng-value="1">&nbsp;&nbsp;
+                                            <label>Nam </label>
+                                        </label>&nbsp;&nbsp;
+                                        <label class="ui-radio">
+                                            <input name="radio1" ng-model="admin.gender" type="radio" ng-value="0">&nbsp;&nbsp;
+                                            <label>Nữ</label>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!--<div class="form-group">-->
+                                    <!--<label for="inputHometown" class="col-sm-2 control-label">{{-->
+                                        <!--'DOCTOR_MODULE.HOMETOWN' | translate }}-->
+                                    <!--</label>-->
                                     <!--<div class="col-sm-10">-->
-                                    <!--<input server-error name="gender" ng-model="admin.gender" type="text" class="form-control"-->
-                                    <!--id="inputGender" placeholder="{{ 'DOCTOR_MODULE.GENDER' | translate }}">-->
+                                        <!--<input server-error name="hometown" ng-model="admin.hometown" type="text"-->
+                                               <!--class="form-control" id="inputHometown"-->
+                                               <!--placeholder="{{ 'DOCTOR_MODULE.HOMETOWN' | translate }}">-->
                                     <!--</div>-->
-                                    <div class="col-sm-10">
-                                        <label ng-required="true" class="ui-radio">
-                                            <input name="radio1" ng-model="admin.gender" type="radio" ng-value="0">
-                                            <label>{{ 'DOCTOR_MODULE.MALE' | translate }}</label>
-                                        </label>
-                                        <label ng-required="true" class="ui-radio">
-                                            <input name="radio1" ng-model="admin.gender" type="radio" ng-value="1">
-                                            <label>{{ 'DOCTOR_MODULE.FEMALE' | translate }}</label>
-                                        </label>
-                                    </div>
-                                </div>
+                                <!--</div>-->
                                 <div class="form-group">
-                                    <label for="inputHometown" class="col-sm-2 control-label">{{
-                                        'DOCTOR_MODULE.HOMETOWN' | translate }}
-                                    </label>
-                                    <div class="col-sm-10">
-                                        <input server-error name="hometown" ng-model="admin.hometown" type="text"
-                                               class="form-control" id="inputHometown"
-                                               placeholder="{{ 'DOCTOR_MODULE.HOMETOWN' | translate }}">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputAddress" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.ADDRESS'
-                                        | translate }}
+                                    <label for="inputAddress" class="col-sm-2 control-label">Địa chỉ
                                     </label>
                                     <div class="col-sm-10">
                                         <input server-error name="address" ng-model="admin.address" type="text"
                                                class="form-control" id="inputAddress"
-                                               placeholder="{{ 'DOCTOR_MODULE.ADDRESS' | translate }}">
+                                               placeholder="Địa chỉ">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputNumberId" class="col-sm-2 control-label">{{
-                                        'DOCTOR_MODULE.NUMBER_ID' | translate }}
+                                    <label for="inputNumberId" class="col-sm-2 control-label">Số CMT
                                     </label>
                                     <div class="col-sm-10">
                                         <input server-error name="numberId" ng-model="admin.numberId" type="text"
                                                class="form-control" id="inputNumberId"
-                                               placeholder="{{ 'DOCTOR_MODULE.NUMBER_ID' | translate }}">
+                                               placeholder="Số CMT">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputDateOfIssue" class="col-sm-2 control-label">{{
-                                        'DOCTOR_MODULE.DATE_OF_ISSUE' | translate }}</label>
+                                    <label for="inputDateOfIssue" class="col-sm-2 control-label">Ngày cấp</label>
                                     <div class="col-sm-10">
                                         <input data-inputmask="'alias': 'dd/mm/yyyy', 'clearIncomplete': true"
                                                ng-model="admin.dateOfIssue" class="form-control"
                                                name="dateOfIssue" id="inputDateOfIssue"
-                                               placeholder="{{ 'DOCTOR_MODULE.DATE_OF_ISSUE' | translate }}">
+                                               placeholder="Ngày cấp">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputPlaceOfIssue" class="col-sm-2 control-label">{{
-                                        'DOCTOR_MODULE.PLACE_OF_ISSUE' | translate }}</label>
+                                    <label for="inputPlaceOfIssue" class="col-sm-2 control-label">Nơi cấp</label>
                                     <div class="col-sm-10">
                                         <input server-error name="placeOfIssue" ng-model="admin.placeOfIssue"
                                                type="text" class="form-control" id="inputPlaceOfIssue"
-                                               placeholder="{{ 'DOCTOR_MODULE.PLACE_OF_ISSUE' | translate }}">
+                                               placeholder="Nơi cấp">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputPhone" class="col-sm-2 control-label">{{ 'DOCTOR_MODULE.PHONE' |
-                                        translate }}
+                                    <label for="inputPhone" class="col-sm-2 control-label">Số điện thoại
                                     </label>
                                     <div class="col-sm-10">
                                         <input server-error name="phone"
                                                ng-class="{'has-error': adminForm.phone.$invalid}" ng-model="admin.phone"
                                                type="text" class="form-control" id="inputPhone"
-                                               placeholder="{{ 'DOCTOR_MODULE.PHONE' | translate }}">
+                                               placeholder="Số điện thoại">
                                     </div>
                                     <div class="col-sm-10 text-danger" ng-show="adminForm.phone.$invalid">
                                         {{'ENTER_PHONE_INVALID'

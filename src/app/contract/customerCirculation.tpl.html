@@ -1,11 +1,11 @@
 <div class="row mb-20">
-    <div class="col-sm-1">
+    <div class="col-sm-1" e-route-name="contract.update">
         <button type="button" class="btn btn-primary" ng-click="saveCirculation()"
                 ng-disabled="checkedList.length === 0">Lưu
         </button>
 
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2" e-route-name="contract.viewDate">
         <input input-value="filter.date" e-datepicker class="form-control" type="text" placeholder="Chọn ngày">
     </div>
 
@@ -22,11 +22,11 @@
 </div>
 
 <div class="row mb-20" style="align-items: center;">
-    <div class="col-sm-3" ng-if="contracts.length > 0">
-        <input class="mt15" type="checkbox" ng-model="checkbox.checkAll" id="checkAll">
-        <label class="form-check-label">
-        </label>
-    </div>
+    <!--<div class="col-sm-3" ng-if="contracts.length > 0">-->
+        <!--<input class="mt15" type="checkbox" ng-model="checkbox.checkAll" id="checkAll">-->
+        <!--<label class="form-check-label">-->
+        <!--</label>-->
+    <!--</div>-->
 
     <!--<div class="col-sm-3" ng-if="checkedList.length > 0">-->
     <!--<button type="button" class="btn btn-success" ng-click="showModal(0)">Đáo</button>-->
@@ -36,10 +36,10 @@
     <!--</div>-->
 </div>
 
+<!--row-headers="settings.rowHeaders"-->
+<!--min-spare-rows="settings.minSpareRows"-->
 <hot-table hot-id="my-handsontable"
            settings="settings"
-           row-headers="settings.rowHeaders"
-           min-spare-rows="settings.minSpareRows"
            on-after-init="onAfterInit()"
            datarows="contracts">
     <hot-column data="isActive" title="' '" type="'checkbox'" checked-template="true"
@@ -50,10 +50,10 @@
                 format="'#,###'" read-only></hot-column>
     <hot-column data="totalMoneyPaid" title="'Đã đóng'" width="100" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
-    <hot-column data="moneyHavePay" title="'Tiền phải đóng/ ngày'" width="150" type="'numeric'"
+    <hot-column data="moneyHavePay" title="'Đóng/ ngày'" width="100" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
     <!--<hot-column title="'Đóng nhanh'" type="'text'" width="140" read-only></hot-column>-->
-    <hot-column data="moneyPaid" title="'Đóng trong ngày'" width="150" type="'numeric'"
+    <hot-column data="moneyPaid" title="'Đóng trong ngày'" width="130" type="'numeric'"
                 format="'#,###'"></hot-column>
     <hot-column data="contractStatus" title="'Thao tác'" type="'text'" width="150" read-only></hot-column>
     <hot-column data="status" title="'Trạng thái'" type="'text'" width="80" read-only></hot-column>
@@ -168,7 +168,7 @@
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-3 control-label">
-                                Tiền vay:
+                                Gói vay:
                             </label>
                             <div class="col-md-4 control-label">
                                 <input type="text" name="selectedCirculation.newLoanMoney" currency-input
@@ -191,7 +191,7 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                (Tiền vay + lãi)
+                                Thực thu
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">

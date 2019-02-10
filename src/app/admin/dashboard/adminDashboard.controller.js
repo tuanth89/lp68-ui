@@ -5,8 +5,9 @@
         .module('ati.admin')
         .controller('AdminDashboard', AdminDashboard);
 
-    function AdminDashboard($scope, UserStateHelper) {
-        $scope.dashboardItem = [];
+    function AdminDashboard($scope, $rootScope, dashboard, UserStateHelper) {
+
+        $scope.dashboard = angular.copy(dashboard) || {};
         let baseSate = UserStateHelper.getBaseState();
         $scope.studentListUrl = baseSate + '.studentManagement.list';
         $scope.courseListUrl = baseSate + '.course.list';

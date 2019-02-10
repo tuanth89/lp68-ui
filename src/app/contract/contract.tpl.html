@@ -8,6 +8,7 @@
         <li ui-sref-active="active"><a ui-sref=".chot">Chốt</a></li>
         <li ui-sref-active="active"><a ui-sref=".be">Bễ</a></li>
         <li ui-sref-active="active"><a ui-sref=".ketThuc">Kết thúc</a></li>
+        <li ui-sref-active="active"><a ui-sref=".hetHo">Hết họ</a></li>
     </ul>
     <div class="tab-content">
         <div ui-view="content" class="tab-pane col-md-12 bgc-white p-20 active">
@@ -128,6 +129,66 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dongTienModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Đóng tiền</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="widget-box">
+                    <form class="form-inline row-border label-style">
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Họ và tên:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{contractSelected.customer.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Số hợp đồng:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{contractSelected.contractNo}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Gói vay:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{contractSelected.loanMoney | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Đóng:
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" ng-model="contractSelected.newPayMoney" currency-input
+                                       class="form-control textAlign"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary"
+                        ng-disabled="contractSelected.newPayMoney <= 0"
+                        ng-click="dongTienFunc()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu</button>
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 {
-  "name": "kham-suc-khoe-ui",
+  "name": "loc-phat-68",
   "private": true,
   "devDependencies": {
     "grunt": "^0.4.5",
@@ -38,6 +38,7 @@
     "bootstrap": "^3.3.7",
     "gem": "^2.4.3",
     "grunt-sync": "0.0.7",
+    "perfect-scrollbar": "^1.4.0",
     "popper.js": "^1.0.4"
   }
 }

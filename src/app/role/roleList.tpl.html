@@ -1,0 +1,64 @@
+
+
+<h4 class="title-page">Danh sách nhóm quyền</h4>
+<div class="bgc-white bd bdrs-3 p-20 mB-20">
+    <div>
+        <div class="filter-region">
+            <div class="row">
+                <div class="col-sm-3" style="padding-left: 30px">
+                    <div class="input-group search-box">
+                        <input class="form-control" ng-model="filter.search" autocomplete="off" name="search" type="text" placeholder="Tìm kiếm" id="roleFilter" ng-keypress="filterSearch($event)">
+                        <div class="input-group-addon" ng-click="getData()">
+                            <i class="fa fa-search"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="button-bar hidden-xs float-right" e-route-name="role.create">
+                        <button ui-sref="^.new" class="btn btn-primary" type="button">
+                            <span class="ti ti-plus"></span>
+                            Thêm mới nhóm quyền
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="search-result" ng-if="keyword && total !== ''">
+                    Hiển thị {{total}} kết quả cho từ khóa <b>{{keyword}}</b>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered" style="width: 100%;">
+            <thead>
+                <tr role="row">
+                    <th class="sorting_disabled text-center" rowspan="1" colspan="1">STT</th>
+                    <th class="sorting_disabled text-center" rowspan="1" colspan="1">Tên nhóm quyền</th>
+                    <th class="sorting_disabled text-center" rowspan="1" colspan="1">Mô tả</th>
+                    <th class="sorting_disabled text-center" rowspan="1" colspan="1" e-route-name="role.update,role.remove">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr role="row" ng-if="tableData && tableData.length > 0" ng-repeat="rowData in tableData">
+                    <td class="sorting_disabled text-center" rowspan="1" colspan="1">{{$index + 1}}</td>
+                    <td class="sorting_disabled" rowspan="1" colspan="1">
+                        <a ui-sref="^.edit({friendlyName:rowData.friendlyName})">{{rowData.name}}</a>
+                    </td>
+                    <td class="sorting_disabled" rowspan="1" colspan="1">{{rowData.description}}</td>
+                    <td class="sorting_disabled text-center non-overflow" e-route-name="role.update,role.remove">
+                        <div ng-if="!rowData.isDefault" class="btn-group"><button type="button" class="btn btn-default fa fa-ellipsis-v" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only"></span></button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" ui-sref="^.edit({friendlyName:rowData.friendlyName})" e-route-name="role.update">Sửa</a>
+                                <a class="dropdown-item" ng-click="remove(rowData.friendlyName)" e-route-name="role.remove">Xóa</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr role="row" ng-if="tableData && tableData.length <= 0">
+                    <td rolspan="1" colspan="5" class="sorting_disabled text-center">Không tìm thấy bản ghi nào</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

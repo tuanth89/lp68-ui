@@ -4,23 +4,36 @@
     angular.module('ati.contract')
         .controller('ContractDaoHanController', ContractDaoHanController);
 
-    function ContractDaoHanController($scope, $stateParams, $timeout, $state, hotRegisterer, Restangular, contracts) {
+    function ContractDaoHanController($scope, CONTRACT_STATUS, $timeout, ContractManager, hotRegisterer, Restangular) {
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
-        $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+        // $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            ContractManager.one('allContract').one('byType').getList("", {
+                type: CONTRACT_STATUS.MATURITY,
+                storeId: $scope.$parent.storeSelected.storeId
+            })
+                .then((contracts) => {
+                    $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+                })
+                .catch((error) => {
+
+                });
+        });
 
         let hotInstance = "";
 
         $scope.settings = {
             stretchH: "all",
             autoWrapRow: true,
-            rowHeaders: true,
+            // rowHeaders: true,
             colHeaders: true,
             minSpareRows: 0,
             // strict: true
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1) {
+                if (col === 1 || col === 2 || col === 7) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
@@ -57,7 +70,13 @@
             if (col === 1) {
                 // td.innerHTML = '<u><a ng-click="viewCustomerCalendar(' + value + ')">' + value + '</a></u>';
                 td.innerHTML = '<u><a class="linkable cusRow" value="' + value + '" ng-click="viewCustomerCalendar(' + value + ')">' + value + '</a></u>';
+            }
 
+            if (col === 2 || col === 7) {
+                if (value)
+                    td.innerHTML = moment(value).format("DD/MM/YYYY");
+                else
+                    td.innerHTML = '';
             }
         }
 

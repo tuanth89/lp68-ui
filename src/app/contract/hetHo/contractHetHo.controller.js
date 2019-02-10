@@ -2,19 +2,15 @@
     'use strict';
 
     angular.module('ati.contract')
-        .controller('ContractKetThucController', ContractKetThucController);
+        .controller('ContractHetHoController', ContractHetHoController);
 
-    function ContractKetThucController($scope, $timeout, CONTRACT_STATUS, hotRegisterer, ContractManager, Restangular) {
+    function ContractHetHoController($scope, CONTRACT_STATUS, $timeout, $state, hotRegisterer, ContractManager, Restangular) {
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
 
         $scope.$on('$viewContentLoaded', function (event, data) {
-            $scope.getData();
-        });
-
-        $scope.getData = () => {
             ContractManager.one('allContract').one('byType').getList("", {
-                type: CONTRACT_STATUS.END,
+                type: CONTRACT_STATUS.ACCOUNTANT_END,
                 storeId: $scope.$parent.storeSelected.storeId
             })
                 .then((contracts) => {
@@ -23,10 +19,9 @@
                 .catch((error) => {
 
                 });
-        };
+        });
 
         let hotInstance = "";
-
         $scope.settings = {
             stretchH: "all",
             autoWrapRow: true,
@@ -35,24 +30,17 @@
             minSpareRows: 0,
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 7 || col === 8 || col === 9) {
+                cellPrp.readOnly = true;
+                if (col === 1 || col === 2 || col === 7) {
                     cellPrp.renderer = myBtns;
-                    cellPrp.readOnly = true;
                 }
+
                 return cellPrp;
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {
                 if (event.realTarget.className.indexOf('cusRow') >= 0) {
                     let selectedCus = angular.copy($scope.contracts[rowCol.row]);
                     $scope.$parent.getContractsByCus(selectedCus);
-                    return;
-                }
-
-                if (event.realTarget.className.indexOf('btnDuyet') >= 0) {
-                    $scope.contractSelected = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
-                    $scope.$apply();
-
-                    $scope.accountantEnd();
                 }
             }
         };
@@ -70,39 +58,7 @@
                 else
                     td.innerHTML = '';
             }
-
-            if (col === 8) {
-                let statusName = "";
-                switch (value) {
-                    case 6:
-                        statusName = "Kết thúc";
-                        break;
-                    case 7:
-                        statusName = "Kết thúc đáo";
-                        break;
-
-                }
-                td.innerHTML = '<button class="btnStatus btn status-' + value + '" value="' + 0 + '">' + statusName + '</button>';
-            }
-
-            if (col === 9) {
-                td.innerHTML = '<button class="btnStatus btnDuyet btn status-0">' + 'Duyệt' + '</button>';
-            }
         }
-
-        $scope.accountantEnd = () => {
-            ContractManager
-                .one($scope.contractSelected._id)
-                .one('changeStatus')
-                .customPUT({status: CONTRACT_STATUS.ACCOUNTANT_END})
-                .then((contract) => {
-                    toastr.success('Cập nhật thành công!');
-                    $scope.getData();
-                })
-                .catch((error) => {
-                    toastr.error('Cập nhật không thành công!');
-                });
-        };
 
         $timeout(function () {
             hotInstance = hotRegisterer.getInstance('my-handsontable');
