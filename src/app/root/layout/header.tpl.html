@@ -32,20 +32,20 @@
                         <p ng-if="systemNotifications.list.length == 0" style="text-align: center;margin-top: 5px;">Không có thông báo nào.</p>
                         <li ng-click="goToURL(item)" style="position: relative;" ng-repeat="item in systemNotifications.list">
                             <span ng-click="checkReaded(item)" ng-class="{'notifications_status--unread': !item.read}" class="notifications_status" title="Đánh dấu đã đọc"></span>
-                            <a href="medu.vn" ng-click="goToURL(item)" target="_blank" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                            <a ng-click="goToURL(item)" target="_blank" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
                                 <div class="peer mR-15">
                                     <img class="w-3r bdrs-50p" src="{{item.user.photo ? item.user.photo: '/assets/images/anonymous.png'}}" alt="">
                                 </div>
                                 <div class="peer peer-greed">
-                                    <span>
-                                        <!-- <span class="fw-500">{{item.user.name}}</span>
-                                                <span class="c-grey-600">liked your
-                                                    <span class="text-dark">post</span>
-                                                </span> -->
-                                        Giảng viên
-                                        <b>{{item.user.name}}</b> đã tạo khóa học
-                                        <b>{{item.course.name}}</b> mới. Vui lòng duyệt nội dung khóa học đó.
-                                    </span>
+                                    <!--<span>-->
+                                        <!--&lt;!&ndash; <span class="fw-500">{{item.user.name}}</span>-->
+                                                <!--<span class="c-grey-600">liked your-->
+                                                    <!--<span class="text-dark">post</span>-->
+                                                <!--</span> &ndash;&gt;-->
+                                        <!--Giảng viên-->
+                                        <!--<b>{{item.user.name}}</b> đã tạo khóa học-->
+                                        <!--<b>{{item.course.name}}</b> mới. Vui lòng duyệt nội dung khóa học đó.-->
+                                    <!--</span>-->
                                     <p class="m-0">
                                         <small class="fsz-xs" ng-bind="item.createdAt"></small>
                                     </p>

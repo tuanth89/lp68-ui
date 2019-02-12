@@ -1,12 +1,34 @@
 <div class="row mb-20">
     <div class="col-sm-1" e-route-name="contract.update">
-        <button type="button" class="btn btn-primary" ng-click="saveCustomer()">
+        <button type="button" class="btn btn-primary" ng-click="saveCustomer()" ng-disabled="isAccountant && !userSelected.id">
             Lưu
         </button>
 
     </div>
-    <div class="col-sm-3" e-route-name="contract.viewDate">
+    <div class="col-sm-2" e-route-name="contract.viewDate">
         <input input-value="filter.date" e-datepicker class="form-control" type="text" placeholder="Chọn ngày">
+    </div>
+
+    <div class="col-sm-3" ng-if="isAccountant">
+        <ui-select ng-model="userSelected.storeId" theme="bootstrap" search-enabled="true" on-select="selectedStoreEvent($item)">
+            <ui-select-match placeholder="Cửa hàng">
+                <span ng-bind-html="$select.selected.name"></span>
+            </ui-select-match>
+            <ui-select-choices repeat="i._id as i in stores | filter : {name: $select.search}">
+                <span ng-bind-html="i.name | highlight: $select.search"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+
+    <div class="col-sm-3" ng-if="isAccountant">
+        <ui-select ng-model="userSelected.id" theme="bootstrap" search-enabled="true">
+            <ui-select-match placeholder="Nhân viên">
+                <span ng-bind-html="$select.selected.fullName"></span>
+            </ui-select-match>
+            <ui-select-choices repeat="i._id as i in usersByStore | filter : {fullName: $select.search}">
+                <span ng-bind-html="i.fullName | highlight: $select.search"></span>
+            </ui-select-choices>
+        </ui-select>
     </div>
 </div>
 
@@ -17,9 +39,10 @@
            datarows="customers">
     <hot-column data="isHdLaiDung" title="'Lãi đứng'" type="'checkbox'" checked-template="true"
                 unchecked-template="false" width="30"></hot-column>
-    <hot-column data="customer.name" title="'Họ và tên'" width="100" type="'autocomplete'">
-        <hot-autocomplete datarows="{{customerSource}}"></hot-autocomplete>
-    </hot-column>
+    <!--<hot-column data="customer.name" title="'Họ và tên'" width="100" type="'autocomplete'">-->
+    <!--<hot-autocomplete datarows="{{customerSource}}"></hot-autocomplete>-->
+    <!--</hot-column>-->
+    <hot-column data="customer.name" title="'Họ và tên'" width="100" type="'dropdown'"></hot-column>
     <hot-column data="loanMoney" title="'Gói vay'" width="60" type="'numeric'" format="'#,###'"></hot-column>
     <hot-column data="actuallyCollectedMoney" title="'Thực thu'" width="60" type="'numeric'"
                 format="'#,###'"></hot-column>

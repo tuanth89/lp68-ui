@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractHetHoController', ContractHetHoController);
 
-    function ContractHetHoController($scope, CONTRACT_STATUS, $timeout, $state, hotRegisterer, ContractManager, Restangular) {
+    function ContractHetHoController($scope, CONTRACT_STATUS, $timeout, CONTRACT_EVENT, hotRegisterer, ContractManager, Restangular) {
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
 
@@ -19,6 +19,10 @@
                 .catch((error) => {
 
                 });
+        });
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            hotInstance.render();
         });
 
         let hotInstance = "";

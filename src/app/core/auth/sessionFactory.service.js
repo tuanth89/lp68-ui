@@ -15,10 +15,11 @@
              * @param {String} email
              * @param {String} photo
              * @param {Array} [userRoles]
-             * @param {String} [selectedStoreId]
+             * @param {String} selectedStoreId
+             * @param {Boolean} isAccountant
              */
-            createNew: function (token, id, fullName, username, email, userRoles, photo, selectedStoreId) {
-                return new Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId);
+            createNew: function (token, id, fullName, username, email, userRoles, photo, selectedStoreId, isAccountant) {
+                return new Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, isAccountant);
             },
 
             /**
@@ -46,10 +47,10 @@
                 }
 
                 if (!data.photo) {
-                    data.photo = '/assets/images/45611310_7ad3.jpg';
+                    data.photo = '/assets/images/anonymous.png';
                 }
 
-                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo, data.selectedStoreId);
+                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo, data.selectedStoreId, data.isAccountant);
             },
 
             isSession: function (session) {
@@ -57,13 +58,14 @@
             }
         };
 
-        function Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId) {
+        function Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, isAccountant) {
             this.token = token;
             this.id = id || null;
             this.username = username;
             this.fullName = fullName;
             this.email = email;
             this.selectedStoreId = selectedStoreId;
+            this.isAccountant = isAccountant;
 
             if (!angular.isArray(userRoles)) {
                 userRoles = [];
@@ -77,13 +79,17 @@
             return this.userRoles.indexOf(role) !== -1;
         };
 
-        Session.prototype.isAdmin = function () {
-            return this.userRoles.indexOf(USER_ROLES.admin) !== -1;
+        // Session.prototype.isAdmin = function () {
+        //     return this.userRoles.indexOf(USER_ROLES.admin) !== -1;
+        // };
+
+        Session.prototype.hasRoleAccountant = function () {
+            return this.isAccountant;
         };
 
-        Session.prototype.isSuperAdmin = function () {
-            return this.userRoles.indexOf(USER_ROLES.superAdmin) !== -1;
-        };
+        // Session.prototype.isSuperAdmin = function () {
+        //     return this.userRoles.indexOf(USER_ROLES.superAdmin) !== -1;
+        // };
 
         return api;
     }

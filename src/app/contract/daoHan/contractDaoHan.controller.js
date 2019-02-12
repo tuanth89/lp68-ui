@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractDaoHanController', ContractDaoHanController);
 
-    function ContractDaoHanController($scope, CONTRACT_STATUS, $timeout, ContractManager, hotRegisterer, Restangular) {
+    function ContractDaoHanController($scope, CONTRACT_STATUS, CONTRACT_EVENT, $timeout, ContractManager, hotRegisterer, Restangular) {
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
         // $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
@@ -20,6 +20,10 @@
                 .catch((error) => {
 
                 });
+        });
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            hotInstance.render();
         });
 
         let hotInstance = "";

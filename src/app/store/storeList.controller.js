@@ -64,7 +64,7 @@
                     orderable: false,
                     data: "name",
                     render: function (data, e, full, meta) {
-                        return `<a ui-sref="^.edit({id:'${full._id}'})">${data}</a>`;
+                        return `<a ui-sref="^.detail({id:'${full._id}'})">${data}</a>`;
                     },
                     fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
                         $compile(nTd)($scope);

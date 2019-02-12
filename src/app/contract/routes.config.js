@@ -7,7 +7,7 @@
         UserStateHelperProvider
             .state('contract', {
                 abstract: true,
-                url: '/contract',
+                url: '/hop-dong',
                 views: {
                     'content@app': {
                         controller: 'ContractController',
@@ -24,8 +24,8 @@
                     }
                 },
                 resolve: {
-                    customerSource: function($stateParams, CustomerManager) {
-                        return CustomerManager.one('list').one('autoComplete').getList();
+                    customerSource: function ($stateParams, CustomerManager, Auth) {
+                        return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId});
                     }
                 }
             })
@@ -136,14 +136,14 @@
                     }
                 }
             })
-            // .state('contract.test', {
-            //     url: '/calendar-test',
-            //     views: {
-            //         'content@app.root.contract': {
-            //             controller: 'CalendarTestController',
-            //             templateUrl: 'contract/test/calendarTest.tpl.html'
-            //         }
-            //     }
-            // })
+        // .state('contract.test', {
+        //     url: '/calendar-test',
+        //     views: {
+        //         'content@app.root.contract': {
+        //             controller: 'CalendarTestController',
+        //             templateUrl: 'contract/test/calendarTest.tpl.html'
+        //         }
+        //     }
+        // })
     }
 })();

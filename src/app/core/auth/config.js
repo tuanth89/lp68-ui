@@ -7,7 +7,7 @@
         .constant('SELECTED_STORE_ID', 'selectedStoreId')
 
         .constant('USER_ROLES', {
-            root: 'ROLE_ROOT'
+            root: 'super-admin'
         })
 
         .constant('AUTH_EVENTS', {

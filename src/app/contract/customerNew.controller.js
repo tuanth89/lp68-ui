@@ -4,12 +4,36 @@
     angular.module('ati.contract')
         .controller('CustomerNewController', CustomerNewController);
 
-    function CustomerNewController($scope, $stateParams, $timeout, $state, hotRegisterer, customerSource, ContractManager, Restangular, Auth) {
+    function CustomerNewController($scope, CONTRACT_EVENT, $timeout, StoreManager, hotRegisterer, customerSource, ContractManager, Restangular, Auth) {
         let currentUser = Auth.getSession();
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
         $scope.customerSource = _.map(customerS, 'name').join(',');
 
         let selectedStoreId = $scope.$parent.storeSelected.storeId;
+
+        $scope.userSelected = {storeId: "", id: ""};
+        $scope.stores = [];
+        $scope.usersByStore = [];
+
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            $scope.getData();
+
+            StoreManager.one('listActive').getList()
+                .then((stores) => {
+                    $scope.stores = angular.copy(Restangular.stripRestangular(stores));
+                });
+        });
+
+        $scope.selectedStoreEvent = function (item) {
+            $scope.userSelected.id = "";
+            StoreManager.one(item._id).one('listUserByStore').get()
+                .then((store) => {
+                    $scope.usersByStore = angular.copy(Restangular.stripRestangular(store.staffs));
+                }, (error) => {
+                })
+                .finally(() => {
+                });
+        };
 
         $scope.filter = {date: ""};
         $scope.$watch('filter.date', function (newValue, oldValue) {
@@ -20,9 +44,13 @@
             }, 100);
         });
 
-        $scope.$on('$viewContentLoaded', function (event, data) {
-            $scope.getData();
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            hotInstance.render();
         });
+
+        $scope.onAfterInit = function () {
+            hotInstance.validateCells();
+        };
 
         $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
 
@@ -91,8 +119,9 @@
                 // cellPrp.readOnly = true;
 
                 if (col === 1) {
-                    cellPrp.type = 'autocomplete';
+                    cellPrp.type = 'dropdown';
                     cellPrp.source = _.map(customerS, 'name');
+                    cellPrp.strict = true;
 
                     // hotInstance.updateSettings($scope.settings);
                     // cellPrp.datarows = $scope.customerSource;
@@ -199,8 +228,8 @@
         }, 0);
 
         $scope.saveCustomer = () => {
-            if (!selectedStoreId) {
-                toastr.error("Chưa chọn cửa hàng!");
+            if ($scope.$parent.isAccountant && !$scope.userSelected.id) {
+                toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
                 return;
             }
 

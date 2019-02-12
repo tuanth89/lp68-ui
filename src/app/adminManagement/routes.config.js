@@ -7,7 +7,7 @@
     function addStates(UserStateHelperProvider) {
         UserStateHelperProvider.state('adminManagement', {
             abstract: true,
-            url: '/adminManagement',
+            url: '/tai-khoan-he-thong',
             ncyBreadcrumb: {
                 skip: true
             },
@@ -17,7 +17,7 @@
         })
             .state('adminManagement.list', {
                 // url: '/list?page&sortField&orderBy&search',
-                url: '/list?page&search',
+                url: '/danh-sach?page&search',
                 views: {
                     'content@app': {
                         controller: 'AdminList',
@@ -36,7 +36,7 @@
             })
 
             .state('adminManagement.new', {
-                url: '/new',
+                url: '/tao-moi',
                 views: {
                     'content@app': {
                         controller: 'AdminForm',
@@ -65,7 +65,7 @@
 
             .state({
                 name: 'adminManagement.edit',
-                url: '/edit/:id',
+                url: '/chinh-sua/:id',
                 views: {
                     'content@app': {
                         controller: 'AdminForm',

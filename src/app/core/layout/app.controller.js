@@ -4,12 +4,11 @@
     angular.module('ati.core.layout')
         .controller('AppController', App);
 
-    function App($rootScope, $scope, Auth, userSession, $timeout, AUTH_EVENTS, LANG_KEY, storeList, Restangular) {
+    function App($rootScope, $scope, Auth, userSession, $timeout, AUTH_EVENTS, LANG_KEY, storeList, Restangular, CONTRACT_EVENT) {
         $scope.storeList = angular.copy(Restangular.stripRestangular(storeList));
         $scope.currentUser = userSession;
-        $scope.isRoot = Auth.isRoot;
-        // $scope.isAdmin = Auth.isAdmin;
-        // $scope.isDoctor = Auth.isDoctor;
+        $scope.isRoot = Auth.isRoot();
+        $scope.isAccountant = Auth.isAccountant();
 
         $scope.storeSelected = {storeId: ""};
         $scope.storeSelected.storeId = $scope.currentUser.selectedStoreId;
@@ -113,22 +112,39 @@
                 }
             });
 
-            // ٍSidebar Toggle
-            $('.sidebar-toggle').on('click', e => {
-                $('.app').toggleClass('is-collapsed');
-                e.preventDefault();
-            });
+            // // ٍSidebar Toggle
+            // $('.sidebar-toggle').on('click', e => {
+            //     $('.app').toggleClass('is-collapsed');
+            //     e.preventDefault();
+            // });
 
-            /**
-             * Wait untill sidebar fully toggled (animated in/out)
-             * then trigger window resize event in order to recalculate
-             * masonry layout widths and gutters.
-             */
-            $('#sidebar-toggle').click(e => {
-                e.preventDefault();
-                setTimeout(() => {
-                    window.dispatchEvent(window.EVENT);
+            // /**
+            //  * Wait untill sidebar fully toggled (animated in/out)
+            //  * then trigger window resize event in order to recalculate
+            //  * masonry layout widths and gutters.
+            //  */
+            // $('#sidebar-toggle').click(e => {
+            //     e.preventDefault();
+            //     setTimeout(() => {
+            //         window.dispatchEvent(window.EVENT);
+            //     }, 300);
+            // });
+
+            $('#sidebar-toggle').click(function () {
+                let bodyHasClass = $('body').hasClass('is-collapsed');
+
+                if (bodyHasClass) {
+                    $("body").removeClass("is-collapsed");
+                } else {
+                    $("body").addClass("is-collapsed");
+                }
+
+                //Khi thu gọn/mở rộng thanh menu thì trigger sự kiện resize của window để database thực hiện render lại ui
+                setTimeout(function () {
+                    $(window).trigger('resize');
+                    $scope.$broadcast(CONTRACT_EVENT.RESIZE_TABLE);
                 }, 300);
+
             });
 
         }, 0);

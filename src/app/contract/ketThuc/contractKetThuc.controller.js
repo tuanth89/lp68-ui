@@ -4,12 +4,16 @@
     angular.module('ati.contract')
         .controller('ContractKetThucController', ContractKetThucController);
 
-    function ContractKetThucController($scope, $timeout, CONTRACT_STATUS, hotRegisterer, ContractManager, Restangular) {
+    function ContractKetThucController($scope, $timeout, CONTRACT_STATUS, hotRegisterer, ContractManager, Restangular, CONTRACT_EVENT) {
         $scope.rowHeaders = true;
         $scope.colHeaders = true;
 
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
+        });
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            hotInstance.render();
         });
 
         $scope.getData = () => {

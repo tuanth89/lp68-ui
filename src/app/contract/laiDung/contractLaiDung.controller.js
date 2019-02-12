@@ -16,6 +16,10 @@
             $scope.getData();
         });
 
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            hotInstance.render();
+        });
+
         $scope.getData = () => {
             ContractManager.one('allContract').one('byType').getList("", {
                 type: CONTRACT_STATUS.STAND,

@@ -24,7 +24,7 @@
             isAuthenticated: isAuthenticated,
             isAuthorized: isAuthorized,
             getAuthorizationHeaderValue: getAuthorizationHeaderValue,
-            isAdmin: isAdmin,
+            isAccountant: isAccountant,
             isRoot: isRoot
         };
 
@@ -207,10 +207,14 @@
             return null;
         }
 
-        function isAdmin() {
-            // If the admin is currently logged in as a content manager
-            // they will have a previous token set
-            return isAuthorized(USER_ROLES.root) && !sessionStorage.getPreviousToken();
+        // function isAdmin() {
+        //     // If the admin is currently logged in as a content manager
+        //     // they will have a previous token set
+        //     return isAuthorized(USER_ROLES.root) && !sessionStorage.getPreviousToken();
+        // }
+
+        function isAccountant() {
+            return isAuthenticated() && _$currentSession.hasRoleAccountant();
         }
 
         function isRoot() {

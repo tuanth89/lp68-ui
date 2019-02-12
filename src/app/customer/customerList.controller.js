@@ -48,7 +48,7 @@
         }])
         .controller('CustomerListController', CustomerListController);
 
-    function CustomerListController($scope, Upload, $timeout, IMGUR_API, hotRegisterer, CustomerManager, Restangular, FileUploader) {
+    function CustomerListController($scope, Upload, $timeout, CONTRACT_EVENT, IMGUR_API, hotRegisterer, CustomerManager, Restangular, FileUploader, StoreManager) {
         $scope.settings = {rowHeaders: true, colHeaders: true, minSpareRows: 1};
 
         let hotInstance = "";
@@ -56,8 +56,35 @@
             _id: "",
             name: "",
             address: "",
-            phone: ""
+            phone: "",
+            storeId: $scope.storeSelected.storeId
         };
+
+        $scope.userSelected = {storeId: "", id: ""};
+        $scope.stores = [];
+        $scope.usersByStore = [];
+
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            StoreManager.one('listActive').getList()
+                .then((stores) => {
+                    $scope.stores = angular.copy(Restangular.stripRestangular(stores));
+                });
+        });
+
+        $scope.selectedStoreEvent = function (item) {
+            $scope.userSelected.id = "";
+            StoreManager.one(item._id).one('listUserByStore').get()
+                .then((store) => {
+                    $scope.usersByStore = angular.copy(Restangular.stripRestangular(store.staffs));
+                }, (error) => {
+                })
+                .finally(() => {
+                });
+        };
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            hotInstance.render();
+        });
 
         $scope.formProcessing = false;
         $scope.fileImgDoc = "";
@@ -67,21 +94,21 @@
         // $scope.customers = angular.copy(Restangular.stripRestangular(contracts));
 
         $scope.settings = {
-            contextMenu: {
-                items: {
-                    'row_above': {name: 'Thêm dòng trên'},
-                    'row_below': {name: 'Thêm dòng dưới'},
-                    'remove_row': {name: 'Xóa'}
-                }
-                // callback: function (key, options) {
-                //     if (key === 'remove_row') {
-                //         if (hotInstance.countRows() > 1) {
-                //             var indexArr = hot.getSelected();
-                //             var selectedData = hot.getDataAtRow(indexArr[0]);
-                //         }
-                //     }
-                // }
-            },
+            // contextMenu: {
+            //     items: {
+            //         'row_above': {name: 'Thêm dòng trên'},
+            //         'row_below': {name: 'Thêm dòng dưới'},
+            //         'remove_row': {name: 'Xóa'}
+            //     }
+            //     // callback: function (key, options) {
+            //     //     if (key === 'remove_row') {
+            //     //         if (hotInstance.countRows() > 1) {
+            //     //             var indexArr = hot.getSelected();
+            //     //             var selectedData = hot.getDataAtRow(indexArr[0]);
+            //     //         }
+            //     //     }
+            //     // }
+            // },
             beforeRemoveRow: function (index, amount) {
                 if (hotInstance.countRows() <= 1)
                     return false;
@@ -100,7 +127,7 @@
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
 
-                if (col === 5 || col === 6 || col === 7)
+                if (col !== 0)
                     cellPrp.renderer = columnRenderer;
 
                 return cellPrp;
@@ -155,16 +182,16 @@
 
         function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
-            if (col === 5) {
+            if (cellProperties.prop === "photo") {
                 if (value)
                     td.innerHTML = '<img src="' + value + '" style="width: 50px; height: 50px"/>&nbsp;&nbsp;<button class="btnAction btn btn-success avaRow" value="' + value + '">Tải lên</button>';
                 else
-                    td.innerHTML = '<button class="btnAction btn btn-success avaRow" value="' + value + '">Tải lên</button>';
+                    td.innerHTML = '<div class="ht-center"><button class="btnAction btn btn-success avaRow" value="' + value + '">Tải lên</button></div>';
                 return;
             }
 
-            if (col === 6) {
-                td.innerHTML = '<u><a class="linkable resourceRow" value="' + value + '">Xem</a></u>';
+            if (cellProperties.prop === "imgResource") {
+                td.innerHTML = '<div class="ht-center"><button class="btnAction btn btn-success resourceRow" value="' + value + '">Xem</button></div>';
                 return;
             }
 
@@ -215,7 +242,9 @@
 
         $scope.getData = function () {
             CustomerManager
-                .getList("")
+                .one($scope.$parent.storeSelected.storeId)
+                .one('list')
+                .getList()
                 .then(function (resp) {
                     $scope.customers = angular.copy(Restangular.stripRestangular(resp));
                     $scope.customers.push(angular.copy(customerItem));
@@ -273,6 +302,11 @@
         // });
 
         $scope.saveCustomer = () => {
+            if ($scope.$parent.isAccountant && !$scope.userSelected.id) {
+                toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
+                return;
+            }
+
             let customers = angular.copy($scope.customers);
             _.remove(customers, function (item) {
                 return !item.name;

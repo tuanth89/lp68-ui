@@ -7,10 +7,10 @@
         UserStateHelperProvider
             .state('store', {
                 abstract: true,
-                url: '/store'
+                url: '/cua-hang'
             })
             .state('store.list', {
-                url: '/list?page',
+                url: '/danh-sach?page',
                 views: {
                     'content@app': {
                         controller: 'StoreListController',
@@ -19,7 +19,7 @@
                 },
             })
             .state('store.new', {
-                url: '/new',
+                url: '/tao-moi',
                 views: {
                     'content@app': {
                         controller: 'StoreFormController',
@@ -28,7 +28,7 @@
                 },
             })
             .state('store.edit', {
-                url: '/edit/:id',
+                url: '/chinh-sua/:id',
                 views: {
                     'content@app': {
                         controller: 'StoreFormController',
@@ -37,7 +37,7 @@
                 },
             })
             .state('store.detail', {
-                url: '/detail/:id',
+                url: '/chi-tiet/:id',
                 views: {
                     'content@app': {
                         controller: 'StoreFormController',

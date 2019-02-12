@@ -6,7 +6,7 @@
     function addStates(UserStateHelperProvider) {
         UserStateHelperProvider
             .state('customer', {
-                url: '/customer-list',
+                url: '/ds-khach-hang',
                 views: {
                     'content@app': {
                         controller: 'CustomerListController',

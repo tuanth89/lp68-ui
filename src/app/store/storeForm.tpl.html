@@ -85,6 +85,7 @@
 
                         <div class="col-sm-8 col-md-8">
                             <ui-select remove-selected="false"
+                                       ng-disabled="mode=='detail'"
                                        ng-model="store.ownStore" theme="bootstrap" search-enabled="true">
                                 <ui-select-match allow-clear="true" placeholder="Chủ cửa hàng">
                                     <span ng-bind-html="$select.selected.name"></span>
@@ -102,7 +103,7 @@
                         </label>
 
                         <div class="col-sm-8 col-md-8">
-                            <ui-select ng-model="store.accountant" theme="bootstrap" search-enabled="true">
+                            <ui-select ng-model="store.accountant" theme="bootstrap" search-enabled="true" ng-disabled="mode=='detail'">
                                 <ui-select-match allow-clear placeholder="Kế toán">
                                     <span ng-bind-html="$select.selected.name"></span>
                                 </ui-select-match>
@@ -119,7 +120,7 @@
                         </label>
 
                         <div class="col-sm-8 col-md-8">
-                            <ui-select remove-selected="false" multiple
+                            <ui-select remove-selected="false" multiple ng-disabled="mode=='detail'"
                                        ng-model="store.staffs" theme="bootstrap" search-enabled="true">
                                 <ui-select-match allow-clear placeholder="Nhân viên"
                                                  remove-selected="false">
@@ -147,19 +148,19 @@
                 </form>
             </div>
             <div class="col-sm-12" style="text-align: center;">
-                <button type="button" ng-click="submit()" ng-if="mode=='add'" ng-disabled="!isFormValid() || formProcessing"
+                <button e-route-name="store.create" type="button" ng-click="submit()" ng-if="mode=='add'" ng-disabled="!isFormValid() || formProcessing"
                         class="btn btn-sm btn-primary"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>
                     Gửi
                 </button>
-                <button type="button" ng-click="submit()" ng-if="mode=='edit'" ng-disabled="!isFormValid()"
+                <button e-route-name="store.update" type="button" ng-click="submit()" ng-if="mode=='edit'" ng-disabled="!isFormValid()"
                         class="btn btn-sm btn-primary">
                     Lưu
                 </button>
-                <button ui-sref="^.edit({ id: store._id })" ng-if="mode=='detail'"
+                <button e-route-name="store.update" ui-sref="^.edit({ id: store._id })" ng-if="mode=='detail'"
                         class="btn btn-sm btn-primary" type="button">
                     Sửa
                 </button>
-                <button ui-sref="^.list" class="btn btn-sm btn-primary" ng-if="mode!='detail'" type="button">
+                <button ui-sref="^.list" class="btn btn-sm btn-primary" ng-if="mode=='edit'" type="button">
                     Hủy
                 </button>
             </div>

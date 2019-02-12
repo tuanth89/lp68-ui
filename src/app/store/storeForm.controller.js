@@ -40,7 +40,11 @@
                     };
                 });
 
-                $scope.accountants = _.filter($scope.users, (item)=> {
+                $scope.accountants = _.filter($scope.users, (item) => {
+                    return item.isAccountant;
+                });
+
+                _.remove($scope.users, (item)=> {
                     return item.isAccountant;
                 });
 

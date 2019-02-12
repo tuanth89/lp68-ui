@@ -5,13 +5,16 @@
         .controller('CustomerCirculationController', CustomerCirculationController)
     ;
 
-    function CustomerCirculationController($scope, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThong) {
+    function CustomerCirculationController($scope, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThong, CONTRACT_EVENT) {
         let hotInstance = "";
-        let hotHideColumn = "";
         $scope.formProcessing = false;
         $scope.filter = {date: "", status: "", storeId: $scope.$parent.storeSelected.storeId};
         $scope.selectedCirculation = {};
         // $('#lai-dung-dp').datepicker({startDate: new Date()});
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            hotInstance.render();
+        });
 
         $scope.status = [
             {
@@ -294,7 +297,6 @@
                         // console.log('col: ' + source[0][1]);
                         // console.log('old value: ' + source[0][2]);
                         // console.log('new value: ' + source[0][3]);
-
                     }
                 }
             }
@@ -418,7 +420,6 @@
                     //
                     // $scope.checkedList = [];
                     // $scope.checkbox.checkAll = false;
-                    hotHideColumn.hideColumn(2);
 
                     $scope.getData();
                     toastr.success('Cập nhật thành công!');
@@ -438,7 +439,6 @@
                 hotInstance.validateCells();
             };
 
-            hotHideColumn = hotInstance.getPlugin('hiddenColumns');
         }, 0);
 
         $scope.getData();
