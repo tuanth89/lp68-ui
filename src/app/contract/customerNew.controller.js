@@ -28,7 +28,12 @@
             $scope.userSelected.id = "";
             StoreManager.one(item._id).one('listUserByStore').get()
                 .then((store) => {
-                    $scope.usersByStore = angular.copy(Restangular.stripRestangular(store.staffs));
+                    $scope.usersByStore = _.map(store.staffs, (item) => {
+                        if (!item.isAccountant)
+                            return item;
+                    });
+
+                    // $scope.usersByStore = angular.copy(Restangular.stripRestangular(store.staffs));
                 }, (error) => {
                 })
                 .finally(() => {
@@ -63,6 +68,7 @@
                 phone: "",
                 _id: ""
             },
+            customerId: "",
             loanMoney: "",
             actuallyCollectedMoney: "",
             loanDate: "",
@@ -145,9 +151,12 @@
                         let customerItem = _.find(customerS, {name: newValue});
                         if (customerItem) {
                             $scope.customers[rowChecked].customer._id = customerItem._id;
+                            $scope.customers[rowChecked].customerId = customerItem._id;
                         }
-                        else
+                        else {
                             $scope.customers[rowChecked].customer._id = "";
+                            $scope.customers[rowChecked].customerId = "";
+                        }
 
                         // console.log('row: ' + source[0][0]);
                         // console.log('col: ' + source[0][1]);
@@ -229,27 +238,40 @@
 
         $scope.saveCustomer = () => {
             if ($scope.$parent.isAccountant && !$scope.userSelected.id) {
-                toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
+                // toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
+                AlertService.replaceAlerts({
+                    type: 'error',
+                    message: "Hãy chọn nhân viên thuộc cửa hàng!"
+                });
                 return;
             }
 
-            let customers = angular.copy($scope.customers);
+            let validCustomers = angular.copy($scope.customers);
             let checkValid = true;
-            _.filter(customers, (item) => {
+            _.filter(validCustomers, (item) => {
                 if (!item.customer.name || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate) {
                     checkValid = false;
                     return false;
                 }
             });
 
-            // _.remove(customers, function (item) {
-            //     return !item.customer.name || item._id;
-            // });
-
             if (!checkValid) {
-                toastr.error("Chưa nhập đủ thông tin khách hàng!");
+                // toastr.error("Chưa nhập đủ thông tin hợp đồng!");
+                AlertService.replaceAlerts({
+                    type: 'error',
+                    message: "Chưa nhập đủ thông tin hợp đồng!"
+                });
                 return;
             }
+
+            let customers = _.map(validCustomers, (item) => {
+                if ($scope.$parent.isAccountant && !item._id) {
+                    item.storeId = $scope.userSelected.storeId;
+                    item.creator = $scope.userSelected.id;
+                }
+
+                return item;
+            });
 
             ContractManager.post(customers)
                 .then((items) => {
@@ -257,11 +279,20 @@
                     // customerItem.createdAt = $scope.filter.date;
                     // $scope.customers.push(angular.copy(customerItem));
                     $scope.getData();
-                    toastr.success('Tạo mới hợp đồng thành công!');
+
+                    // toastr.success('Tạo mới hợp đồng thành công!');
+                    AlertService.addFlash({
+                        type: 'success',
+                        message: "Tạo mới hợp đồng thành công!"
+                    });
                 })
                 .catch((error) => {
                     console.log(error);
-                    toastr.error("Tạo mới hợp đồng thất bại. Hãy thử lại sau!");
+                    // toastr.error("Tạo mới hợp đồng thất bại. Hãy thử lại sau!");
+                    AlertService.replaceAlerts({
+                        type: 'error',
+                        message: "Tạo mới hợp đồng thất bại. Hãy thử lại sau!"
+                    });
                 });
         };
     }

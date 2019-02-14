@@ -1,6 +1,6 @@
 <div ng-show="!showResource">
     <div class="row mb-20">
-        <div class="col-sm-1">
+        <div class="col-sm-1" e-route-name="customer.update">
             <button type="button" class="btn btn-primary" ng-click="saveCustomer()" ng-disabled="isAccountant && !userSelected.id">Lưu</button>
         </div>
 
@@ -15,7 +15,7 @@
             </ui-select>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-3" ng-if="isAccountant">
             <ui-select ng-model="userSelected.id" theme="bootstrap" search-enabled="true">
                 <ui-select-match placeholder="Nhân viên">
                     <span ng-bind-html="$select.selected.fullName"></span>

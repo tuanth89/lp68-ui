@@ -3,85 +3,89 @@
     <div class="row">
         <div class="col-md-12">
             <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                <!--<div e-table datatable-config="tableConfig" table="table" filter="filter">-->
-                <div class="filter-region">
-                    <div class="button-bar hidden-xs float-right" e-route-name="admin.create">
-                        <button ui-sref="^.new" class="btn btn-sm btn-primary" type="button">
-                            <span class="ti ti-plus"></span>
-                            Thêm mới
-                        </button>
-                    </div>
-
-                    <div class="col-sm-3 search-box">
-                        <div class="input-group">
-                            <input class="form-control" ng-model="filter.search" autocomplete="off" name="search"
-                                   type="text"
-                                   placeholder="Tìm kiếm" ng-keypress="filterSearch($event)">
-                            <div class="input-group-addon">
-                                <i class="fa fa-search"></i>
-                            </div>
+                <div e-table datatable-config="tableConfig" table="table" filter="filter">
+                    <div class="filter-region">
+                        <div class="button-bar hidden-xs float-right" e-route-name="admin.create">
+                            <button ui-sref="^.new" class="btn btn-sm btn-primary" type="button">
+                                <span class="ti ti-plus"></span>
+                                Thêm mới
+                            </button>
                         </div>
-                    </div>
 
-                    <div class="row col-sm-12">
-                        <div class="search-result" ng-if="keyword && total !== ''">
-                            Hiển thị {{total}} kết quả cho từ khóa <b>{{keyword}}</b>
-                        </div>
-                    </div>
-                    <!--<div class="form-inline">-->
-                    <!--<div class="form-group">-->
-                    <!--<search-box sb-list="admins" search-fields="['phone', 'username', 'email', 'name']"></search-box>-->
-                    <!--</div>-->
-                    <!--</div>-->
-                </div>
-                <table class="table table-bordered" style="width: 100%;">
-                    <thead>
-                    <tr role="row">
-                        <th class="sorting_disabled text-center" rowspan="1" colspan="1">STT</th>
-                        <th class="sorting_disabled text-center" rowspan="1" colspan="1">Họ và tên</th>
-                        <th class="sorting_disabled text-center" rowspan="1" colspan="1">Email</th>
-                        <th class="sorting_disabled text-center" rowspan="1" colspan="1">Số điện thoại</th>
-                        <th class="sorting_disabled text-center" rowspan="1" colspan="1">Trạng thái</th>
-                        <th class="sorting_disabled text-center" rowspan="1" colspan="1"
-                            e-route-name="admin.remove">Thao tác
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    <tr role="row" ng-if="tableData && tableData.length > 0" ng-repeat="rowData in tableData">
-                        <td class="sorting_disabled text-center" rowspan="1" colspan="1">{{$index + 1}}</td>
-                        <td class="sorting_disabled" rowspan="1" colspan="1">
-                            <a ui-sref="^.edit({id:rowData._id})">{{rowData.fullName}}</a>
-                        </td>
-                        <td class="sorting_disabled" rowspan="1" colspan="1">{{rowData.email}}</td>
-                        <td class="sorting_disabled" rowspan="1" colspan="1">{{rowData.phone}}</td>
-                        <td class="sorting_disabled text-center" rowspan="1" colspan="1"><span class='badge'
-                                                                                               ng-class="{'badge-success': rowData.enabled, 'badge-danger': !rowData.enabled}">{{rowData.enabled ? 'Hoạt động': 'Ngừng hoạt động'}}</span>
-                        </td>
-                        <td class="sorting_disabled text-center non-overflow" e-route-name="admin.remove">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default fa fa-ellipsis-v" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                    <span class="sr-only"></span></button>
-                                <div class="dropdown-menu">
-                                    <!--<a class="dropdown-item" ui-sref="^.edit({friendlyName:rowData.friendlyName})"-->
-                                    <!--e-route-name="admin.update">Sửa</a>-->
-                                    <a class="dropdown-item"
-                                       ng-click="confirmClick(confirmDelete) && delAccount(rowData._id)" confirm-click>Xóa</a>
+                        <div class="col-sm-3 search-box">
+                            <div class="input-group">
+                                <input class="form-control" ng-model="filter.search" autocomplete="off" name="search"
+                                       type="text"
+                                       placeholder="Tìm kiếm" ng-keypress="filterSearch($event)">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-search"></i>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
+                        </div>
 
-                    <tr role="row" ng-if="tableData && tableData.length <= 0">
-                        <td rolspan="1" colspan="6" class="sorting_disabled text-center">Không tìm thấy bản ghi nào</td>
-                    </tr>
-                    </tbody>
-                </table>
+                        <div class="row col-sm-12">
+                            <div class="search-result" ng-if="keyword && total !== ''">
+                                Hiển thị {{total}} kết quả cho từ khóa <b>{{keyword}}</b>
+                            </div>
+                        </div>
+                        <!--<div class="form-inline">-->
+                        <!--<div class="form-group">-->
+                        <!--<search-box sb-list="admins" search-fields="['phone', 'username', 'email', 'name']"></search-box>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                    <table class="table table-bordered" style="width: 100%;">
+                        <!--<thead>-->
+                        <!--<tr role="row">-->
+                            <!--<th class="sorting_disabled text-center" rowspan="1" colspan="1">STT</th>-->
+                            <!--<th class="sorting_disabled text-center" rowspan="1" colspan="1">Họ và tên</th>-->
+                            <!--<th class="sorting_disabled text-center" rowspan="1" colspan="1">Email</th>-->
+                            <!--<th class="sorting_disabled text-center" rowspan="1" colspan="1">Số điện thoại</th>-->
+                            <!--<th class="sorting_disabled text-center" rowspan="1" colspan="1">Trạng thái</th>-->
+                            <!--<th class="sorting_disabled text-center" rowspan="1" colspan="1"-->
+                                <!--e-route-name="admin.remove">Thao tác-->
+                            <!--</th>-->
+                        <!--</tr>-->
+                        <!--</thead>-->
+                        <!--<tbody>-->
 
+                        <!--<tr role="row" ng-if="tableData && tableData.length > 0" ng-repeat="rowData in tableData">-->
+                            <!--<td class="sorting_disabled text-center" rowspan="1" colspan="1">{{$index + 1}}</td>-->
+                            <!--<td class="sorting_disabled" rowspan="1" colspan="1">-->
+                                <!--<a ui-sref="^.edit({id:rowData._id})">{{rowData.fullName}}</a>-->
+                            <!--</td>-->
+                            <!--<td class="sorting_disabled" rowspan="1" colspan="1">{{rowData.email}}</td>-->
+                            <!--<td class="sorting_disabled" rowspan="1" colspan="1">{{rowData.phone}}</td>-->
+                            <!--<td class="sorting_disabled text-center" rowspan="1" colspan="1"><span class='badge'-->
+                                                                                                   <!--ng-class="{'badge-success': rowData.enabled, 'badge-danger': !rowData.enabled}">{{rowData.enabled ? 'Hoạt động': 'Ngừng hoạt động'}}</span>-->
+                            <!--</td>-->
+                            <!--<td class="sorting_disabled text-center non-overflow" e-route-name="admin.remove">-->
+                                <!--<div class="btn-group">-->
+                                    <!--<button type="button" class="btn btn-default fa fa-ellipsis-v"-->
+                                            <!--data-toggle="dropdown"-->
+                                            <!--aria-haspopup="true" aria-expanded="false">-->
+                                        <!--<span class="sr-only"></span></button>-->
+                                    <!--<div class="dropdown-menu">-->
+                                        <!--&lt;!&ndash;<a class="dropdown-item" ui-sref="^.edit({friendlyName:rowData.friendlyName})"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;e-route-name="admin.update">Sửa</a>&ndash;&gt;-->
+                                        <!--<a class="dropdown-item"-->
+                                           <!--ng-click="confirmClick(confirmDelete) && delAccount(rowData._id)"-->
+                                           <!--confirm-click>Xóa</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+
+                        <!--<tr role="row" ng-if="tableData && tableData.length <= 0">-->
+                            <!--<td rolspan="1" colspan="6" class="sorting_disabled text-center">Không tìm thấy bản ghi-->
+                                <!--nào-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--</tbody>-->
+                    </table>
+
+                </div>
             </div>
-            <!--</div>-->
         </div>
     </div>
 </div>

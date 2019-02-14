@@ -56,9 +56,9 @@
                 actions: ["list"]
             },
             {
-                title: "Tính phế",
+                title: "Cấu hình phế",
                 icon: "c-blue-500 ti-money",
-                state: "",
+                state: ".pheConfig.newCustomer",
                 noneDropdown: true,
                 visible: true,
                 featureName: "tinhphe",

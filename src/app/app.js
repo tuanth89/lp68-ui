@@ -7,5 +7,6 @@ angular.module('ati', [
     'ati.customer',
     'ati.store',
     'ati.adminManagement',
+    'ati.pheConfig',
     'angularMoment'
 ]);
