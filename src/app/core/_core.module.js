@@ -101,6 +101,33 @@
         };
     });
 
+    core.directive('formatNumber', function ($filter) {
+        return {
+            restrict: 'A',
+            priority: 1,
+            require: 'ngModel',
+            link: function (scope, element, attrs, ctrl) {
+                function formatter(value) {
+                    value = value ? parseFloat(value.toString().replace(/[^0-9._-]/g, '')) || 0 : 0;
+                    //console.log(scope.controller);
+                    var formattedValue = $filter('currency')(value, "", 0);
+
+                    element.val(formattedValue);
+
+                    // ngModelCtrl.$setViewValue(value);
+                    scope.ngModel = value;
+                    scope.$apply();
+
+                    return formattedValue;
+                }
+
+                element.bind('blur', function () {
+                    element.val(formatter(formatInputNumberKMB(element.val())));
+                });
+            }
+        };
+    });
+
     core.run(appRun);
 
     function appRun(Auth, EXISTING_SESSION, $rootScope) {

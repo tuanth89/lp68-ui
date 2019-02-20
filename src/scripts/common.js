@@ -1,7 +1,7 @@
 function formatInputNumberKMB(inputValue) {
-    let number = inputValue.match(/^\d+$/);
+    let number = inputValue.match(/^\d*\.?\d*/);
     let decimal = inputValue.match(/^\d+.\d+/);
-    if (number) {
+    if (!(number % 1)) {
         number = number.toString();
         let listAllow = ["k", "m", "b"];
         let numberWord = inputValue.replace(number, "");

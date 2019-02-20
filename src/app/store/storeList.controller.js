@@ -107,7 +107,7 @@
         $scope.delStore = function (storeId) {
             if (storeId) {
                 swal({
-                    title: 'Bạn có chắc chắn muốn xóa khách hàng này ?',
+                    title: 'Bạn có chắc chắn muốn xóa cửa hàng này ?',
                     text: "",
                     type: 'warning',
                     showCancelButton: true,
