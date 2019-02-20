@@ -1,10 +1,10 @@
 <div ng-show="!showResource">
     <div class="row mb-20">
         <div class="col-sm-1" e-route-name="customer.update">
-            <button type="button" class="btn btn-primary" ng-click="saveCustomer()" ng-disabled="isAccountant && !userSelected.id">Lưu</button>
+            <button type="button" class="btn btn-primary" ng-click="saveCustomer()" ng-disabled="(isAccountant || isRoot) && !userSelected.id">Lưu</button>
         </div>
 
-        <div class="col-sm-3" ng-if="isAccountant">
+        <div class="col-sm-3" ng-if="isAccountant || isRoot">
             <ui-select ng-model="userSelected.storeId" theme="bootstrap" search-enabled="true" on-select="selectedStoreEvent($item)">
                 <ui-select-match placeholder="Cửa hàng">
                     <span ng-bind-html="$select.selected.name"></span>
@@ -15,7 +15,7 @@
             </ui-select>
         </div>
 
-        <div class="col-sm-3" ng-if="isAccountant">
+        <div class="col-sm-3" ng-if="isAccountant || isRoot">
             <ui-select ng-model="userSelected.id" theme="bootstrap" search-enabled="true">
                 <ui-select-match placeholder="Nhân viên">
                     <span ng-bind-html="$select.selected.fullName"></span>
@@ -39,7 +39,7 @@
         <hot-column ng-if="isAccountant || isRoot" data="phone" title="'Số điện thoại'" type="'text'" width="60"></hot-column>
         <hot-column ng-if="true" data="photo" title="'Ảnh đại diện'" type="'text'" width="80" read-only></hot-column>
         <hot-column ng-if="isAccountant || isRoot" data="imgResource" title="'Tài liệu'" type="'text'" width="60" read-only></hot-column>
-        <!--<hot-column title=" " type="'text'" width="40" read-only></hot-column>-->
+        <hot-column ng-if="roleRemove" data="actionDel" title="''" type="'text'" width="40" read-only></hot-column>
 
         <!--<hot-column data="product.description" title="'Favorite food'" type="'autocomplete'">-->
         <!--<hot-autocomplete datarows="description in product.options"></hot-autocomplete>-->

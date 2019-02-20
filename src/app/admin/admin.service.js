@@ -136,6 +136,35 @@
             return hasPermission;
         }
 
+        function checkRole (routeNames) {
+            return new Promise(function (resolve, reject) {
+                getFeatureAccessByCurentRole().then(function (route) {
+                    let hasPermission = false;
+                    routeNames.forEach(name => {
+                        if ($rootScope.routeNames.indexOf(name) >= 0) {
+                            hasPermission = true;
+                        }
+                    });
+
+                    resolve(hasPermission);
+                });
+                // adminRestangular.all("feature-access").customGET("getByCurrentUser").then(function (resp) {
+                //     let features = resp.plain();
+                //     let routeNames = [];
+                //
+                //     features.forEach(item => {
+                //         routeNames = _.union(routeNames, item.routeNames);
+                //     });
+                //
+                //     $rootScope.routeNames = routeNames;
+                //
+                //     resolve(routeNames);
+                // }).catch(err => {
+                //     reject(err);
+                // })
+            })
+        };
+
         /**
          * Cập nhật thông tin sidebar
          */
@@ -155,8 +184,10 @@
         return {
             // favicon,
             init,
+            getFeatureAccessByCurentRole,
             hasRouteNames,
-            getFeatureAccessByCurentRole
+            checkRole
+
         }
     }
 

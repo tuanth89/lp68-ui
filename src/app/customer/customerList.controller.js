@@ -48,8 +48,12 @@
         }])
         .controller('CustomerListController', CustomerListController);
 
-    function CustomerListController($scope, Upload, $timeout, CONTRACT_EVENT, IMGUR_API, hotRegisterer, CustomerManager, Restangular, FileUploader, StoreManager, Auth) {
+    function CustomerListController($scope, Upload, $timeout, CONTRACT_EVENT, IMGUR_API, hotRegisterer, CustomerManager, Restangular, FileUploader, StoreManager, Auth, AlertService, AdminService) {
         $scope.settings = {rowHeaders: true, colHeaders: true, minSpareRows: 1};
+
+        AdminService.checkRole(['customer.remove']).then(function (allowRole) {
+            $scope.roleRemove = allowRole;
+        });
 
         let currentUser = Auth.getSession();
         let hotInstance = "";
@@ -73,13 +77,14 @@
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
 
-            StoreManager.one('listActive').getList()
+            StoreManager.one('listForUser').getList()
                 .then((stores) => {
                     $scope.stores = angular.copy(Restangular.stripRestangular(stores));
                 });
         });
 
         $scope.selectedStoreEvent = function (item) {
+            $scope.userSelected.storeId = item._id;
             $scope.userSelected.id = "";
             StoreManager.one(item._id).one('listUserByStore').get()
                 .then((store) => {
@@ -88,7 +93,7 @@
                             return item;
                     });
 
-                    // $scope.usersByStore = angular.copy(Restangular.stripRestangular(store.staffs));
+                    $scope.getData();
                 }, (error) => {
                 })
                 .finally(() => {
@@ -153,7 +158,7 @@
                         return;
                     }
 
-                    // $scope.updateAvatar = angular.copy($scope.customers[rowCol.row]);
+                    $scope.updateAvatar = angular.copy($scope.customers[rowCol.row]);
                     avatarIndex = rowCol.row;
                     $scope.$apply();
                     $('#avatarModal').modal('show');
@@ -172,6 +177,10 @@
 
                     $scope.$apply();
                     $('#imageDoc').modal('show');
+                }
+
+                if (event.realTarget.className.indexOf('delRow') >= 0) {
+                    $scope.delCustomer(rowCol.row, $scope.customers[rowCol.row]._id);
                 }
             },
             afterChange: function (source, changes) {
@@ -210,10 +219,59 @@
                 return;
             }
 
-            // if (col === 7) {
-            //     td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '">Xóa</button>';
-            // }
+            if (cellProperties.prop === "actionDel") {
+                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '"><span class="fa fa-trash"></span>&nbsp;Xóa</button>';
+                return;
+            }
+
         }
+
+        $scope.delCustomer = function (rowIndex, customerId) {
+            if (!customerId) {
+                $scope.customers.splice(rowIndex, 1);
+
+                setTimeout(function () {
+                    $scope.$apply();
+                    hotInstance.render();
+                }, 0);
+            }
+            else {
+                swal({
+                    title: 'Bạn có chắc chắn muốn xóa khách hàng này ?',
+                    text: "",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có',
+                    cancelButtonText: 'Không',
+                }).then((result) => {
+                    if (result.value) {
+                        CustomerManager.one(customerId).remove()
+                            .then(function (result) {
+                                if (result.removed) {
+                                    $scope.customers.splice(rowIndex, 1);
+
+                                    AlertService.replaceAlerts({
+                                        type: 'success',
+                                        message: "Xóa khách hàng thành công!"
+                                    });
+                                }
+                                else {
+                                    AlertService.replaceAlerts({
+                                        type: 'error',
+                                        message: "Xóa thất bại. Khách hàng đã tồn tại số hợp đồng"
+                                    });
+                                }
+                            })
+                            .catch(function () {
+                                AlertService.replaceAlerts({
+                                    type: 'error',
+                                    message: "Có lỗi xảy ra!"
+                                });
+                            });
+                    }
+                });
+            }
+        };
 
         $scope.checkPersonalIdExists = (rowIndex, value, isNumberId) => {
             let customerItem = $scope.customers[rowIndex];
@@ -256,10 +314,15 @@
         };
 
         $scope.getData = function () {
+            let storeId = "";
+            if ($scope.$parent.isRoot)
+                storeId = !$scope.userSelected.storeId ? "none" : $scope.userSelected.storeId;
+            else
+                storeId = $scope.$parent.storeSelected.storeId;
+
             CustomerManager
-                .one($scope.$parent.storeSelected.storeId)
                 .one('list')
-                .getList()
+                .getList("", {storeId: storeId})
                 .then(function (resp) {
                     $scope.customers = angular.copy(Restangular.stripRestangular(resp));
                     $scope.customers.push(angular.copy(customerItem));
@@ -326,8 +389,9 @@
 
         $scope.saveCustomer = () => {
             let isAccountant = $scope.$parent.isAccountant;
+            let isRoot = $scope.$parent.isRoot;
 
-            if (isAccountant && !$scope.userSelected.id) {
+            if ((isAccountant || isRoot) && !$scope.userSelected.id) {
                 toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
                 return;
             }
@@ -344,7 +408,7 @@
             }
 
             let customers = _.map(removeCustomerInvalid, (item) => {
-                if (isAccountant && !item._id) {
+                if ((isAccountant || isRoot) && !item._id) {
                     item.storeId = $scope.userSelected.storeId;
                     item.visitor = $scope.userSelected.id;
                 }
@@ -368,7 +432,7 @@
 
         $('#avatarModal').on('hidden.bs.modal', function () {
             $scope.fileUp = "";
-            // $scope.updateAvatar = {};
+            $scope.updateAvatar = {};
             avatarIndex = -1;
         });
 

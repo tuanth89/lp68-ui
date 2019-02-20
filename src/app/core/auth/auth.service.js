@@ -109,9 +109,6 @@
                         sessionStorage.setCurrentToken(session.token);
                     }
 
-                    //Khởi tạo các thông tin cho admin sau khi đăng nhập
-                    // AdminService.init();
-
                     return session;
                 })
                 // .catch(function (e) {

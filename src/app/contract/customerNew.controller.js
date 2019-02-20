@@ -4,12 +4,16 @@
     angular.module('ati.contract')
         .controller('CustomerNewController', CustomerNewController);
 
-    function CustomerNewController($scope, CONTRACT_EVENT, $timeout, StoreManager, hotRegisterer, customerSource, ContractManager, Restangular, Auth) {
+    function CustomerNewController($scope, CONTRACT_EVENT, $timeout, StoreManager, hotRegisterer, customerSource, ContractManager, Restangular, Auth, AlertService, CustomerManager, AdminService) {
         let currentUser = Auth.getSession();
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
         $scope.customerSource = _.map(customerS, 'name').join(',');
 
         let selectedStoreId = $scope.$parent.storeSelected.storeId;
+
+        AdminService.checkRole(['contract.remove']).then(function (allowRole) {
+            $scope.roleRemove = allowRole;
+        });
 
         $scope.userSelected = {storeId: "", id: ""};
         $scope.stores = [];
@@ -18,7 +22,7 @@
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
 
-            StoreManager.one('listActive').getList()
+            StoreManager.one('listForUser').getList()
                 .then((stores) => {
                     $scope.stores = angular.copy(Restangular.stripRestangular(stores));
                 });
@@ -32,13 +36,21 @@
                         if (!item.isAccountant)
                             return item;
                     });
-
                     // $scope.usersByStore = angular.copy(Restangular.stripRestangular(store.staffs));
                 }, (error) => {
                 })
                 .finally(() => {
                 });
+
+            CustomerManager.one('list').one('autoComplete').getList("", {storeId: item._id})
+                .then((customers) => {
+                    customerS = angular.copy(Restangular.stripRestangular(customers));
+                }, (error) => {
+                })
+                .finally(() => {
+                });
         };
+
 
         $scope.filter = {date: ""};
         $scope.$watch('filter.date', function (newValue, oldValue) {
@@ -75,6 +87,7 @@
             createdAt: $scope.filter.date,
             isHdLaiDung: false,
             isCustomerNew: true,
+            numOfPayDay: "",
             storeId: selectedStoreId,
             creator: currentUser._id
         };
@@ -114,6 +127,12 @@
             },
             cells: function (row, col) {
                 let cellPrp = {};
+                let item = $scope.customers[row];
+                if (typeof item === 'object' && item._id) {
+                    cellPrp.readOnly = true;
+                }
+                else
+                    cellPrp.className = "hot-normal";
 
                 // if (moment($scope.filter.date, "YYYY-MM-DD").isBefore(moment().format("YYYY-MM-DD"))) {
                 //     cellPrp.readOnly = true;
@@ -121,7 +140,6 @@
                 //     return cellPrp;
                 // }
 
-                cellPrp.className = "hot-normal";
                 // cellPrp.readOnly = true;
 
                 if (col === 1) {
@@ -140,14 +158,23 @@
                     //     width: 'resolve'
                     // };
                 }
+                if (col === 7) {
+                    cellPrp.renderer = columnRenderer;
+                }
 
                 return cellPrp;
             },
+            afterOnCellMouseDown: function (event, rowCol, TD) {
+                if (event.realTarget.className.indexOf('delRow') >= 0) {
+                    $scope.delContract(rowCol.row, $scope.customers[rowCol.row]._id);
+                }
+            },
             afterChange: function (source, changes) {
                 if (changes === 'edit') {
+                    let rowChecked = source[0][0];
+                    let newValue = source[0][3];
+
                     if (source[0][1] === "customer.name") {
-                        let rowChecked = source[0][0];
-                        let newValue = source[0][3];
                         let customerItem = _.find(customerS, {name: newValue});
                         if (customerItem) {
                             $scope.customers[rowChecked].customer._id = customerItem._id;
@@ -163,6 +190,21 @@
                         // console.log('old value: ' + source[0][2]);
                         // console.log('new value: ' + source[0][3]);
                     }
+
+                    if (source[0][1] === "numOfPayDay") {
+                        if (newValue > $scope.customers[rowChecked].loanDate) {
+                            toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
+                            hotInstance.selectCell(rowChecked, 5);
+                            hotInstance.setDataAtCell(rowChecked, 5, "");
+                        }
+                    }
+                    if (source[0][1] === "loanDate") {
+                        if (newValue < $scope.customers[rowChecked].numOfPayDay) {
+                            toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
+                            hotInstance.selectCell(rowChecked, 5);
+                            hotInstance.setDataAtCell(rowChecked, 5, "");
+                        }
+                    }
                 }
             },
             /*afterCreateRow: function (index) {
@@ -176,6 +218,15 @@
             minSpareRows: 0
             // strict: true
         };
+
+        function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
+            Handsontable.renderers.TextRenderer.apply(this, arguments);
+            if (cellProperties.prop === "actionDel") {
+                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '"><span class="fa fa-trash"></span>&nbsp;Xóa</button>';
+                return;
+            }
+
+        }
 
         $scope.getData = function () {
             ContractManager.one("circulation").one("all")
@@ -228,6 +279,15 @@
                     let totalCols = hotInstance.countCols();
                     let totalRows = hotInstance.countRows();
                     if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
+                        if (!$scope.customers[rowIndex].customerId) {
+                            toastr.error("Chưa nhập khách hàng hoặc không tồn tại khách hàng!");
+                            setTimeout(function () {
+                                hotInstance.selectCell(rowIndex, 1);
+                            }, 1);
+
+                            return;
+                        }
+
                         customerItem.createdAt = $scope.filter.date;
                         $scope.customers.push(angular.copy(customerItem));
                         // hotInstance.alter("insert_row", totalRows + 1);
@@ -236,8 +296,8 @@
             }, true);
         }, 0);
 
-        $scope.saveCustomer = () => {
-            if ($scope.$parent.isAccountant && !$scope.userSelected.id) {
+        $scope.saveContract = () => {
+            if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !$scope.userSelected.id) {
                 // toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
                 AlertService.replaceAlerts({
                     type: 'error',
@@ -247,6 +307,10 @@
             }
 
             let validCustomers = angular.copy($scope.customers);
+            _.remove(validCustomers, function (item) {
+                return item._id;
+            });
+
             let checkValid = true;
             _.filter(validCustomers, (item) => {
                 if (!item.customer.name || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate) {
@@ -265,7 +329,7 @@
             }
 
             let customers = _.map(validCustomers, (item) => {
-                if ($scope.$parent.isAccountant && !item._id) {
+                if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !item._id) {
                     item.storeId = $scope.userSelected.storeId;
                     item.creator = $scope.userSelected.id;
                 }
@@ -281,7 +345,7 @@
                     $scope.getData();
 
                     // toastr.success('Tạo mới hợp đồng thành công!');
-                    AlertService.addFlash({
+                    AlertService.replaceAlerts({
                         type: 'success',
                         message: "Tạo mới hợp đồng thành công!"
                     });
@@ -294,6 +358,53 @@
                         message: "Tạo mới hợp đồng thất bại. Hãy thử lại sau!"
                     });
                 });
+        };
+
+        $scope.delContract = function (rowIndex, contractId) {
+            if (!contractId) {
+                $scope.customers.splice(rowIndex, 1);
+
+                setTimeout(function () {
+                    $scope.$apply();
+                    hotInstance.render();
+                }, 0);
+            }
+            else {
+                swal({
+                    title: 'Bạn có chắc chắn muốn xóa hợp đồng này ?',
+                    text: "",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có',
+                    cancelButtonText: 'Không',
+                }).then((result) => {
+                    if (result.value) {
+                        ContractManager.one(contractId).remove()
+                            .then(function (result) {
+                                if (result.removed) {
+                                    $scope.customers.splice(rowIndex, 1);
+
+                                    AlertService.replaceAlerts({
+                                        type: 'success',
+                                        message: "Xóa hợp đồng thành công!"
+                                    });
+                                }
+                                else {
+                                    AlertService.replaceAlerts({
+                                        type: 'error',
+                                        message: "Xóa thất bại. Hợp đồng đã chuyển trạng thái!"
+                                    });
+                                }
+                            })
+                            .catch(function () {
+                                AlertService.replaceAlerts({
+                                    type: 'error',
+                                    message: "Có lỗi xảy ra!"
+                                });
+                            });
+                    }
+                });
+            }
         };
     }
 })();

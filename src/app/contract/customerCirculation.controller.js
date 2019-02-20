@@ -418,8 +418,8 @@
                     //     $scope.contracts[rowValue].isActive = false;
                     // });
                     //
-                    // $scope.checkedList = [];
-                    // $scope.checkbox.checkAll = false;
+                    $scope.checkedList = [];
+                    $scope.checkbox.checkAll = false;
 
                     $scope.getData();
                     toastr.success('Cập nhật thành công!');

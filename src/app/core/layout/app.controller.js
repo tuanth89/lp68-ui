@@ -12,7 +12,7 @@
 
         $scope.storeSelected = {storeId: ""};
         $scope.storeSelected.storeId = $scope.currentUser.selectedStoreId;
-        if (!$scope.storeSelected.storeId) {
+        if (!$scope.currentUser.selectedStoreId && !$scope.isRoot) {
             $('#storeModal').modal({show: true, backdrop: 'static', keyboard: false});
         }
 

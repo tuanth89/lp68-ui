@@ -61,7 +61,7 @@
                 state: ".pheConfig.newCustomer",
                 noneDropdown: true,
                 visible: true,
-                featureName: "tinhphe",
+                featureName: "pheConfig",
                 actions: ["list"]
             },
             {

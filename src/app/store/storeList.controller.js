@@ -4,7 +4,7 @@
     angular.module('ati.store')
         .controller('StoreListController', StoreListController);
 
-    function StoreListController($scope, $stateParams, $compile, Restangular, StoreManager) {
+    function StoreListController($scope, $state, $stateParams, $compile, AlertService, StoreManager) {
         $scope.filter = angular.copy($stateParams);
 
         $scope.getData = function (filter) {
@@ -93,7 +93,7 @@
                     className: "text-center",
                     data: '_id',
                     render: function (data, e, full, meta) {
-                        return `<button class="btn btn-sm btn-primary" type="button" ui-sref="^.detail({ id:'${data}'})">Xem</button>`;
+                        return `<button class="btn btn-sm btn-danger" type="button" ng-click="delStore('${full._id}')"><span class="fa fa-trash"></span>&nbsp;Xóa</button>`;
                     },
                     fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
                         $compile(nTd)($scope);
@@ -102,7 +102,45 @@
                 },
             ],
             // order: [1, 'asc']
-        }
+        };
 
+        $scope.delStore = function (storeId) {
+            if (storeId) {
+                swal({
+                    title: 'Bạn có chắc chắn muốn xóa khách hàng này ?',
+                    text: "",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có',
+                    cancelButtonText: 'Không',
+                }).then((result) => {
+                    if (result.value) {
+                        StoreManager.one(storeId).remove()
+                            .then(function (result) {
+                                if (result.removed) {
+                                    $('.table').DataTable().ajax.reload();
+
+                                    AlertService.replaceAlerts({
+                                        type: 'success',
+                                        message: "Xóa cửa hàng thành công!"
+                                    });
+                                }
+                                else {
+                                    AlertService.replaceAlerts({
+                                        type: 'error',
+                                        message: "Xóa thất bại. Cửa hàng đang tồn tại khách hàng"
+                                    });
+                                }
+                            })
+                            .catch(function () {
+                                AlertService.replaceAlerts({
+                                    type: 'error',
+                                    message: "Có lỗi xảy ra!"
+                                });
+                            });
+                    }
+                });
+            }
+        };
     }
 })();
