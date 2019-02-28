@@ -23,7 +23,8 @@
         $scope.getData = () => {
             ContractManager.one('allContract').one('byType').getList("", {
                 type: CONTRACT_STATUS.CLOSE_DEAL,
-                storeId: $scope.$parent.storeSelected.storeId
+                storeId: $scope.$parent.storeSelected.storeId,
+                userId: $scope.$parent.storeSelected.userId
             })
                 .then((contracts) => {
                     $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
@@ -43,7 +44,7 @@
             minSpareRows: 0,
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 7 || col === 8) {
+                if (col === 2 || col === 3 || col === 5 || col === 7) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
@@ -65,7 +66,7 @@
                     return;
                 }
 
-                if (event.realTarget.className.indexOf('btnStatus') >= 0) {
+                if (event.realTarget.className.indexOf('btnStatus') >= 0 && $scope.$parent.storeSelected.userId) {
                     let contractSelected = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
                     let {actuallyCollectedMoney, totalMoneyPaid, moneyPaid} = contractSelected;
 
@@ -89,14 +90,14 @@
                 td.innerHTML = '<u><a class="linkable cusRow" value="' + value + '" ng-click="viewCustomerCalendar(' + value + ')">' + value + '</a></u>';
             }
 
-            if (col === 2 || col === 7) {
+            if (col === 2 || col === 3 || col === 5) {
                 if (value)
                     td.innerHTML = moment(value).format("DD/MM/YYYY");
                 else
                     td.innerHTML = '';
             }
 
-            if (col === 8) {
+            if (col === 7) {
                 td.innerHTML = '<button class="btnStatus btn status-0">' + 'Đóng' + '</button>';
             }
 

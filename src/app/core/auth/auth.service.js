@@ -20,7 +20,7 @@
             setSession: _setSession,
             getSession: getSession,
             setSessionPropery: setSessionPropery,
-            setSessionPropertyStoreId: setSessionProperty_StoreId,
+            setSessionProperty_StoreId_UserId: setSessionProperty_StoreId_UserId,
             isAuthenticated: isAuthenticated,
             isAuthorized: isAuthorized,
             getAuthorizationHeaderValue: getAuthorizationHeaderValue,
@@ -127,6 +127,7 @@
 
             var token = sessionStorage.getCurrentToken();
             let selectedStoreId = sessionStorage.getStoreId();
+            let selectedUserId = sessionStorage.getUserByStoreId();
 
             if (!token) {
                 dfd.reject(new Error(authErrors.noToken));
@@ -147,6 +148,7 @@
                         data.token = token;
                         // use selected storeId
                         data.selectedStoreId = selectedStoreId;
+                        data.selectedUserId = selectedUserId;
 
                         dfd.resolve(data);
                     },
@@ -181,10 +183,15 @@
             }
         }
 
-        function setSessionProperty_StoreId(storeId) {
+        function setSessionProperty_StoreId_UserId(storeId, userId) {
             if (isAuthenticated()) {
                 _$currentSession.selectedStoreId = storeId;
                 sessionStorage.setStoreId(storeId);
+
+                if (userId) {
+                    _$currentSession.selectedUserId = userId;
+                    sessionStorage.setUserByStoreId(userId);
+                }
             }
         }
 

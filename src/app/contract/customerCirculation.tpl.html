@@ -1,5 +1,5 @@
 <div class="row mb-20">
-    <div class="col-sm-1" e-route-name="contract.update">
+    <div class="col-sm-1" e-route-name="contract.update" ng-if="storeSelected.userId">
         <button type="button" class="btn btn-primary" ng-click="saveCirculation()"
                 ng-disabled="checkedList.length === 0">Lưu
         </button>
@@ -118,7 +118,7 @@
                                 Đóng:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" ng-model="selectedCirculation.newPayMoney" format-number
+                                <input type="text" ng-model="selectedCirculation.newPayMoney" blur-currency
                                        class="form-control textAlign"/>
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                                 Gói vay:
                             </label>
                             <div class="col-md-4 control-label">
-                                <input type="text" name="selectedCirculation.newLoanMoney" format-number
+                                <input type="text" name="selectedCirculation.newLoanMoney" blur-currency
                                        ng-model="selectedCirculation.newLoanMoney"
                                        class="form-control textAlign"/>
                             </div>
@@ -186,7 +186,7 @@
                                 Tiền thực thu:
                             </label>
                             <div class="col-md-4">
-                                <input type="text" name="newActuallyCollectedMoney" format-number
+                                <input type="text" name="newActuallyCollectedMoney" blur-currency
                                        ng-model="selectedCirculation.newActuallyCollectedMoney"
                                        class="form-control textAlign"/>
                             </div>
@@ -267,7 +267,7 @@
                             </label>
                             <div class="col-md-7 control-label">
                                 <label>
-                                    {{selectedCirculation.newTransferDate}}
+                                    {{filterDateFormat}}
                                 </label>
                             </div>
                         </div>
@@ -275,7 +275,7 @@
                             <label class="col-md-5 control-label">Đóng hàng ngày:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" ng-model="selectedCirculation.dailyMoneyPay" format-number
+                                <input type="text" ng-model="selectedCirculation.dailyMoneyPay" blur-currency
                                        class="form-control textAlign" readonly/>
                             </div>
                         </div>
@@ -284,7 +284,7 @@
                                 Dư nợ:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" ng-model="selectedCirculation.moneyContractOld" format-number
+                                <input type="text" ng-model="selectedCirculation.moneyContractOld" blur-currency
                                        class="form-control textAlign" readonly/>
                             </div>
                         </div>
@@ -293,7 +293,7 @@
                                 Tiền góp nhẹ:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" name="newMoneyThuVe" format-number
+                                <input type="text" name="newMoneyThuVe" blur-currency
                                        ng-model="selectedCirculation.newActuallyCollectedMoney"
                                        class="form-control textAlign"/>
                             </div>
@@ -364,7 +364,7 @@
                                 Đóng:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" ng-model="selectedCirculation.newPayMoney" format-number
+                                <input type="text" ng-model="selectedCirculation.newPayMoney" blur-currency
                                        class="form-control textAlign"/>
                             </div>
                         </div>
@@ -429,11 +429,11 @@
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
-                                Ngày chuyển:
+                                Ngày vay:
                             </label>
                             <div class="col-md-7 control-label">
                                 <label>
-                                    {{selectedCirculation.newTransferDate}}
+                                    {{selectedCirculation.contractCreatedAt}}
                                 </label>
                             </div>
                         </div>
@@ -442,16 +442,16 @@
                                 Đóng:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" ng-model="selectedCirculation.newPayMoney" format-number
+                                <input type="text" ng-model="selectedCirculation.newPayMoney" blur-currency
                                        class="form-control textAlign"/>
                             </div>
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
-                                Ngày vay:
+                                Ngày chuyển:
                             </label>
                             <div class="col-md-7">
-                                <input input-value="selectedCirculation.newChotLoanDate" e-datepicker
+                                <input input-value="selectedCirculation.newTransferDate" e-datepicker
                                        class="form-control datepicker-ui" type="text" placeholder="Chọn ngày">
                             </div>
                         </div>

@@ -23,7 +23,8 @@
         $scope.getData = () => {
             ContractManager.one('allContract').one('byType').getList("", {
                 type: CONTRACT_STATUS.STAND,
-                storeId: $scope.$parent.storeSelected.storeId
+                storeId: $scope.$parent.storeSelected.storeId,
+                userId: $scope.$parent.storeSelected.userId
             })
                 .then((contracts) => {
                     $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
@@ -52,6 +53,7 @@
                 // if (col === 2 || col === 3) {
                 //     cellPrp.className = "handsontable-td-red";
                 // }
+
                 return cellPrp;
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {
@@ -66,7 +68,7 @@
                     return;
                 }
 
-                if (event.realTarget.className.indexOf('btnStatus') >= 0) {
+                if (event.realTarget.className.indexOf('btnStatus') >= 0 && $scope.$parent.storeSelected.userId) {
                     let contractSelected = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
                     let {actuallyCollectedMoney, totalMoneyPaid, moneyPaid} = contractSelected;
 

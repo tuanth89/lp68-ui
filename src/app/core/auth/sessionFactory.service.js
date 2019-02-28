@@ -16,10 +16,11 @@
              * @param {String} photo
              * @param {Array} [userRoles]
              * @param {String} selectedStoreId
+             * @param {String} selectedUserId
              * @param {Boolean} isAccountant
              */
-            createNew: function (token, id, fullName, username, email, userRoles, photo, selectedStoreId, isAccountant) {
-                return new Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, isAccountant);
+            createNew: function (token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant) {
+                return new Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant);
             },
 
             /**
@@ -50,7 +51,7 @@
                     data.photo = '/assets/images/anonymous.png';
                 }
 
-                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo, data.selectedStoreId, data.isAccountant);
+                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo, data.selectedStoreId, data.selectedUserId, data.isAccountant);
             },
 
             isSession: function (session) {
@@ -58,13 +59,14 @@
             }
         };
 
-        function Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, isAccountant) {
+        function Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant) {
             this.token = token;
             this.id = id || null;
             this.username = username;
             this.fullName = fullName;
             this.email = email;
             this.selectedStoreId = selectedStoreId;
+            this.selectedUserId = selectedUserId;
             this.isAccountant = isAccountant;
 
             if (!angular.isArray(userRoles)) {

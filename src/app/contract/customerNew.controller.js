@@ -15,17 +15,17 @@
             $scope.roleRemove = allowRole;
         });
 
-        $scope.userSelected = {storeId: "", id: ""};
+        $scope.userSelected = {storeId: $scope.$parent.storeSelected.storeId, id: $scope.$parent.storeSelected.userId};
         $scope.stores = [];
         $scope.usersByStore = [];
 
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
 
-            StoreManager.one('listForUser').getList()
-                .then((stores) => {
-                    $scope.stores = angular.copy(Restangular.stripRestangular(stores));
-                });
+            // StoreManager.one('listForUser').getList()
+            //     .then((stores) => {
+            //         $scope.stores = angular.copy(Restangular.stripRestangular(stores));
+            //     });
         });
 
         $scope.selectedStoreEvent = function (item) {
@@ -42,7 +42,20 @@
                 .finally(() => {
                 });
 
-            CustomerManager.one('list').one('autoComplete').getList("", {storeId: item._id})
+            // CustomerManager.one('list').one('autoComplete').getList("", {storeId: item._id})
+            //     .then((customers) => {
+            //         customerS = angular.copy(Restangular.stripRestangular(customers));
+            //     }, (error) => {
+            //     })
+            //     .finally(() => {
+            //     });
+        };
+
+        $scope.selectedStaffEvent = function (item) {
+            CustomerManager.one('list').one('autoComplete').getList("", {
+                storeId: $scope.userSelected.storeId,
+                userId: item._id
+            })
                 .then((customers) => {
                     customerS = angular.copy(Restangular.stripRestangular(customers));
                 }, (error) => {
@@ -69,7 +82,10 @@
             hotInstance.validateCells();
         };
 
-        $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
+        if ($scope.$parent.isAccountant)
+            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
+        else
+            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
 
         let hotInstance = "";
         let customerItem = {
@@ -87,7 +103,7 @@
             createdAt: $scope.filter.date,
             isHdLaiDung: false,
             isCustomerNew: true,
-            numOfPayDay: "",
+            payNow: "",
             storeId: selectedStoreId,
             creator: currentUser._id
         };
@@ -162,6 +178,9 @@
                     cellPrp.renderer = columnRenderer;
                 }
 
+                if (!$scope.$parent.storeSelected.userId)
+                    cellPrp.readOnly = true;
+
                 return cellPrp;
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {
@@ -191,27 +210,22 @@
                         // console.log('new value: ' + source[0][3]);
                     }
 
-                    if (source[0][1] === "numOfPayDay") {
-                        if (newValue > $scope.customers[rowChecked].loanDate) {
-                            toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
-                            hotInstance.selectCell(rowChecked, 5);
-                            hotInstance.setDataAtCell(rowChecked, 5, "");
-                        }
-                    }
-                    if (source[0][1] === "loanDate") {
-                        if (newValue < $scope.customers[rowChecked].numOfPayDay) {
-                            toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
-                            hotInstance.selectCell(rowChecked, 5);
-                            hotInstance.setDataAtCell(rowChecked, 5, "");
-                        }
-                    }
+                    // if (source[0][1] === "payNow") {
+                    //     if (newValue > $scope.customers[rowChecked].loanDate) {
+                    //         toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
+                    //         hotInstance.selectCell(rowChecked, 5);
+                    //         hotInstance.setDataAtCell(rowChecked, 5, "");
+                    //     }
+                    // }
+                    // if (source[0][1] === "loanDate") {
+                    //     if (newValue < $scope.customers[rowChecked].payNow) {
+                    //         toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
+                    //         hotInstance.selectCell(rowChecked, 5);
+                    //         hotInstance.setDataAtCell(rowChecked, 5, "");
+                    //     }
+                    // }
                 }
             },
-            /*afterCreateRow: function (index) {
-             setTimeout(function () {
-             this.selectCell(index, 0, 0, 0, true);
-             }, 1);
-             },*/
             stretchH: "all",
             autoWrapRow: true,
             colHeaders: true,
@@ -225,7 +239,6 @@
                 td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '"><span class="fa fa-trash"></span>&nbsp;Xóa</button>';
                 return;
             }
-
         }
 
         $scope.getData = function () {
@@ -236,8 +249,38 @@
 
                     customerItem.createdAt = $scope.filter.date;
                     // if (!moment($scope.filter.date, "YYYY-MM-DD").isBefore(moment().format("YYYY-MM-DD"))) {
-                    $scope.customers.push(angular.copy(customerItem));
+                    //
                     // }
+
+                    // $scope.customers.push(angular.copy(customerItem));
+                    let userNews = angular.copy($scope.$parent.newUsers);
+                    if (userNews.length > 0) {
+                        _.each(userNews, (customer) => {
+                            let customerItem = {
+                                _id: "",
+                                contractNo: "",
+                                customer: {
+                                    name: customer.name,
+                                    phone: "",
+                                    _id: customer._id
+                                },
+                                customerId: customer._id,
+                                loanMoney: "",
+                                actuallyCollectedMoney: "",
+                                loanDate: "",
+                                createdAt: $scope.filter.date,
+                                isHdLaiDung: false,
+                                isCustomerNew: true,
+                                payNow: "",
+                                storeId: selectedStoreId,
+                                creator: currentUser._id
+                            };
+
+                            $scope.customers.push(customerItem);
+                        });
+                    }
+                    else
+                        $scope.customers.push(angular.copy(customerItem));
 
                     setTimeout(function () {
                         hotInstance.render();
@@ -298,7 +341,6 @@
 
         $scope.saveContract = () => {
             if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !$scope.userSelected.id) {
-                // toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
                 AlertService.replaceAlerts({
                     type: 'error',
                     message: "Hãy chọn nhân viên thuộc cửa hàng!"
@@ -320,7 +362,6 @@
             });
 
             if (!checkValid) {
-                // toastr.error("Chưa nhập đủ thông tin hợp đồng!");
                 AlertService.replaceAlerts({
                     type: 'error',
                     message: "Chưa nhập đủ thông tin hợp đồng!"
@@ -332,19 +373,34 @@
                 if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !item._id) {
                     item.storeId = $scope.userSelected.storeId;
                     item.creator = $scope.userSelected.id;
+                    item.isRemove = true;
                 }
 
                 return item;
             });
 
             ContractManager.post(customers)
-                .then((items) => {
-                    // $scope.customers = items;
-                    // customerItem.createdAt = $scope.filter.date;
-                    // $scope.customers.push(angular.copy(customerItem));
+                .then((results) => {
+                    _.remove(results, (item) => {
+                        return !item.isRemove;
+                    });
+
+                    if (results.length > 0) {
+                        let userNews = angular.copy($scope.$parent.newUsers);
+                        _.forEach(results, (itemResult) => {
+                            let foundIndex = _.findIndex(userNews, function (customer) {
+                                return customer._id === itemResult.customerId;
+                            });
+
+                            if (foundIndex >= 0)
+                                $scope.$parent.newUsers.splice(foundIndex, 1);
+                        });
+                    }
+                    else
+                        $scope.$parent.newUsers = [];
+
                     $scope.getData();
 
-                    // toastr.success('Tạo mới hợp đồng thành công!');
                     AlertService.replaceAlerts({
                         type: 'success',
                         message: "Tạo mới hợp đồng thành công!"
@@ -352,7 +408,6 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                    // toastr.error("Tạo mới hợp đồng thất bại. Hãy thử lại sau!");
                     AlertService.replaceAlerts({
                         type: 'error',
                         message: "Tạo mới hợp đồng thất bại. Hãy thử lại sau!"
@@ -361,6 +416,10 @@
         };
 
         $scope.delContract = function (rowIndex, contractId) {
+            if (!contractId && $scope.customers.length === 1) {
+                return;
+            }
+
             if (!contractId) {
                 $scope.customers.splice(rowIndex, 1);
 

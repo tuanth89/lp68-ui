@@ -6,7 +6,7 @@
     ;
 
     function addRoutes($stateProvider, $locationProvider) {
-        $locationProvider.html5Mode(true);
+        // $locationProvider.html5Mode(true);
         $locationProvider.hashPrefix('');
         $stateProvider
             // all states should inherit from root

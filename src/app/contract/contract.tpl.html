@@ -2,13 +2,13 @@
     <ul class="nav nav-tabs">
         <li ui-sref-active="active"><a ui-sref=".cusNew">Hợp đồng mới</a></li>
         <li ui-sref-active="active"><a ui-sref=".cusCirculation">Lưu thông</a></li>
-        <li ui-sref-active="active"><a ui-sref=".daoHan">Đáo hạn</a></li>
         <li ui-sref-active="active"><a ui-sref=".laiDung">Lãi đứng</a></li>
         <li ui-sref-active="active"><a ui-sref=".thuVe">Thu về</a></li>
         <li ui-sref-active="active"><a ui-sref=".chot">Chốt</a></li>
         <li ui-sref-active="active"><a ui-sref=".be">Bễ</a></li>
         <li ui-sref-active="active"><a ui-sref=".ketThuc">Kết thúc</a></li>
         <li ui-sref-active="active"><a ui-sref=".hetHo">Hết họ</a></li>
+        <li ui-sref-active="active"><a ui-sref=".daoHan">Đáo hạn</a></li>
     </ul>
     <div class="tab-content">
         <div ui-view="content" class="tab-pane col-md-12 bgc-white p-20 active">
@@ -177,7 +177,7 @@
                                 Đóng:
                             </label>
                             <div class="col-md-7">
-                                <input type="text" ng-model="contractSelected.newPayMoney" format-number
+                                <input type="text" ng-model="contractSelected.newPayMoney" blur-currency
                                        class="form-control textAlign"/>
                             </div>
                         </div>

@@ -5,6 +5,7 @@
         .constant('AUTH_TOKEN_NAME', 'atiToken')
         .constant('PREVIOUS_AUTH_TOKEN_NAME', 'atiPreviousAuthTokenRaw')
         .constant('SELECTED_STORE_ID', 'selectedStoreId')
+        .constant('SELECTED_USER_ID', 'selectedUserId')
 
         .constant('USER_ROLES', {
             root: 'super-admin'

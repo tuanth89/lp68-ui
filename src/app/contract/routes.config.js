@@ -25,7 +25,7 @@
                 },
                 resolve: {
                     customerSource: function ($stateParams, CustomerManager, Auth) {
-                        return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId});
+                        return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId, userId: Auth.getSession().selectedUserId});
                     }
                 }
             })

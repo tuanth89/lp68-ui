@@ -4,17 +4,42 @@
     angular.module('ati.core.layout')
         .controller('AppController', App);
 
-    function App($rootScope, $scope, Auth, userSession, $timeout, AUTH_EVENTS, LANG_KEY, storeList, Restangular, CONTRACT_EVENT) {
+    function App($rootScope, $scope, Auth, userSession, $timeout, AUTH_EVENTS, LANG_KEY, storeList, Restangular, CONTRACT_EVENT, StoreManager, CustomerManager) {
         $scope.storeList = angular.copy(Restangular.stripRestangular(storeList));
         $scope.currentUser = userSession;
         $scope.isRoot = Auth.isRoot();
         $scope.isAccountant = Auth.isAccountant();
+        $scope.usersByStore = [];
+        $scope.titleModal = "Chọn cửa hàng";
+        $scope.step = 1;
+        $scope.newUsers = [];
 
-        $scope.storeSelected = {storeId: ""};
+        $scope.storeSelected = {storeId: "", userId: ""};
         $scope.storeSelected.storeId = $scope.currentUser.selectedStoreId;
+        $scope.storeSelected.userId = $scope.currentUser.selectedUserId;
         if (!$scope.currentUser.selectedStoreId && !$scope.isRoot) {
             $('#storeModal').modal({show: true, backdrop: 'static', keyboard: false});
         }
+
+        $scope.selectedStoreEvent = function (item) {
+            $scope.storeSelected.storeId = item._id;
+            if (!$scope.isAccountant) {
+                $scope.storeSelected.userId = $scope.currentUser.id;
+            }
+            else {
+                $scope.storeSelected.userId = "";
+                StoreManager.one(item._id).one('listUserByStore').get()
+                    .then((store) => {
+                        $scope.usersByStore = _.map(store.staffs, (item) => {
+                            if (!item.isAccountant)
+                                return item;
+                        });
+                    }, (error) => {
+                    })
+                    .finally(() => {
+                    });
+            }
+        };
 
         $scope.saveStore = () => {
             if (!$scope.storeSelected.storeId) {
@@ -22,8 +47,28 @@
                 return;
             }
 
-            Auth.setSessionPropertyStoreId($scope.storeSelected.storeId);
+            // if ($scope.isAccountant && !$scope.storeSelected.userId) {
+            //     toastr.error('Chưa chọn nhân viên!');
+            //     return;
+            // }
+
+            // if ($scope.step === 2) {
+            Auth.setSessionProperty_StoreId_UserId($scope.storeSelected.storeId, $scope.storeSelected.userId);
             $('#storeModal').modal('hide');
+            // return;
+            // }
+
+            // if ($scope.isAccountant && $scope.step === 1) {
+            //     $scope.titleModal = "Chọn nhân viên";
+            //     // $('.carousel-inner').css("overflow", "hidden");
+            //     // $("#modalSelected").carousel("next");
+            //     $scope.step++;
+            //
+            //     // setTimeout(function () {
+            //     //     $('.carousel-inner').css("overflow", "visible");
+            //     // }, 1000);
+            //
+            // }
         };
 
         $scope.admin = {
@@ -146,6 +191,46 @@
                 }, 300);
 
             });
+
+            // let carouselConfig = {
+            //     controlsClass: 'owl-controls',
+            //     navigation: false,
+            //     // navContainerClass: 'owl-nav',
+            //     // navClass: ['owl-prev', 'owl-next'],
+            //     // navText: ['<span class="fa fa-chevron-left"></span>', '<span class="fa fa-chevron-right"></span>'],
+            //     loop: false,
+            //     interval: false,
+            //     margin: 12,
+            //     dots: false,
+            //     items: 1,
+            //     responsiveClass: true,
+            //     // responsive: {
+            //     //     0: {
+            //     //         items: 1,
+            //     //         nav: true
+            //     //     },
+            //     //     450: {
+            //     //         items: 2,
+            //     //         nav: true
+            //     //     },
+            //     //     600: {
+            //     //         items: 3,
+            //     //         nav: true
+            //     //     },
+            //     //     800: {
+            //     //         items: 5,
+            //     //         nav: true
+            //     //     },
+            //     //     1000: {
+            //     //         items: 5,
+            //     //         nav: true,
+            //     //         loop: false
+            //     //     }
+            //     // }
+            //
+            // };
+            //
+            // $('#modalSelected').carousel(carouselConfig);
 
         }, 0);
     }

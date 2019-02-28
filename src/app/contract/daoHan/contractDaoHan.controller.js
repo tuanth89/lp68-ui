@@ -12,7 +12,8 @@
         $scope.$on('$viewContentLoaded', function (event, data) {
             ContractManager.one('allContract').one('byType').getList("", {
                 type: CONTRACT_STATUS.MATURITY,
-                storeId: $scope.$parent.storeSelected.storeId
+                storeId: $scope.$parent.storeSelected.storeId,
+                userId: $scope.$parent.storeSelected.userId
             })
                 .then((contracts) => {
                     $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));

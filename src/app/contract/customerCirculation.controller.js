@@ -8,7 +8,12 @@
     function CustomerCirculationController($scope, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThong, CONTRACT_EVENT) {
         let hotInstance = "";
         $scope.formProcessing = false;
-        $scope.filter = {date: "", status: "", storeId: $scope.$parent.storeSelected.storeId};
+        $scope.filter = {
+            date: "",
+            status: "",
+            storeId: $scope.$parent.storeSelected.storeId,
+            userId: $scope.$parent.storeSelected.userId
+        };
         $scope.selectedCirculation = {};
         // $('#lai-dung-dp').datepicker({startDate: new Date()});
 
@@ -51,6 +56,8 @@
             }
         ];
 
+        $scope.filterDateFormat = "";
+
         $scope.checkedList = [];
         $scope.checkbox = {checkAll: false};
         $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
@@ -87,6 +94,7 @@
 
         $scope.$watch('filter.date', function (newValue, oldValue) {
             if (newValue != oldValue) {
+                $scope.filterDateFormat = moment(newValue, "YYYY-MM-DD").format("DD/MM/YYYY");
                 $scope.getData();
             }
         });
@@ -112,7 +120,10 @@
             }, 1);
         });
 
-        $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
+        if ($scope.$parent.isAccountant)
+            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
+        else
+            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
 
         $scope.contracts = [];
         $scope.rowHeaders = true;
@@ -196,12 +207,12 @@
                     return;
                 }
 
-                if (event.realTarget.className.indexOf('btnAction') >= 0) {
+                if (event.realTarget.className.indexOf('btnAction') >= 0 && $scope.$parent.storeSelected.userId) {
                     $scope.selectedCirculation = {};
                     let nowDate = moment($scope.filter.date, "YYYYMMDD");
                     $scope.selectedCirculation = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
-                    let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
-                    let diffDays = nowDate.diff(dateContract, 'days');
+                    // let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
+                    // let diffDays = nowDate.diff(dateContract, 'days');
                     let {actuallyCollectedMoney, totalMoneyPaid, moneyPaid} = $scope.selectedCirculation;
 
                     switch (parseInt(event.realTarget.value)) {
@@ -216,32 +227,45 @@
                             $scope.selectedCirculation.totalMoney = -$scope.selectedCirculation.moneyContractOld;
 
                             $('#hopDongDaoModal').modal('show');
+
                             break;
                         case 1:
-                            nowDate = moment();
+                            // nowDate = moment();
                             // let dateContract = moment($scope.selectedCirculation.createdAt, "YYYYMMDD");
                             // let diffDays = nowDate.diff(dateContract, 'days');
                             // let {actuallyCollectedMoney, dailyMoney} = $scope.selectedCirculation;
+
                             $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
                             $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
-                            $scope.selectedCirculation.newTransferDate = nowDate.format("DD/MM/YYYY");
+
+                            // $scope.selectedCirculation.newTransferDate = $scope.filterDateFormat;
+
                             $scope.selectedCirculation.newChotLoanDate = "";
                             $scope.selectedCirculation.newActuallyCollectedMoney = 0;
 
                             $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
+
                             $('#hopDongThuVeModal').modal('show');
+
                             break;
                         case 2:
-                            nowDate = moment();
-                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
-                            $scope.selectedCirculation.newTransferDate = nowDate.format("DD/MM/YYYY");
-                            $scope.selectedCirculation.newChotLoanDate = "";
-                            $scope.selectedCirculation.newAppointmentDate = "";
-                            $scope.selectedCirculation.newPayMoney = 0;
-                            $('.datepicker-ui').val('');
+                            // // nowDate = moment();
+                            // $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
+                            // $scope.selectedCirculation.newTransferDate = $scope.filter.date;
+                            // $scope.selectedCirculation.newChotLoanDate = "";
+                            // $scope.selectedCirculation.newAppointmentDate = "";
+                            // $scope.selectedCirculation.newPayMoney = 0;
+                            // $scope.selectedCirculation.contractCreatedAt = moment($scope.selectedCirculation.contractCreatedAt).utc().format("DD/MM/YYYY");
+                            // $('.datepicker-ui').val('');
+                            //
+                            // $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
+                            // $('#hopDongChotModal').modal('show');
 
-                            $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
-                            $('#hopDongChotModal').modal('show');
+                            setTimeout(function () {
+                                $scope.$apply();
+                                $scope.showModalChot(actuallyCollectedMoney, totalMoneyPaid);
+                            }, 1);
+
 
                             break;
                         case 3:
@@ -274,7 +298,10 @@
                             break;
                     }
 
-                    $scope.$apply();
+                    setTimeout(function () {
+                        $scope.$apply();
+                    }, 1);
+
 
                 }
                 // $scope.clickPay(event.realTarget.innerText);
@@ -300,6 +327,20 @@
                     }
                 }
             }
+        };
+
+        $scope.showModalChot = (actuallyCollectedMoney, totalMoneyPaid) => {
+            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
+            $scope.selectedCirculation.newTransferDate = $scope.filter.date;
+            $scope.selectedCirculation.newChotLoanDate = "";
+            $scope.selectedCirculation.newAppointmentDate = "";
+            $scope.selectedCirculation.newPayMoney = 0;
+            $scope.selectedCirculation.contractCreatedAt = moment($scope.selectedCirculation.contractCreatedAt).utc().format("DD/MM/YYYY");
+            $('.datepicker-ui').val('');
+
+            $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
+
+            $('#hopDongChotModal').modal('show');
         };
 
         function myBtns(instance, td, row, col, prop, value, cellProperties) {
@@ -531,6 +572,7 @@
 
             $scope.selectedCirculation.statusContract = CONTRACT_STATUS.COLLECT;
             $scope.selectedCirculation.moneyPaid = $scope.selectedCirculation.newActuallyCollectedMoney;
+            $scope.selectedCirculation.newTransferDate = $scope.filterDateFormat;
 
             HdLuuThong
                 .one($scope.selectedCirculation.contractId)
@@ -562,6 +604,7 @@
             $scope.formProcessing = true;
 
             $scope.selectedCirculation.statusContract = CONTRACT_STATUS.CLOSE_DEAL;
+            $scope.selectedCirculation.newTransferDate = moment($scope.selectedCirculation.newTransferDate).format("DD/MM/YYYY");
             $scope.selectedCirculation.newAppointmentDate = moment($scope.selectedCirculation.newAppointmentDate).format("DD/MM/YYYY");
             $scope.selectedCirculation.moneyHavePay = $scope.selectedCirculation.moneyPaid = $scope.selectedCirculation.newPayMoney;
 
@@ -626,7 +669,7 @@
             ContractManager
                 .one($scope.selectedCirculation.contractId)
                 .one('changeStatus')
-                .customPUT({status: CONTRACT_STATUS.END})
+                .customPUT({status: CONTRACT_STATUS.END, luuThongId: $scope.selectedCirculation._id})
                 .then((contract) => {
                     toastr.success('Chuyển hợp đồng Kết Thúc thành công!');
 

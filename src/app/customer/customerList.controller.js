@@ -55,7 +55,7 @@
             $scope.roleRemove = allowRole;
         });
 
-        let currentUser = Auth.getSession();
+        // let currentUser = Auth.getSession();
         let hotInstance = "";
         let customerItem = {
             _id: "",
@@ -65,22 +65,22 @@
             photo: "",
             imgDocs: [],
             storeId: $scope.storeSelected.storeId,
-            visitor: currentUser.id
+            visitor: $scope.storeSelected.userId
         };
         let avatarIndex = -1;
         let imgDocsIndex = -1;
 
-        $scope.userSelected = {storeId: "", id: ""};
+        $scope.userSelected = {storeId: $scope.$parent.storeSelected.storeId, id: $scope.$parent.storeSelected.userId};
         $scope.stores = [];
         $scope.usersByStore = [];
 
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
 
-            StoreManager.one('listForUser').getList()
-                .then((stores) => {
-                    $scope.stores = angular.copy(Restangular.stripRestangular(stores));
-                });
+            // StoreManager.one('listForUser').getList()
+            //     .then((stores) => {
+            //         $scope.stores = angular.copy(Restangular.stripRestangular(stores));
+            //     });
         });
 
         $scope.selectedStoreEvent = function (item) {
@@ -144,6 +144,9 @@
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
+                if (!$scope.$parent.storeSelected.userId) {
+                    cellPrp.readOnly = true;
+                }
 
                 if (col !== 0)
                     cellPrp.renderer = columnRenderer;
@@ -227,6 +230,10 @@
         }
 
         $scope.delCustomer = function (rowIndex, customerId) {
+            if (!customerId && $scope.customers.length === 1) {
+                return;
+            }
+
             if (!customerId) {
                 $scope.customers.splice(rowIndex, 1);
 
@@ -249,6 +256,13 @@
                             .then(function (result) {
                                 if (result.removed) {
                                     $scope.customers.splice(rowIndex, 1);
+
+                                    if ($scope.customers === 0) {
+                                        $scope.customers.push(angular.copy(customerItem));
+                                        setTimeout(function () {
+                                            hotInstance.render();
+                                        }, 0);
+                                    }
 
                                     AlertService.replaceAlerts({
                                         type: 'success',
@@ -322,7 +336,7 @@
 
             CustomerManager
                 .one('list')
-                .getList("", {storeId: storeId})
+                .getList("", {storeId: storeId, userId: $scope.$parent.storeSelected.userId})
                 .then(function (resp) {
                     $scope.customers = angular.copy(Restangular.stripRestangular(resp));
                     $scope.customers.push(angular.copy(customerItem));
@@ -420,8 +434,9 @@
                 .then((items) => {
                     // $scope.customers = angular.copy(Restangular.stripRestangular(items));
                     // $scope.customers.push(angular.copy(customerItem));
-                    toastr.success('Cập nhật thành công!');
+                    $scope.$parent.newUsers.push(...angular.copy(items));
 
+                    toastr.success('Cập nhật thành công!');
                     $scope.getData();
                 })
                 .catch((error) => {

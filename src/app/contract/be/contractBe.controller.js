@@ -21,7 +21,12 @@
         });
 
         $scope.getData = () => {
-            ContractManager.one('allContract').one('byType').getList("", {type: CONTRACT_STATUS.ESCAPE, storeId: $scope.$parent.storeSelected.storeId})
+            ContractManager.one('allContract').one('byType').getList("",
+                {
+                    type: CONTRACT_STATUS.ESCAPE,
+                    storeId: $scope.$parent.storeSelected.storeId,
+                    userId: $scope.$parent.storeSelected.userId
+                })
                 .then((contracts) => {
                     $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
                 })
@@ -62,7 +67,7 @@
                     return;
                 }
 
-                if (event.realTarget.className.indexOf('btnStatus') >= 0) {
+                if (event.realTarget.className.indexOf('btnStatus') >= 0 && $scope.$parent.storeSelected.userId) {
                     let contractSelected = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
                     let {actuallyCollectedMoney, totalMoneyPaid, moneyPaid} = contractSelected;
 

@@ -5,10 +5,13 @@
         .factory('sessionStorage', sessionStorage)
     ;
 
-    function sessionStorage($window, AUTH_TOKEN_NAME, PREVIOUS_AUTH_TOKEN_NAME, SELECTED_STORE_ID) {
+    function sessionStorage($window, AUTH_TOKEN_NAME, PREVIOUS_AUTH_TOKEN_NAME, SELECTED_STORE_ID, SELECTED_USER_ID) {
         var api = {
             setStoreId: setStoreId,
             getStoreId: getStoreId,
+
+            setUserByStoreId: setUserByStoreId,
+            getUserByStoreId: getUserByStoreId,
 
             setCurrentToken: setCurrentToken,
             getCurrentToken: getCurrentToken,
@@ -23,6 +26,15 @@
         //
 
         return api;
+
+        function setUserByStoreId(userId) {
+            $window.localStorage[SELECTED_USER_ID] = userId;
+        }
+
+        function getUserByStoreId() {
+            return $window.localStorage[SELECTED_USER_ID];
+        }
+
 
         function setStoreId(storeId) {
             $window.localStorage[SELECTED_STORE_ID] = storeId;
