@@ -48,6 +48,8 @@
             $scope.contracts = [];
             $scope.filter.contractNo = "";
             $scope.contractInfo = {};
+            contractNo = "";
+
             _.remove($scope.events, function (item) {
                 return item;
             });

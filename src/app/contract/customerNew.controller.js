@@ -441,7 +441,7 @@
                         ContractManager.one(contractId).remove()
                             .then(function (result) {
                                 if (result.removed) {
-                                    $scope.customers.splice(rowIndex, 1);
+                                    $scope.getData();
 
                                     AlertService.replaceAlerts({
                                         type: 'success',

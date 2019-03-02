@@ -43,7 +43,7 @@
             minSpareRows: 0,
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 7 || col === 8) {
+                if (col === 1 || col === 2 || col === 6 || col === 7) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
@@ -90,14 +90,14 @@
 
             }
 
-            if (col === 2 || col === 7) {
+            if (col === 2 || col === 6) {
                 if (value)
                     td.innerHTML = moment(value).format("DD/MM/YYYY");
                 else
                     td.innerHTML = '';
             }
 
-            if (col === 8) {
+            if (col === 7) {
                 td.innerHTML = '<button class="btnStatus btn status-0"">' + 'Đóng' + '</button>';
             }
         }

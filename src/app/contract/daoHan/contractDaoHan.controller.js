@@ -38,7 +38,7 @@
             // strict: true
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 8) {
+                if (col === 1 || col === 2 || col === 7) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
@@ -77,7 +77,7 @@
                 td.innerHTML = '<u><a class="linkable cusRow" value="' + value + '" ng-click="viewCustomerCalendar(' + value + ')">' + value + '</a></u>';
             }
 
-            if (col === 2 || col === 8) {
+            if (col === 2 || col === 7) {
                 if (value)
                     td.innerHTML = moment(value).format("DD/MM/YYYY");
                 else

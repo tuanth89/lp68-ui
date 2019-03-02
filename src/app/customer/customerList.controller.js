@@ -55,6 +55,9 @@
             $scope.roleRemove = allowRole;
         });
 
+        let isAccountant = $scope.$parent.isAccountant;
+        let isRoot = $scope.$parent.isRoot;
+
         // let currentUser = Auth.getSession();
         let hotInstance = "";
         let customerItem = {
@@ -402,9 +405,6 @@
         // });
 
         $scope.saveCustomer = () => {
-            let isAccountant = $scope.$parent.isAccountant;
-            let isRoot = $scope.$parent.isRoot;
-
             if ((isAccountant || isRoot) && !$scope.userSelected.id) {
                 toastr.error("Hãy chọn nhân viên thuộc cửa hàng!");
                 return;
@@ -435,6 +435,8 @@
                     // $scope.customers = angular.copy(Restangular.stripRestangular(items));
                     // $scope.customers.push(angular.copy(customerItem));
                     $scope.$parent.newUsers.push(...angular.copy(items));
+
+                    $('#avatarModal').modal('hide');
 
                     toastr.success('Cập nhật thành công!');
                     $scope.getData();
@@ -604,6 +606,7 @@
                     $scope.formProcessing = false;
                 });
         };
+
 
     }
 })();

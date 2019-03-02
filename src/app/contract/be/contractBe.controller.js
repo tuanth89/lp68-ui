@@ -45,7 +45,7 @@
             minSpareRows: 0,
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 7 || col === 8 || col === 9) {
+                if (col === 1 || col === 2 || col === 6 || col === 7 || col === 8) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
@@ -96,14 +96,14 @@
                 td.innerHTML = '<u><a class="linkable cusRow" value="' + value + '" ng-click="viewCustomerCalendar(' + value + ')">' + value + '</a></u>';
             }
 
-            if (col === 2 || col === 7 || col === 8) {
+            if (col === 2 || col === 6 || col === 7) {
                 if (value)
                     td.innerHTML = moment(value).format("DD/MM/YYYY");
                 else
                     td.innerHTML = '';
             }
 
-            if (col === 9) {
+            if (col === 8) {
                 td.innerHTML = '<button class="btnStatus btn status-0">' + 'Đóng' + '</button>';
             }
         }

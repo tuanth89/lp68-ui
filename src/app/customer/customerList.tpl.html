@@ -69,7 +69,9 @@
                             <!--uploader="uploader" onclick="this.value=null"-->
                             <!--accept=".gif,.jpg,.jpeg,.png"-->
                             <!--id="FileUploader">-->
-                            <input class="fileInput" type="file" ng-model="fileUp" ngf-select
+                            <input class="fileInput" type="file" ng-model="$parent.fileUp"
+                                   ng-disabled="formProcessing"
+                                   ngf-select
                                    ngf-pattern="'image/*'"
                                    ngf-accept="'image/*'" ngf-resize="{width: 400, height: 400, centerCrop: true}"
                                    title=" ">
