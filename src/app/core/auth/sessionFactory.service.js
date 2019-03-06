@@ -18,9 +18,12 @@
              * @param {String} selectedStoreId
              * @param {String} selectedUserId
              * @param {Boolean} isAccountant
+             * @param {String} selectedStoreName
+             * @param {String} selectedUserCode
+             * @param {String} selectedUserName
              */
-            createNew: function (token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant) {
-                return new Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant);
+            createNew: function (token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant, selectedStoreName, selectedUserCode, selectedUserName) {
+                return new Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant, selectedStoreName, selectedUserCode, selectedUserName);
             },
 
             /**
@@ -51,7 +54,7 @@
                     data.photo = '/assets/images/anonymous.png';
                 }
 
-                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo, data.selectedStoreId, data.selectedUserId, data.isAccountant);
+                return this.createNew(data.token, data.id, data.fullName, data.username, data.email, data.userRoles, data.photo, data.selectedStoreId, data.selectedUserId, data.isAccountant, data.selectedStoreName, data.selectedUserCode, data.selectedUserName);
             },
 
             isSession: function (session) {
@@ -59,14 +62,17 @@
             }
         };
 
-        function Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant) {
+        function Session(token, id, fullName, username, email, userRoles, photo, selectedStoreId, selectedUserId, isAccountant, selectedStoreName, selectedUserCode, selectedUserName) {
             this.token = token;
             this.id = id || null;
             this.username = username;
             this.fullName = fullName;
             this.email = email;
             this.selectedStoreId = selectedStoreId;
+            this.selectedStoreName = selectedStoreName;
             this.selectedUserId = selectedUserId;
+            this.selectedUserCode = selectedUserCode;
+            this.selectedUserName = selectedUserName;
             this.isAccountant = isAccountant;
 
             if (!angular.isArray(userRoles)) {

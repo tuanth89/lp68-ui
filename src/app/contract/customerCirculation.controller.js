@@ -134,6 +134,7 @@
             colHeaders: true,
             minSpareRows: 0,
             stretchH: "all",
+            wordWrap: false,
             cells: function (row, col) {
                 let cellPrp = {};
                 let item = $scope.contracts[row];

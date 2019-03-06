@@ -29,6 +29,20 @@
                     }
                 }
             })
+            .state('contract.cusOld', {
+                url: '/hop-dong-cu',
+                views: {
+                    'content@app.root.contract': {
+                        controller: 'ContractOldController',
+                        templateUrl: 'contract/hopDongCu/contractOld.tpl.html'
+                    }
+                },
+                resolve: {
+                    customerSource: function ($stateParams, CustomerManager, Auth) {
+                        return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId, userId: Auth.getSession().selectedUserId});
+                    }
+                }
+            })
             .state('contract.cusCirculation', {
                 url: '/luu-thong',
                 views: {

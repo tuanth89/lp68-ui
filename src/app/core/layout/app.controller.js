@@ -14,20 +14,28 @@
         $scope.step = 1;
         $scope.newUsers = [];
 
-        $scope.storeSelected = {storeId: "", userId: ""};
+        $scope.storeSelected = {storeId: "", userId: "", userCode: "", userName: "", storeName: ""};
         $scope.storeSelected.storeId = $scope.currentUser.selectedStoreId;
+        $scope.storeSelected.storeName = $scope.currentUser.selectedStoreName;
         $scope.storeSelected.userId = $scope.currentUser.selectedUserId;
+        $scope.storeSelected.userCode = $scope.currentUser.selectedUserCode;
+        $scope.storeSelected.userName = $scope.currentUser.selectedUserName;
         if (!$scope.currentUser.selectedStoreId && !$scope.isRoot) {
             $('#storeModal').modal({show: true, backdrop: 'static', keyboard: false});
         }
 
         $scope.selectedStoreEvent = function (item) {
             $scope.storeSelected.storeId = item._id;
+            $scope.storeSelected.storeName = item.name;
             if (!$scope.isAccountant) {
                 $scope.storeSelected.userId = $scope.currentUser.id;
+                $scope.storeSelected.userCode = $scope.currentUser.username;
+                $scope.storeSelected.userName = $scope.currentUser.fullName;
             }
             else {
                 $scope.storeSelected.userId = "";
+                $scope.storeSelected.userCode = "";
+                $scope.storeSelected.userName = "";
                 StoreManager.one(item._id).one('listUserByStore').get()
                     .then((store) => {
                         $scope.usersByStore = _.map(store.staffs, (item) => {
@@ -39,6 +47,11 @@
                     .finally(() => {
                     });
             }
+        };
+
+        $scope.selectedUserEvent = function (item) {
+            $scope.storeSelected.userCode = item.username;
+            $scope.storeSelected.userName = item.fullName;
         };
 
         $scope.saveStore = () => {
@@ -53,7 +66,7 @@
             // }
 
             // if ($scope.step === 2) {
-            Auth.setSessionProperty_StoreId_UserId($scope.storeSelected.storeId, $scope.storeSelected.userId);
+            Auth.setSessionProperty_StoreId_UserId($scope.storeSelected.storeId, $scope.storeSelected.userId, $scope.storeSelected.userCode, $scope.storeSelected.userName, $scope.storeSelected.storeName);
             $('#storeModal').modal('hide');
             // return;
             // }

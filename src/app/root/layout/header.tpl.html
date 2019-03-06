@@ -16,6 +16,24 @@
         </li>
     </ul>
     <ul class="nav-right">
+        <li ng-if="storeSelected.storeName">
+            <a href="" class="no-after peers fxw-nw ai-c lh-1">
+                <div class="peer">
+                    <span class="fsz-sm c-grey-900">Cửa hàng: </span>
+                    <span>{{storeSelected.storeName}}</span>
+                </div>
+            </a>
+        </li>
+
+        <li ng-if="storeSelected.userName">
+            <a href="" class="no-after peers fxw-nw ai-c lh-1">
+                <div class="peer">
+                    <span class="fsz-sm c-grey-900">Nhân viên: </span>
+                    <span>{{storeSelected.userName}}</span>
+                </div>
+            </a>
+        </li>
+
         <li class="notifications dropdown">
             <span class="counter bgc-red">{{systemNotificationsCount || 0}}</span>
             <a href="" class="dropdown-toggle no-after" data-toggle="dropdown">

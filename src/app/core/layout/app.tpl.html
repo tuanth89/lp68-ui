@@ -43,7 +43,8 @@
                 </div>
 
                 <div class="form-group" ng-if="isAccountant">
-                    <ui-select ng-model="storeSelected.userId" theme="bootstrap" search-enabled="true">
+                    <ui-select ng-model="storeSelected.userId" theme="bootstrap" search-enabled="true"
+                               on-select="selectedUserEvent($item)">
                         <ui-select-match placeholder="Nhân viên">
                             <span ng-bind-html="$select.selected.fullName"></span>
                         </ui-select-match>

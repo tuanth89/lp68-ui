@@ -123,11 +123,14 @@
          * @returns {promise}
          */
         function check() {
-            var dfd = $q.defer();
+            let dfd = $q.defer();
 
-            var token = sessionStorage.getCurrentToken();
+            let token = sessionStorage.getCurrentToken();
             let selectedStoreId = sessionStorage.getStoreId();
+            let selectedStoreName = sessionStorage.getStoreName();
             let selectedUserId = sessionStorage.getUserByStoreId();
+            let selectedUserCode = sessionStorage.getUserByStoreCode();
+            let selectedUserName = sessionStorage.getUserByStoreName();
 
             if (!token) {
                 dfd.reject(new Error(authErrors.noToken));
@@ -149,6 +152,9 @@
                         // use selected storeId
                         data.selectedStoreId = selectedStoreId;
                         data.selectedUserId = selectedUserId;
+                        data.selectedUserCode = selectedUserCode;
+                        data.selectedUserName = selectedUserName;
+                        data.selectedStoreName = selectedStoreName;
 
                         dfd.resolve(data);
                     },
@@ -183,14 +189,27 @@
             }
         }
 
-        function setSessionProperty_StoreId_UserId(storeId, userId) {
+        function setSessionProperty_StoreId_UserId(storeId, userId, userCode, userName, storeName) {
             if (isAuthenticated()) {
                 _$currentSession.selectedStoreId = storeId;
                 sessionStorage.setStoreId(storeId);
 
+                _$currentSession.selectedStoreName = storeName;
+                sessionStorage.setStoreName(storeName);
+
                 if (userId) {
                     _$currentSession.selectedUserId = userId;
                     sessionStorage.setUserByStoreId(userId);
+                }
+
+                if (userCode) {
+                    _$currentSession.selectedUserCode = userCode;
+                    sessionStorage.setUserByStoreCode(userCode);
+                }
+
+                if (userName) {
+                    _$currentSession.selectedUserName = userName;
+                    sessionStorage.setUserByStoreName(userName);
                 }
             }
         }

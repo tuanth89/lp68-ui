@@ -1019,6 +1019,11 @@ input.textAlign {
     text-align: center;
 }
 
+.handsontable td {
+    white-space: normal !important;
+    word-wrap: break-word;
+}
+
 /*.file {*/
 /*position: relative;*/
 /*height: 30px;*/

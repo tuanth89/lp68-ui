@@ -2,13 +2,17 @@
     'use strict';
 
     angular.module('ati.contract')
-        .controller('CustomerNewController', CustomerNewController);
+        .controller('ContractOldController', ContractOldController);
 
-    function CustomerNewController($scope, CONTRACT_EVENT, $timeout, StoreManager, hotRegisterer, customerSource, ContractManager, Restangular, Auth, AlertService, CustomerManager, AdminService, storeList) {
+    function ContractOldController($scope, CONTRACT_EVENT, $timeout, StoreManager, hotRegisterer, customerSource, ContractManager, Restangular, Auth, AlertService, CustomerManager, storeList) {
         let currentUser = Auth.getSession();
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
-        $scope.customerSource = _.map(customerS, 'name').join(',');
+        // $scope.customerSource = _.map(customerS, 'name').join(',');
+        let typeContract = [
+            {name: "Lãi đứng", value: true},
+            {name: "Đáo", value: true}
+        ];
 
         let selectedStoreId = $scope.$parent.storeSelected.storeId;
         let storeCode = "";
@@ -17,22 +21,9 @@
             storeCode = storeItem.storeId;
         }
 
-        AdminService.checkRole(['contract.remove']).then(function (allowRole) {
-            $scope.roleRemove = allowRole;
-        });
-
         $scope.userSelected = {storeId: $scope.$parent.storeSelected.storeId, id: $scope.$parent.storeSelected.userId};
         $scope.stores = [];
         $scope.usersByStore = [];
-
-        $scope.$on('$viewContentLoaded', function (event, data) {
-            $scope.getData();
-
-            // StoreManager.one('listForUser').getList()
-            //     .then((stores) => {
-            //         $scope.stores = angular.copy(Restangular.stripRestangular(stores));
-            //     });
-        });
 
         $scope.selectedStoreEvent = function (item) {
             $scope.userSelected.id = "";
@@ -70,33 +61,13 @@
                 });
         };
 
-
-        $scope.filter = {date: ""};
-        $scope.$watch('filter.date', function (newValue, oldValue) {
-            $timeout(function () {
-                if (newValue != oldValue) {
-                    $scope.getData();
-                }
-            }, 100);
-        });
-
         $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
             hotInstance.render();
         });
 
-        $scope.onAfterInit = function () {
-            hotInstance.validateCells();
-        };
-
-        if ($scope.$parent.isAccountant)
-            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
-        else
-            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
-
         let hotInstance = "";
         let customerItem = {
             _id: "",
-            contractNo: "",
             customer: {
                 name: "",
                 phone: "",
@@ -106,10 +77,12 @@
             loanMoney: "",
             actuallyCollectedMoney: "",
             loanDate: "",
-            createdAt: $scope.filter.date,
+            createdAt: "",
+            dateEnd: "",
             isHdLaiDung: false,
+            isHdDao: false,
             isCustomerNew: true,
-            payNow: "",
+            paidMoney: "",
             storeId: selectedStoreId,
             storeCode: storeCode,
             customerCode: $scope.$parent.storeSelected.userCode,
@@ -158,31 +131,19 @@
                 else
                     cellPrp.className = "hot-normal";
 
-                // if (moment($scope.filter.date, "YYYY-MM-DD").isBefore(moment().format("YYYY-MM-DD"))) {
-                //     cellPrp.readOnly = true;
-                //     cellPrp.className = "handsontable-cell-disable";
-                //     return cellPrp;
-                // }
-
-                // cellPrp.readOnly = true;
+                if (col === 0) {
+                    cellPrp.type = 'dropdown';
+                    cellPrp.source = _.map(typeContract, 'name');
+                    cellPrp.strict = true;
+                }
 
                 if (col === 1) {
                     cellPrp.type = 'dropdown';
                     cellPrp.source = _.map(customerS, 'name');
                     cellPrp.strict = true;
-
-                    // hotInstance.updateSettings($scope.settings);
-                    // cellPrp.datarows = $scope.customerSource;
-                    // cellPrp.editor = 'select2';
-                    // cellPrp.renderer = customDropdownRenderer;
-                    // cellPrp.width = '200px';
-                    // cellPrp.select2Options = {
-                    //     data: optionsList,
-                    //     dropdownAutoWidth: true,
-                    //     width: 'resolve'
-                    // };
                 }
-                if (col === 7) {
+
+                if (col === 10) {
                     cellPrp.renderer = columnRenderer;
                 }
 
@@ -201,6 +162,20 @@
                     let rowChecked = source[0][0];
                     let newValue = source[0][3];
 
+                    if (source[0][1] === "statusType") {
+                        let typeItem = _.find(typeContract, {name: newValue});
+                        $scope.customers[rowChecked].isHdLaiDung = false;
+                        $scope.customers[rowChecked].isHdDao = false;
+                        if (typeItem) {
+                            if (typeItem.name === "Đáo") {
+                                $scope.customers[rowChecked].isHdDao = true;
+                            }
+                            else {
+                                $scope.customers[rowChecked].isHdLaiDung = true;
+                            }
+                        }
+                    }
+
                     if (source[0][1] === "customer.name") {
                         let customerItem = _.find(customerS, {name: newValue});
                         if (customerItem) {
@@ -218,13 +193,17 @@
                         // console.log('new value: ' + source[0][3]);
                     }
 
-                    // if (source[0][1] === "payNow") {
-                    //     if (newValue > $scope.customers[rowChecked].loanDate) {
-                    //         toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
-                    //         hotInstance.selectCell(rowChecked, 5);
-                    //         hotInstance.setDataAtCell(rowChecked, 5, "");
-                    //     }
-                    // }
+                    if (source[0][1] === "paidMoney") {
+                        // if (newValue > $scope.customers[rowChecked].loanDate) {
+                        let realMoney = parseInt($scope.customers[rowChecked].actuallyCollectedMoney);
+                        if (realMoney > 0) {
+                            let paidMoney = parseInt($scope.customers[rowChecked].paidMoney);
+                            let totalMoneyPaid = realMoney - paidMoney;
+                            hotInstance.setDataAtCell(rowChecked, 7, totalMoneyPaid >= 0 ? totalMoneyPaid : 0);
+                        }
+                        // }
+                    }
+
                     // if (source[0][1] === "loanDate") {
                     //     if (newValue < $scope.customers[rowChecked].payNow) {
                     //         toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
@@ -243,61 +222,19 @@
 
         function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
+
             if (cellProperties.prop === "actionDel") {
-                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '"><span class="fa fa-trash"></span>&nbsp;Xóa</button>';
+                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '" style="width:22px;"><span class="fa fa-trash"></span>&nbsp;</button>';
                 return;
             }
         }
 
-        $scope.getData = function () {
-            ContractManager.one("circulation").one("all")
-                .getList("", {date: $scope.filter.date, type: 0, storeId: selectedStoreId})
-                .then(function (resp) {
-                    $scope.customers = angular.copy(Restangular.stripRestangular(resp));
-
-                    customerItem.createdAt = $scope.filter.date;
-                    // if (!moment($scope.filter.date, "YYYY-MM-DD").isBefore(moment().format("YYYY-MM-DD"))) {
-                    //
-                    // }
-
-                    // $scope.customers.push(angular.copy(customerItem));
-                    let userNews = angular.copy($scope.$parent.newUsers);
-                    if (userNews.length > 0) {
-                        _.each(userNews, (customer) => {
-                            let customerItem = {
-                                _id: "",
-                                contractNo: "",
-                                customer: {
-                                    name: customer.name,
-                                    phone: "",
-                                    _id: customer._id
-                                },
-                                customerId: customer._id,
-                                loanMoney: "",
-                                actuallyCollectedMoney: "",
-                                loanDate: "",
-                                createdAt: $scope.filter.date,
-                                isHdLaiDung: false,
-                                isCustomerNew: true,
-                                payNow: "",
-                                storeId: selectedStoreId,
-                                creator: currentUser._id
-                            };
-
-                            $scope.customers.push(customerItem);
-                        });
-                    }
-                    else
-                        $scope.customers.push(angular.copy(customerItem));
-
-                    setTimeout(function () {
-                        hotInstance.render();
-                    }, 0);
-                });
-        };
-
         $timeout(function () {
             hotInstance = hotRegisterer.getInstance('my-handsontable');
+
+            $scope.onAfterInit = function () {
+                hotInstance.validateCells();
+            };
 
             // hotInstance.addHook('afterSelectionEnd',
             //     function (rowId, colId, rowEndId, colEndId) {
@@ -339,37 +276,33 @@
                             return;
                         }
 
-                        customerItem.createdAt = $scope.filter.date;
+                        // customerItem.createdAt = $scope.filter.date;
                         $scope.customers.push(angular.copy(customerItem));
                         // hotInstance.alter("insert_row", totalRows + 1);
                     }
                 }
             }, true);
+
         }, 0);
 
         $scope.saveContract = () => {
-            if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !$scope.userSelected.id) {
-                AlertService.replaceAlerts({
-                    type: 'error',
-                    message: "Hãy chọn nhân viên thuộc cửa hàng!"
-                });
-                return;
-            }
-
             let validCustomers = angular.copy($scope.customers);
-            _.remove(validCustomers, function (item) {
-                return item._id;
-            });
-
             let checkValid = true;
-            _.filter(validCustomers, (item) => {
-                if (!item.customer.name || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate) {
+            let indexInvalid = -1;
+
+            _.filter(validCustomers, (item, index) => {
+                if (!item.customer.name || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate
+                    || !item.paidMoney || !item.totalMoneyNeedPay || !item.dateEnd) {
+
                     checkValid = false;
+                    indexInvalid = index;
                     return false;
                 }
             });
 
             if (!checkValid) {
+                hotInstance.selectCell(indexInvalid, 1);
+
                 AlertService.replaceAlerts({
                     type: 'error',
                     message: "Chưa nhập đủ thông tin hợp đồng!"
@@ -387,38 +320,21 @@
                 return item;
             });
 
-            ContractManager.post(customers)
+            ContractManager.one("contractOld").customPOST(customers)
                 .then((results) => {
-                    _.remove(results, (item) => {
-                        return !item.isRemove;
-                    });
-
-                    if (results.length > 0) {
-                        let userNews = angular.copy($scope.$parent.newUsers);
-                        _.forEach(results, (itemResult) => {
-                            let foundIndex = _.findIndex(userNews, function (customer) {
-                                return customer._id === itemResult.customerId;
-                            });
-
-                            if (foundIndex >= 0)
-                                $scope.$parent.newUsers.splice(foundIndex, 1);
-                        });
-                    }
-                    else
-                        $scope.$parent.newUsers = [];
-
-                    $scope.getData();
+                    $scope.customers = [];
+                    $scope.customers.push(angular.copy(customerItem));
 
                     AlertService.replaceAlerts({
                         type: 'success',
-                        message: "Tạo mới hợp đồng thành công!"
+                        message: "Tạo hợp đồng cũ thành công!"
                     });
                 })
                 .catch((error) => {
                     console.log(error);
                     AlertService.replaceAlerts({
                         type: 'error',
-                        message: "Tạo mới hợp đồng thất bại. Hãy thử lại sau!"
+                        message: "Tạo hợp đồng cũ thất bại. Hãy thử lại sau!"
                     });
                 });
         };
@@ -435,42 +351,6 @@
                     $scope.$apply();
                     hotInstance.render();
                 }, 0);
-            }
-            else {
-                swal({
-                    title: 'Bạn có chắc chắn muốn xóa hợp đồng này ?',
-                    text: "",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Có',
-                    cancelButtonText: 'Không',
-                }).then((result) => {
-                    if (result.value) {
-                        ContractManager.one(contractId).remove()
-                            .then(function (result) {
-                                if (result.removed) {
-                                    $scope.getData();
-
-                                    AlertService.replaceAlerts({
-                                        type: 'success',
-                                        message: "Xóa hợp đồng thành công!"
-                                    });
-                                }
-                                else {
-                                    AlertService.replaceAlerts({
-                                        type: 'error',
-                                        message: "Xóa thất bại. Hợp đồng đã chuyển trạng thái!"
-                                    });
-                                }
-                            })
-                            .catch(function () {
-                                AlertService.replaceAlerts({
-                                    type: 'error',
-                                    message: "Có lỗi xảy ra!"
-                                });
-                            });
-                    }
-                });
             }
         };
     }
