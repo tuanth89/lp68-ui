@@ -4,7 +4,7 @@
     angular.module('ati.core')
         .run(eventListeners);
 
-    function eventListeners($rootScope, $translate, $state, AUTH_EVENTS, ENTRY_STATE, AlertService, UserStateHelper, Auth, AdminService) {
+    function eventListeners($rootScope, $translate, $state, AUTH_EVENTS, RELOAD_PAGE, ENTRY_STATE, AlertService, UserStateHelper, Auth, AdminService) {
         $rootScope.$on(AUTH_EVENTS.loginSuccess, function () {
             UserStateHelper.transitionRelativeToBaseState('.dashboard');
 
@@ -16,6 +16,10 @@
             // } else {
             //     UserStateHelper.transitionRelativeToBaseState('admin.management.doctorVisit.todayWorkList');
             // }
+        });
+
+        $rootScope.$on(RELOAD_PAGE.CHANGE_STORE_OR_STAFF, function () {
+            UserStateHelper.transitionRelativeToBaseState('.dashboard');
         });
 
         $rootScope.$on(AUTH_EVENTS.loginFailed, function () {

@@ -4,7 +4,7 @@
     angular.module('ati.core.layout')
         .controller('AppController', App);
 
-    function App($rootScope, $scope, Auth, userSession, $timeout, AUTH_EVENTS, LANG_KEY, storeList, Restangular, CONTRACT_EVENT, StoreManager, CustomerManager) {
+    function App($rootScope, $scope, Auth, userSession, $timeout, AUTH_EVENTS, RELOAD_PAGE, LANG_KEY, storeList, Restangular, CONTRACT_EVENT, StoreManager, CustomerManager) {
         $scope.storeList = angular.copy(Restangular.stripRestangular(storeList));
         $scope.currentUser = userSession;
         $scope.isRoot = Auth.isRoot();
@@ -14,28 +14,47 @@
         $scope.step = 1;
         $scope.newUsers = [];
 
+        $scope.formStoreProcessing = false;
         $scope.storeSelected = {storeId: "", userId: "", userCode: "", userName: "", storeName: ""};
         $scope.storeSelected.storeId = $scope.currentUser.selectedStoreId;
         $scope.storeSelected.storeName = $scope.currentUser.selectedStoreName;
         $scope.storeSelected.userId = $scope.currentUser.selectedUserId;
         $scope.storeSelected.userCode = $scope.currentUser.selectedUserCode;
         $scope.storeSelected.userName = $scope.currentUser.selectedUserName;
+
+        $scope.storeDraff = {storeId: "", userId: "", userCode: "", userName: "", storeName: ""};
+        $scope.allowClose = false;
+
         if (!$scope.currentUser.selectedStoreId && !$scope.isRoot) {
             $('#storeModal').modal({show: true, backdrop: 'static', keyboard: false});
         }
+        else
+            $scope.storeDraff = angular.copy($scope.storeSelected);
 
         $scope.selectedStoreEvent = function (item) {
-            $scope.storeSelected.storeId = item._id;
-            $scope.storeSelected.storeName = item.name;
+            // $scope.storeSelected.storeId = item._id;
+            // $scope.storeSelected.storeName = item.name;
+            $scope.storeDraff.storeId = item._id;
+            $scope.storeDraff.storeName = item.name;
+
             if (!$scope.isAccountant) {
-                $scope.storeSelected.userId = $scope.currentUser.id;
-                $scope.storeSelected.userCode = $scope.currentUser.username;
-                $scope.storeSelected.userName = $scope.currentUser.fullName;
+                // $scope.storeSelected.userId = $scope.currentUser.id;
+                // $scope.storeSelected.userCode = $scope.currentUser.username;
+                // $scope.storeSelected.userName = $scope.currentUser.fullName;
+
+                $scope.storeDraff.userId = $scope.currentUser.id;
+                $scope.storeDraff.userCode = $scope.currentUser.username;
+                $scope.storeDraff.userName = $scope.currentUser.fullName;
             }
             else {
-                $scope.storeSelected.userId = "";
-                $scope.storeSelected.userCode = "";
-                $scope.storeSelected.userName = "";
+                // $scope.storeSelected.userId = "";
+                // $scope.storeSelected.userCode = "";
+                // $scope.storeSelected.userName = "";
+
+                $scope.storeDraff.userId = "";
+                $scope.storeDraff.userCode = "";
+                $scope.storeDraff.userName = "";
+
                 StoreManager.one(item._id).one('listUserByStore').get()
                     .then((store) => {
                         $scope.usersByStore = _.map(store.staffs, (item) => {
@@ -50,15 +69,24 @@
         };
 
         $scope.selectedUserEvent = function (item) {
-            $scope.storeSelected.userCode = item.username;
-            $scope.storeSelected.userName = item.fullName;
+            // $scope.storeSelected.userCode = item.username;
+            // $scope.storeSelected.userName = item.fullName;
+
+            $scope.storeDraff.userCode = item.username;
+            $scope.storeDraff.userName = item.fullName;
+
         };
 
         $scope.saveStore = () => {
-            if (!$scope.storeSelected.storeId) {
+            if (!$scope.storeDraff.storeId) {
                 toastr.error('Chưa chọn cửa hàng!');
                 return;
             }
+
+            let isChange = $scope.storeDraff.storeId !== $scope.storeSelected.storeId
+                || $scope.storeDraff.userId !== $scope.storeSelected.userId;
+
+            $scope.storeSelected = angular.copy($scope.storeDraff);
 
             // if ($scope.isAccountant && !$scope.storeSelected.userId) {
             //     toastr.error('Chưa chọn nhân viên!');
@@ -70,6 +98,13 @@
             $('#storeModal').modal('hide');
             // return;
             // }
+
+            // Nếu đổi cửa hàng, nhân viên thì notify lại all page
+            if ($scope.allowClose && isChange) {
+                setTimeout(function () {
+                    $rootScope.$broadcast(RELOAD_PAGE.CHANGE_STORE_OR_STAFF);
+                }, 300);
+            }
 
             // if ($scope.isAccountant && $scope.step === 1) {
             //     $scope.titleModal = "Chọn nhân viên";
@@ -106,6 +141,36 @@
             $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess, lang);
         };
 
+        $('#storeModal').on('show.bs.modal', function (e) {
+            $scope.storeDraff = angular.copy($scope.storeSelected);
+            if ($scope.usersByStore.length === 0) {
+                $scope.formStoreProcessing = true;
+                StoreManager.one($scope.storeSelected.storeId).one('listUserByStore').get()
+                    .then((store) => {
+                        $scope.usersByStore = _.map(store.staffs, (item) => {
+                            if (!item.isAccountant)
+                                return item;
+                        });
+                    }, (error) => {
+                    })
+                    .finally(() => {
+                        $scope.formStoreProcessing = false;
+                    });
+
+            }
+        });
+
+        $('#storeModal').on('hide.bs.modal', function (e) {
+            if (!$scope.storeDraff.userId) {
+                $scope.usersByStore = [];
+            }
+        });
+
+        $scope.showModalStore = () => {
+            $scope.allowClose = true;
+            $('#storeModal').modal('show');
+        };
+
         $timeout(function () {
             const scrollables = $('.scrollable');
             if (scrollables.length > 0) {
@@ -129,46 +194,47 @@
                 }
             });
 
-            // Sidebar links
-            $('.sidebar .sidebar-menu li a').on('click', function () {
-                const $this = $(this);
 
-                if ($this.parent().hasClass('open')) {
-                    $this
-                        .parent()
-                        .children('.dropdown-menu')
-                        .slideUp(200, () => {
-                            $this.parent().removeClass('open');
-                        });
-                } else {
-                    $this
-                        .parent()
-                        .parent()
-                        .children('li.open')
-                        .children('.dropdown-menu')
-                        .slideUp(200);
-
-                    $this
-                        .parent()
-                        .parent()
-                        .children('li.open')
-                        .children('a')
-                        .removeClass('open');
-
-                    $this
-                        .parent()
-                        .parent()
-                        .children('li.open')
-                        .removeClass('open');
-
-                    $this
-                        .parent()
-                        .children('.dropdown-menu')
-                        .slideDown(200, () => {
-                            $this.parent().addClass('open');
-                        });
-                }
-            });
+            // // Sidebar links
+            // $('.sidebar .sidebar-menu li a').on('click', function () {
+            //     const $this = $(this);
+            //
+            //     if ($this.parent().hasClass('open')) {
+            //         $this
+            //             .parent()
+            //             .children('.dropdown-menu')
+            //             .slideUp(200, () => {
+            //                 $this.parent().removeClass('open');
+            //             });
+            //     } else {
+            //         $this
+            //             .parent()
+            //             .parent()
+            //             .children('li.open')
+            //             .children('.dropdown-menu')
+            //             .slideUp(200);
+            //
+            //         $this
+            //             .parent()
+            //             .parent()
+            //             .children('li.open')
+            //             .children('a')
+            //             .removeClass('open');
+            //
+            //         $this
+            //             .parent()
+            //             .parent()
+            //             .children('li.open')
+            //             .removeClass('open');
+            //
+            //         $this
+            //             .parent()
+            //             .children('.dropdown-menu')
+            //             .slideDown(200, () => {
+            //                 $this.parent().addClass('open');
+            //             });
+            //     }
+            // });
 
             // // ٍSidebar Toggle
             // $('.sidebar-toggle').on('click', e => {

@@ -58,11 +58,23 @@
             {
                 title: "Cấu hình phế",
                 icon: "c-blue-500 ti-money",
-                state: ".pheConfig.newCustomer",
-                noneDropdown: true,
-                visible: true,
-                featureName: "pheConfig",
-                actions: ["list"]
+                state: "",
+                featureName: "",
+                actions: ["list"],
+                children: [
+                    {
+                        title: "Nhân viên",
+                        featureName: "contract",
+                        actions: ["list"],
+                        state: ".pheNv.list"
+                    },
+                    {
+                        title: "Cấu hình phế",
+                        featureName: "pheConfig",
+                        actions: ["list"],
+                        state: ".pheConfig.newCustomer"
+                    }
+                ]
             },
             {
                 title: "Cửa hàng",

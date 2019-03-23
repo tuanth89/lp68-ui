@@ -106,6 +106,9 @@
             restrict: 'A',
             priority: 1,
             require: 'ngModel',
+            scope: {
+                someCtrlFn: '&callbackFn'
+            },
             link: function (scope, element, attrs, ctrl) {
                 function formatter(value) {
                     value = value ? parseFloat(value.toString().replace(/[^0-9._-]/g, '')) || 0 : 0;
@@ -114,8 +117,10 @@
 
                     element.val(formattedValue);
 
-                    // ngModelCtrl.$setViewValue(value);
-                    scope.ngModel = value;
+                    ctrl.$setViewValue(value);
+                    // scope.ngModel = value;
+                    scope.someCtrlFn({money: value});
+
                     scope.$apply();
 
                     return formattedValue;
@@ -123,6 +128,7 @@
 
                 element.bind('blur', function () {
                     element.val(formatter(formatInputNumberKMB(element.val())));
+                    // ctrl.$setViewValue(element.val());
                 });
             }
         };

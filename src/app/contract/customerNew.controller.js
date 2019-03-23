@@ -108,12 +108,12 @@
             loanDate: "",
             createdAt: $scope.filter.date,
             isHdLaiDung: false,
-            isCustomerNew: true,
+            isCustomerNew: false,
             payNow: "",
             storeId: selectedStoreId,
             storeCode: storeCode,
             customerCode: $scope.$parent.storeSelected.userCode,
-            creator: currentUser._id
+            creator: $scope.$parent.storeSelected.userId
         };
 
         $scope.customers = [];

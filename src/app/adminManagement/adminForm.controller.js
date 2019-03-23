@@ -153,6 +153,14 @@
 
                     $state.go('^.list');
                 })
+                .catch((err) => {
+                    AlertService.replaceAlerts({
+                        type: 'error',
+                        message: "Có lỗi xảy ra! Hãy thử tạo lại."
+                    });
+
+                    $scope.formProcessing = false;
+                });
             // .catch(function (response) {
             //     $scope.formProcessing = false;
             //     document.documentElement.scrollTop = 0;

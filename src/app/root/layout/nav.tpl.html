@@ -54,7 +54,8 @@
             <ul ng-if="!item.noneDropdown" class="dropdown-menu">
                 <li ng-repeat="child in item.children" ng-show="child.visible">
                     <a class="sidebar-link" ui-sref="{{child.state}}">
-                        {{child.title}} <span ng-if="child.countNumber" class="badge badge-danger" style="margin-left: 5px">{{countInfo[child.countNumber]}}</span>
+                        {{child.title}}
+                        <!--<span ng-if="child.countNumber" class="badge badge-danger" style="margin-left: 5px">{{countInfo[child.countNumber]}}</span>-->
                     </a>
                 </li>
             </ul>

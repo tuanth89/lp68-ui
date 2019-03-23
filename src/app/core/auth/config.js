@@ -9,11 +9,9 @@
         .constant('SELECTED_USER_ID', 'selectedUserId')
         .constant('SELECTED_USER_CODE', 'selectedUserCode')
         .constant('SELECTED_USER_NAME', 'selectedUserName')
-
         .constant('USER_ROLES', {
             root: 'super-admin'
         })
-
         .constant('AUTH_EVENTS', {
             loginSuccess: 'ati.core.auth.login_success',
             loginFailed: 'ati.core.auth.login_failed',
@@ -22,7 +20,9 @@
             notAuthenticated: 'ati.core.auth.not_authenticated',
             notAuthorized: 'ati.core.auth.not_authorized'
         })
-
+        .constant('RELOAD_PAGE', {
+            CHANGE_STORE_OR_STAFF: 'changeStoreOrStaff'
+        })
     ;
 
 })();

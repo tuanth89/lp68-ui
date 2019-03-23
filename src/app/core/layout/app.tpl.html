@@ -19,44 +19,54 @@
     </footer>
 </div>
 
-<div class="modal fade" id="storeModal">
+<div class="modal fade" id="storeModal" tabindex="-1">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">{{titleModal}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-show="allowClose">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <!--<div id="modalSelected" class="carousel slide" data-ride="carousel" data-interval="false">-->
                 <!--<div class="carousel-inner" style="overflow: visible !important;">-->
                 <!--<div class="carousel-item active">-->
-                <div class="form-group">
-                    <ui-select ng-model="storeSelected.storeId" theme="bootstrap" search-enabled="true"
-                               on-select="selectedStoreEvent($item)">
-                        <ui-select-match allow-clear="true" placeholder="Cửa hàng">
-                            <span ng-bind-html="$select.selected.name"></span>
-                        </ui-select-match>
-                        <ui-select-choices
-                                repeat="item._id as item in storeList | filter : {name: $select.search} ">
-                            <span ng-bind-html="item.name | highlight: $select.search"></span>
-                        </ui-select-choices>
-                    </ui-select>
+                <div class="cold-md-12" style="text-align: center;" ng-show="formStoreProcessing">
+                    <i class="fa fa-spinner fa-pulse fa-3x" style="text-align: center;"></i>
                 </div>
 
-                <div class="form-group" ng-if="isAccountant">
-                    <ui-select ng-model="storeSelected.userId" theme="bootstrap" search-enabled="true"
-                               on-select="selectedUserEvent($item)">
-                        <ui-select-match placeholder="Nhân viên">
-                            <span ng-bind-html="$select.selected.fullName"></span>
-                        </ui-select-match>
-                        <ui-select-choices
-                                repeat="i._id as i in usersByStore | filter : {fullName: $select.search}">
-                            <span ng-bind-html="i.fullName | highlight: $select.search"></span>
-                        </ui-select-choices>
-                    </ui-select>
+                <div ng-show="!formStoreProcessing">
+                    <div class="form-group">
+                        <ui-select ng-model="storeDraff.storeId" theme="bootstrap" search-enabled="true"
+                                   on-select="selectedStoreEvent($item)">
+                            <ui-select-match allow-clear="true" placeholder="Cửa hàng">
+                                <span ng-bind-html="$select.selected.name"></span>
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="item._id as item in storeList | filter : {name: $select.search} ">
+                                <span ng-bind-html="item.name | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+                    <div class="form-group" ng-if="isAccountant">
+                        <ui-select ng-model="storeDraff.userId" theme="bootstrap" search-enabled="true"
+                                   on-select="selectedUserEvent($item)">
+                            <ui-select-match placeholder="Nhân viên">
+                                <span ng-bind-html="$select.selected.fullName"></span>
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="i._id as i in usersByStore | filter : {fullName: $select.search}">
+                                <span ng-bind-html="i.fullName | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
                 </div>
+
             </div>
             <!--<div class="carousel-item">-->
-            <!--<ui-select ng-model="storeSelected.userId" theme="bootstrap" search-enabled="true">-->
+            <!--<ui-select ng-model="storeDraff.userId" theme="bootstrap" search-enabled="true">-->
             <!--<ui-select-match placeholder="Nhân viên">-->
             <!--<span ng-bind-html="$select.selected.fullName"></span>-->
             <!--</ui-select-match>-->
@@ -71,7 +81,7 @@
             <!--</div>-->
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary"
-                        ng-disabled="!storeSelected.storeId"
+                        ng-disabled="!storeDraff.storeId || formStoreProcessing || formProcessing"
                         ng-click="saveStore()">
                     <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Hoàn tất
                 </button>

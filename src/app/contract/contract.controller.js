@@ -60,7 +60,7 @@
         $scope.dongTienFunc = () => {
             ContractManager
                 .one($scope.contractSelected._id)
-                .one('ContractManager')
+                .one('updateTotalMoneyPaid')
                 .customPUT({totalMoneyPaid: $scope.contractSelected.newPayMoney})
                 .then((contract) => {
                     toastr.success('Cập nhật thành công!');

@@ -982,6 +982,10 @@ input.has-error, textarea.has-error, select.has-error {
     background: rgb(238, 238, 238) !important;
 }
 
+.handsontable.listbox td {
+    color: #222 !important;
+}
+
 .row-border .form-group {
     border-top: 1px solid #ececec;
     margin-bottom: 0 !important;
@@ -1022,6 +1026,12 @@ input.textAlign {
 .handsontable td {
     white-space: normal !important;
     word-wrap: break-word;
+}
+
+@media screen and (max-width: 1439px) and (min-width: 992px) {
+    .sidebar-menu li.dropdown.open ul.dropdown-menu {
+        display: none !important;
+    }
 }
 
 /*.file {*/

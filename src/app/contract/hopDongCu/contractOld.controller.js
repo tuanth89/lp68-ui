@@ -70,7 +70,6 @@
             _id: "",
             customer: {
                 name: "",
-                phone: "",
                 _id: ""
             },
             customerId: "",
@@ -81,12 +80,12 @@
             dateEnd: "",
             isHdLaiDung: false,
             isHdDao: false,
-            isCustomerNew: true,
+            isCustomerNew: false,
             paidMoney: "",
             storeId: selectedStoreId,
             storeCode: storeCode,
             customerCode: $scope.$parent.storeSelected.userCode,
-            creator: currentUser._id
+            creator: $scope.$parent.storeSelected.userId
         };
 
         $scope.customers = [];
@@ -152,11 +151,52 @@
 
                 return cellPrp;
             },
-            afterOnCellMouseDown: function (event, rowCol, TD) {
+            afterOnCellMouseDown: function (event, rowCol, td) {
                 if (event.realTarget.className.indexOf('delRow') >= 0) {
                     $scope.delContract(rowCol.row, $scope.customers[rowCol.row]._id);
                 }
+
+                let now = new Date().getTime();
+                if (!(td.lastClick && now - td.lastClick < 200)) {
+                    td.lastClick = now;
+                    return;
+                }
             },
+            beforeKeyDown: function (event) {
+                if (event.keyCode === 13 || event.keyCode === 9) {
+                    isPaid = currCol === 6;
+                    isNeedPay = currCol === 7;
+                }
+            },
+            afterSelection: function (row, col, row2, col2) {
+                currRow = row;
+                currCol = col;
+            },
+
+            // beforeAutofill: (data, coords) => {
+            //     _.forEach(data, (item, index) => {
+            //         if (!item.customerId) {
+            //             let customerItem = _.find(customerS, {name: item.customer.name});
+            //             if (customerItem) {
+            //                 item.customerId = customerItem._id;
+            //                 item.customer = customerItem;
+            //             }
+            //         }
+            //
+            //         if (!item.customerCode || !item.creator || !item.storeCode || !item.storeId) {
+            //             item.customerCode = $scope.$parent.storeSelected.userCode;
+            //             item.creator = $scope.$parent.storeSelected.userId;
+            //             item.storeId = selectedStoreId;
+            //             item.storeCode = storeCode;
+            //         }
+            //
+            //         if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
+            //             item.isCustomerNew = item.isCustomerNew === "TRUE";
+            //         }
+            //
+            //     });
+            // }
+            // ,
             afterChange: function (source, changes) {
                 if (changes === 'edit') {
                     let rowChecked = source[0][0];
@@ -193,24 +233,29 @@
                         // console.log('new value: ' + source[0][3]);
                     }
 
-                    if (source[0][1] === "paidMoney") {
-                        // if (newValue > $scope.customers[rowChecked].loanDate) {
+                    if (source[0][1] === "actuallyCollectedMoney") {
+                        hotInstance.setDataAtCell(rowChecked, 6, "");
+                        hotInstance.setDataAtCell(rowChecked, 7, "");
+                    }
+
+                    if (source[0][1] === "paidMoney" && isPaid) {
                         let realMoney = parseInt($scope.customers[rowChecked].actuallyCollectedMoney);
                         if (realMoney > 0) {
                             let paidMoney = parseInt($scope.customers[rowChecked].paidMoney);
-                            let totalMoneyPaid = realMoney - paidMoney;
-                            hotInstance.setDataAtCell(rowChecked, 7, totalMoneyPaid >= 0 ? totalMoneyPaid : 0);
+                            let totalMoneyNeedPay = realMoney - paidMoney;
+                            hotInstance.setDataAtCell(rowChecked, 7, totalMoneyNeedPay >= 0 ? totalMoneyNeedPay : 0);
                         }
-                        // }
                     }
 
-                    // if (source[0][1] === "loanDate") {
-                    //     if (newValue < $scope.customers[rowChecked].payNow) {
-                    //         toastr.error("Số ngày đóng không được lớn hơn số ngày vay!");
-                    //         hotInstance.selectCell(rowChecked, 5);
-                    //         hotInstance.setDataAtCell(rowChecked, 5, "");
-                    //     }
-                    // }
+                    if (source[0][1] === "totalMoneyNeedPay" && isNeedPay) {
+                        let realMoney = parseInt($scope.customers[rowChecked].actuallyCollectedMoney);
+                        if (realMoney > 0) {
+                            let totalMoneyNeedPay = parseInt($scope.customers[rowChecked].totalMoneyNeedPay);
+                            let moneyPaid = realMoney - totalMoneyNeedPay;
+                            hotInstance.setDataAtCell(rowChecked, 6, moneyPaid >= 0 ? moneyPaid : 0);
+                        }
+                    }
+
                 }
             },
             stretchH: "all",
@@ -219,6 +264,8 @@
             minSpareRows: 0
             // strict: true
         };
+
+        let isPaid = false, isNeedPay = false, currRow = 0, currCol = 0;
 
         function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -285,13 +332,36 @@
 
         }, 0);
 
+
         $scope.saveContract = () => {
-            let validCustomers = angular.copy($scope.customers);
             let checkValid = true;
             let indexInvalid = -1;
+            _.forEach($scope.customers, (item, index) => {
+                if (!item.customerId) {
+                    let customerItem = _.find(customerS, {name: item.customer.name});
+                    if (customerItem) {
+                        item.customerId = customerItem._id;
+                        item.customer = customerItem;
+                    }
+                }
+
+                if (!item.customerCode || !item.creator || !item.storeCode || !item.storeId) {
+                    item.customerCode = $scope.$parent.storeSelected.userCode;
+                    item.creator = $scope.$parent.storeSelected.userId;
+                    item.storeId = selectedStoreId;
+                    item.storeCode = storeCode;
+                }
+
+                if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
+                    item.isCustomerNew = item.isCustomerNew === "TRUE";
+                }
+
+            });
+
+            let validCustomers = angular.copy($scope.customers);
 
             _.filter(validCustomers, (item, index) => {
-                if (!item.customer.name || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate
+                if (!item.customerId || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate
                     || !item.paidMoney || !item.totalMoneyNeedPay || !item.dateEnd) {
 
                     checkValid = false;
@@ -320,6 +390,9 @@
                 return item;
             });
 
+            console.log(validCustomers);
+
+            //
             ContractManager.one("contractOld").customPOST(customers)
                 .then((results) => {
                     $scope.customers = [];
@@ -336,6 +409,8 @@
                         type: 'error',
                         message: "Tạo hợp đồng cũ thất bại. Hãy thử lại sau!"
                     });
+                })
+                .finally(err => {
                 });
         };
 
@@ -346,11 +421,11 @@
 
             if (!contractId) {
                 $scope.customers.splice(rowIndex, 1);
-
                 setTimeout(function () {
                     $scope.$apply();
-                    hotInstance.render();
                 }, 0);
+
+                hotInstance.render();
             }
         };
     }

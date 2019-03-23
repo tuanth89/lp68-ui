@@ -8,5 +8,6 @@ angular.module('ati', [
     'ati.store',
     'ati.adminManagement',
     'ati.pheConfig',
+    'ati.pheNv',
     'angularMoment'
 ]);

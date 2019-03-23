@@ -148,6 +148,10 @@
                 title: "Xóa"
             },
             {
+                name: "editPheStaff",
+                title: "Sửa phế nhân viên"
+            },
+            {
                 name: "active",
                 title: "Kích hoạt"
             },

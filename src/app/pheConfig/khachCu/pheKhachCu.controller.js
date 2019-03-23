@@ -22,20 +22,6 @@
         $scope.formProcessing = false;
 
         $scope.settings = {
-            // beforeRemoveRow: function (index, amount) {
-            //     if (hotInstance.countRows() <= 1)
-            //         return false;
-            // },
-            // afterCreateRow: function (index) {
-            //     setTimeout(function () {
-            //         hotInstance.selectCell(index, 0);
-            //     }, 1);
-            // },
-            // afterCreateRow: function (index) {
-            //     setTimeout(function () {
-            //         this.selectCell(index, 0, 0, 0, true);
-            //     }, 1);
-            // },
             cells: function (row, col) {
                 let cellPrp = {};
                 // cellPrp.className = "hot-normal";
@@ -47,7 +33,7 @@
         };
 
         $scope.getData = function () {
-            PheConfigManager.one('list').getList("", {isNewCustomer: true})
+            PheConfigManager.one('list').getList("", {isNewCustomer: false})
                 .then((data) => {
                     $scope.pheConfigs = angular.copy(Restangular.stripRestangular(data));
                 });

@@ -17,19 +17,19 @@
     </ul>
     <ul class="nav-right">
         <li ng-if="storeSelected.storeName">
-            <a href="" class="no-after peers fxw-nw ai-c lh-1">
+            <a ng-click="showModalStore()" href="" class="no-after peers fxw-nw ai-c lh-1">
                 <div class="peer">
                     <span class="fsz-sm c-grey-900">Cửa hàng: </span>
-                    <span>{{storeSelected.storeName}}</span>
+                    <span style="color: #c40505!important;">{{storeSelected.storeName}}</span>
                 </div>
             </a>
         </li>
 
         <li ng-if="storeSelected.userName">
-            <a href="" class="no-after peers fxw-nw ai-c lh-1">
+            <a ng-click="showModalStore()" href="" class="no-after peers fxw-nw ai-c lh-1">
                 <div class="peer">
                     <span class="fsz-sm c-grey-900">Nhân viên: </span>
-                    <span>{{storeSelected.userName}}</span>
+                    <span style="color: #c40505!important;">{{storeSelected.userName}}</span>
                 </div>
             </a>
         </li>

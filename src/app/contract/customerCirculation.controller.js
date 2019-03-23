@@ -99,26 +99,17 @@
             }
         });
 
-        $scope.$watch("selectedCirculation.newLoanMoney", function (newValue, oldValue) {
-            $scope.selectedCirculation.totalMoney = parseInt(newValue) - parseInt($scope.selectedCirculation.moneyContractOld);
-            setTimeout(function () {
-                $scope.$apply();
-            }, 1);
-        });
+        $scope.newLoanMoneyFunc = (money) => {
+            $scope.selectedCirculation.totalMoney = parseInt(money) - parseInt($scope.selectedCirculation.moneyContractOld);
+        };
 
-        $scope.$watch("selectedCirculation.newActuallyCollectedMoney", function (newValue, oldValue) {
-            $scope.selectedCirculation.newDailyMoney = parseInt(newValue) / parseInt(!$scope.selectedCirculation.newLoanDate === 0 ? 1 : $scope.selectedCirculation.newLoanDate);
-            setTimeout(function () {
-                $scope.$apply();
-            }, 1);
-        });
+        $scope.newActuallyCollectedMoneyFunc = function (money) {
+            $scope.selectedCirculation.newDailyMoney = parseInt(money) / parseInt(!$scope.selectedCirculation.newLoanDate === 0 ? 1 : $scope.selectedCirculation.newLoanDate);
+        };
 
-        $scope.$watch("selectedCirculation.newLoanDate", function (newValue, oldValue) {
-            $scope.selectedCirculation.newDailyMoney = parseInt($scope.selectedCirculation.newActuallyCollectedMoney) / parseInt(newValue);
-            setTimeout(function () {
-                $scope.$apply();
-            }, 1);
-        });
+        $scope.newLoanDateFunc = function () {
+            $scope.selectedCirculation.newDailyMoney = parseInt($scope.selectedCirculation.newActuallyCollectedMoney) / parseInt($scope.selectedCirculation.newLoanDate);
+        };
 
         if ($scope.$parent.isAccountant)
             $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
@@ -135,11 +126,16 @@
             minSpareRows: 0,
             stretchH: "all",
             wordWrap: false,
+            fixedColumnsLeft: 3,
+            manualColumnFreeze: true,
             cells: function (row, col) {
                 let cellPrp = {};
                 let item = $scope.contracts[row];
                 if (typeof item === 'object' && (item.status > 0)) {
                     cellPrp.readOnly = true;
+                    if (item.contractStatus === CONTRACT_STATUS.STAND) {
+                        cellPrp.className = "handsontable-td-red";
+                    }
                     // cellPrp.className = "handsontable-cell-disable";
                     switch (col) {
                         case 0:
@@ -147,14 +143,14 @@
                             cellPrp.renderer = myBtnsRemove;
                             break;
 
-                        case 7:
+                        case 8:
                             cellPrp.renderer = myBtnsRemove;
                             break;
 
                         case 2:
                         case 3:
-                        case 8:
                         case 9:
+                        case 10:
                             cellPrp.renderer = myBtns;
                             break;
                     }
@@ -163,14 +159,14 @@
                 }
 
                 switch (col) {
-                    case 6:
+                    case 7:
                         if (typeof item === 'object' && item.contractStatus === CONTRACT_STATUS.COLLECT) {
                             cellPrp.readOnly = true;
                         }
                         else
                             cellPrp.className = "hot-normal";
                         break;
-                    case 7:
+                    case 8:
                         if (typeof item === 'object' && item.status > 0) {
                             cellPrp.renderer = myBtnsRemove;
                         }
@@ -181,8 +177,8 @@
                         break;
                     case 2:
                     case 3:
-                    case 8:
                     case 9:
+                    case 10:
                         cellPrp.renderer = myBtns;
                         cellPrp.readOnly = true;
                         break;
@@ -269,6 +265,7 @@
                             nowDate = moment();
                             $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); //- parseInt(moneyPaid);
                             $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
+                            $scope.selectedCirculation.contractCreatedAt = moment($scope.selectedCirculation.contractCreatedAt).utc().format("DD/MM/YYYY");
                             $scope.selectedCirculation.newBeLoanDate = nowDate.format("DD/MM/YYYY");
                             $scope.selectedCirculation.newAppointmentDate = "";
                             $scope.selectedCirculation.newPayMoney = 0;
@@ -326,6 +323,18 @@
             }
         };
 
+        $scope.totalMoneyPaid = () => {
+            let totalFee = 0;
+
+            $scope.contracts.forEach(item => {
+                if (item.status === 1)
+                    totalFee += item.moneyPaid;
+            });
+
+
+            return totalFee;
+        };
+
         $scope.showModalChot = (actuallyCollectedMoney, totalMoneyPaid) => {
             $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
             $scope.selectedCirculation.newTransferDate = $scope.filter.date;
@@ -353,7 +362,7 @@
                     td.innerHTML = '';
             }
 
-            if (col === 7) {
+            if (col === 8) {
                 if (value === 2) {
                     td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 5 + '">' + 'Chốt lãi' + '</button>';
                 }
@@ -366,7 +375,7 @@
                 }
             }
 
-            if (col === 8) {
+            if (col === 9) {
                 let statusName = "";
                 switch (value) {
                     case 0:
@@ -379,7 +388,7 @@
                 td.innerHTML = '<div style="text-align: center;"><button class="btnStatus btn status-lt-' + value + '" value="' + 0 + '">' + statusName + '</button></div>';
             }
 
-            if (col === 9) {
+            if (col === 10) {
                 let statusName = "";
                 switch (value) {
                     case 0:
@@ -412,7 +421,7 @@
 
         function myBtnsRemove(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
-            if (col === 7 || col === 0) {
+            if (col === 8 || col === 0) {
                 td.innerHTML = '';
             }
         }
@@ -703,6 +712,24 @@
             });
 
         };
+
+        $scope.opened = false;
+        $scope.opened2 = false;
+
+        $scope.openDate = function ($event, type) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            if (type === 1) {
+                $scope.opened = true;
+                $scope.opened2 = false;
+            }
+            else {
+                $scope.opened2 = true;
+                $scope.opened = false;
+            }
+        };
+
 
     }
 })();
