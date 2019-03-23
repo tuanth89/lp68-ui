@@ -11,6 +11,7 @@
         let baseSate = UserStateHelper.getBaseState();
         $scope.studentListUrl = baseSate + '.studentManagement.list';
         $scope.courseListUrl = baseSate + '.course.list';
+        $scope.$parent.newUsers = [];
 
         const drawSparklines = () => {
             if ($('#sparklinedash').length > 0) {

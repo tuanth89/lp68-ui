@@ -38,6 +38,8 @@
             // rowHeaders: true,
             colHeaders: true,
             minSpareRows: 0,
+            fixedColumnsLeft: 3,
+            manualColumnFreeze: true,
             cells: function (row, col) {
                 let cellPrp = {};
                 if (col === 1 || col === 2 || col === 6 || col === 7 || col === 8) {

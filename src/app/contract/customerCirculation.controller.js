@@ -335,6 +335,18 @@
             return totalFee;
         };
 
+        $scope.totalMoneyPayDraft = () => {
+            let totalFee = 0;
+
+            $scope.contracts.forEach(item => {
+                if (item.isActive)
+                    totalFee += item.moneyPaid;
+            });
+
+
+            return totalFee;
+        };
+
         $scope.showModalChot = (actuallyCollectedMoney, totalMoneyPaid) => {
             $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
             $scope.selectedCirculation.newTransferDate = $scope.filter.date;

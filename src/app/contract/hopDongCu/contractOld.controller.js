@@ -5,7 +5,7 @@
         .controller('ContractOldController', ContractOldController);
 
     function ContractOldController($scope, CONTRACT_EVENT, $timeout, StoreManager, hotRegisterer, customerSource, ContractManager, Restangular, Auth, AlertService, CustomerManager, storeList) {
-        let currentUser = Auth.getSession();
+        // let currentUser = Auth.getSession();
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
         // $scope.customerSource = _.map(customerS, 'name').join(',');
@@ -13,6 +13,48 @@
             {name: "Lãi đứng", value: true},
             {name: "Đáo", value: true}
         ];
+
+        $scope.isPaste = false;
+        $scope.$watch('isPaste', function (newValue, oldValue) {
+            if (newValue) {
+                _.forEach($scope.customers, (item, index) => {
+                    if (!item.customerId) {
+                        let customerItem = _.find(customerS, {name: item.customer.name});
+                        if (customerItem) {
+                            item.customerId = customerItem._id;
+                            item.customer = customerItem;
+                        }
+                    }
+
+                    if (!item.customerCode || !item.creator || !item.storeCode || !item.storeId) {
+                        item.customerCode = $scope.$parent.storeSelected.userCode;
+                        item.creator = $scope.$parent.storeSelected.userId;
+                        item.storeId = selectedStoreId;
+                        item.storeCode = storeCode;
+                    }
+
+                    if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
+                        item.isCustomerNew = item.isCustomerNew === "TRUE";
+                    }
+
+                    item.isHdDao = item.statusType === "Đáo";
+                    item.isHdLaiDung = item.statusType === "Lãi đứng";
+                    if (item.isHdLaiDung) {
+                        item.actuallyCollectedMoney = item.loanMoney;
+                    }
+
+                    if (item.totalMoneyNeedPay === "" || item.totalMoneyNeedPay === 0) {
+                        if (item.paidMoney > 0) {
+                            item.totalMoneyNeedPay = item.actuallyCollectedMoney - item.paidMoney;
+                        }
+                    }
+
+                });
+
+                $scope.isPaste = false;
+                hotInstance.render();
+            }
+        });
 
         let selectedStoreId = $scope.$parent.storeSelected.storeId;
         let storeCode = "";
@@ -90,24 +132,8 @@
 
         $scope.customers = [];
         $scope.customers.push(angular.copy(customerItem));
-        // $scope.customers = angular.copy(Restangular.stripRestangular(contracts));
 
         $scope.settings = {
-            // contextMenu: {
-            //     items: {
-            //         'row_above': {name: 'Thêm dòng trên'},
-            //         'row_below': {name: 'Thêm dòng dưới'},
-            //         'remove_row': {name: 'Xóa'}
-            //     }
-            //     // callback: function (key, options) {
-            //     //     if (key === 'remove_row') {
-            //     //         if (hotInstance.countRows() > 1) {
-            //     //             var indexArr = hot.getSelected();
-            //     //             var selectedData = hot.getDataAtRow(indexArr[0]);
-            //     //         }
-            //     //     }
-            //     // }
-            // },
             beforeRemoveRow: function (index, amount) {
                 if (hotInstance.countRows() <= 1)
                     return false;
@@ -156,11 +182,12 @@
                     $scope.delContract(rowCol.row, $scope.customers[rowCol.row]._id);
                 }
 
-                let now = new Date().getTime();
-                if (!(td.lastClick && now - td.lastClick < 200)) {
-                    td.lastClick = now;
-                    return;
-                }
+                // let now = new Date().getTime();
+                // if (!(td.lastClick && now - td.lastClick < 200)) {
+                //     td.lastClick = now;
+                //     return;
+                // }
+
             },
             beforeKeyDown: function (event) {
                 if (event.keyCode === 13 || event.keyCode === 9) {
@@ -172,32 +199,8 @@
                 currRow = row;
                 currCol = col;
             },
-
-            // beforeAutofill: (data, coords) => {
-            //     _.forEach(data, (item, index) => {
-            //         if (!item.customerId) {
-            //             let customerItem = _.find(customerS, {name: item.customer.name});
-            //             if (customerItem) {
-            //                 item.customerId = customerItem._id;
-            //                 item.customer = customerItem;
-            //             }
-            //         }
-            //
-            //         if (!item.customerCode || !item.creator || !item.storeCode || !item.storeId) {
-            //             item.customerCode = $scope.$parent.storeSelected.userCode;
-            //             item.creator = $scope.$parent.storeSelected.userId;
-            //             item.storeId = selectedStoreId;
-            //             item.storeCode = storeCode;
-            //         }
-            //
-            //         if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
-            //             item.isCustomerNew = item.isCustomerNew === "TRUE";
-            //         }
-            //
-            //     });
-            // }
-            // ,
             afterChange: function (source, changes) {
+                $scope.isPaste = changes === 'paste';
                 if (changes === 'edit') {
                     let rowChecked = source[0][0];
                     let newValue = source[0][3];
@@ -214,6 +217,10 @@
                                 $scope.customers[rowChecked].isHdLaiDung = true;
                             }
                         }
+                    }
+
+                    if (source[0][1] === "loanMoney") {
+                        $scope.customers[rowChecked].actuallyCollectedMoney = newValue;
                     }
 
                     if (source[0][1] === "customer.name") {
@@ -243,7 +250,7 @@
                         if (realMoney > 0) {
                             let paidMoney = parseInt($scope.customers[rowChecked].paidMoney);
                             let totalMoneyNeedPay = realMoney - paidMoney;
-                            hotInstance.setDataAtCell(rowChecked, 7, totalMoneyNeedPay >= 0 ? totalMoneyNeedPay : 0);
+                            hotInstance.setDataAtCell(rowChecked, 7, totalMoneyNeedPay >= 0 ? totalMoneyNeedPay : "");
                         }
                     }
 
@@ -252,7 +259,7 @@
                         if (realMoney > 0) {
                             let totalMoneyNeedPay = parseInt($scope.customers[rowChecked].totalMoneyNeedPay);
                             let moneyPaid = realMoney - totalMoneyNeedPay;
-                            hotInstance.setDataAtCell(rowChecked, 6, moneyPaid >= 0 ? moneyPaid : 0);
+                            hotInstance.setDataAtCell(rowChecked, 6, moneyPaid >= 0 ? moneyPaid : "");
                         }
                     }
 
@@ -336,33 +343,12 @@
         $scope.saveContract = () => {
             let checkValid = true;
             let indexInvalid = -1;
-            _.forEach($scope.customers, (item, index) => {
-                if (!item.customerId) {
-                    let customerItem = _.find(customerS, {name: item.customer.name});
-                    if (customerItem) {
-                        item.customerId = customerItem._id;
-                        item.customer = customerItem;
-                    }
-                }
-
-                if (!item.customerCode || !item.creator || !item.storeCode || !item.storeId) {
-                    item.customerCode = $scope.$parent.storeSelected.userCode;
-                    item.creator = $scope.$parent.storeSelected.userId;
-                    item.storeId = selectedStoreId;
-                    item.storeCode = storeCode;
-                }
-
-                if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
-                    item.isCustomerNew = item.isCustomerNew === "TRUE";
-                }
-
-            });
-
             let validCustomers = angular.copy($scope.customers);
 
             _.filter(validCustomers, (item, index) => {
-                if (!item.customerId || !item.loanMoney || !item.actuallyCollectedMoney || !item.loanDate
-                    || !item.paidMoney || !item.totalMoneyNeedPay || !item.dateEnd) {
+                if (!item.customerId || !item.loanMoney
+                    || !item.paidMoney || !item.totalMoneyNeedPay
+                    || (!item.isHdLaiDung && (!item.actuallyCollectedMoney || !item.loanDate || !item.dateEnd))) {
 
                     checkValid = false;
                     indexInvalid = index;
@@ -390,9 +376,6 @@
                 return item;
             });
 
-            console.log(validCustomers);
-
-            //
             ContractManager.one("contractOld").customPOST(customers)
                 .then((results) => {
                     $scope.customers = [];
@@ -416,17 +399,16 @@
 
         $scope.delContract = function (rowIndex, contractId) {
             if (!contractId && $scope.customers.length === 1) {
-                return;
-            }
-
-            if (!contractId) {
                 $scope.customers.splice(rowIndex, 1);
-                setTimeout(function () {
-                    $scope.$apply();
-                }, 0);
-
-                hotInstance.render();
+                $scope.customers.push(angular.copy(customerItem));
             }
+            else if (!contractId) {
+                $scope.customers.splice(rowIndex, 1);
+            }
+
+            $scope.$apply();
+            hotInstance.render();
+
         };
     }
 })();
