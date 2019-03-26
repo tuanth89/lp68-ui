@@ -171,8 +171,16 @@
                 }
 
                 switch (col) {
+                    case 0:
+                        if (typeof item === 'object'
+                            && (item.contractStatus === CONTRACT_STATUS.STAND)) {
+                            cellPrp.readOnly = true;
+                            cellPrp.renderer = myBtnsRemove;
+                        }
+                        break;
                     case 7:
-                        if (typeof item === 'object' && item.contractStatus === CONTRACT_STATUS.COLLECT) {
+                        if (typeof item === 'object'
+                            && (item.contractStatus === CONTRACT_STATUS.COLLECT || item.contractStatus === CONTRACT_STATUS.STAND)) {
                             cellPrp.readOnly = true;
                         }
                         else
@@ -296,6 +304,7 @@
                             $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid);
                             $scope.selectedCirculation.createdAt = moment($scope.selectedCirculation.createdAt).format("DD/MM/YYYY");
                             $scope.selectedCirculation.newPayMoney = 0;
+                            $scope.selectedCirculation.payMoneyOriginal = 0;
                             $('.datepicker-ui').val('');
 
                             $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
@@ -335,18 +344,19 @@
             }
         };
 
-        $scope.totalMoneyPaid = () => {
-            let totalFee = 0;
+        // $scope.totalMoneyPaid = () => {
+        //     let totalFee = 0;
+        //
+        //     $scope.contracts.forEach(item => {
+        //         if (item.status === 1)
+        //             totalFee += item.moneyPaid;
+        //     });
+        //
+        //
+        //     return totalFee;
+        // };
 
-            $scope.contracts.forEach(item => {
-                if (item.status === 1)
-                    totalFee += item.moneyPaid;
-            });
-
-
-            return totalFee;
-        };
-
+        $scope.totalMoneyPaid = 0;
         $scope.totalMoneyPayDraft = () => {
             let totalFee = 0;
 
@@ -392,7 +402,7 @@
                 }
                 else {
                     td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 0 + '">' + 'Đáo' + '</button>&nbsp;&nbsp;' +
-                        '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' +
+                        '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
                         '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' +
                         '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>' +
                         '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
@@ -486,11 +496,15 @@
                         let data = resp.plain();
                         $scope.contracts = angular.copy(data.docs);
                         $scope.pagination.totalItems = data.totalItems;
+                        $scope.totalMoneyPaid = data.totalMoneyStatusEnd;
                     }
                     else {
-                        $scope.orders = [];
+                        $scope.contracts = [];
                         $scope.pagination.totalItems = 0;
+                        $scope.totalMoneyPaid = 0;
                     }
+
+                    hotInstance.render();
                 });
         };
 

@@ -251,7 +251,11 @@
 
         $scope.getData = function () {
             ContractManager.one("circulation").one("all")
-                .getList("", {date: $scope.filter.date, type: 0, storeId: selectedStoreId})
+                .getList("", {
+                    date: $scope.filter.date,
+                    type: 0, storeId: selectedStoreId,
+                    customerCode: $scope.$parent.storeSelected.userCode
+                })
                 .then(function (resp) {
                     $scope.customers = angular.copy(Restangular.stripRestangular(resp));
 
@@ -281,6 +285,8 @@
                                 isCustomerNew: true,
                                 payNow: "",
                                 storeId: selectedStoreId,
+                                storeCode: storeCode,
+                                customerCode: $scope.$parent.storeSelected.userCode,
                                 creator: currentUser._id
                             };
 

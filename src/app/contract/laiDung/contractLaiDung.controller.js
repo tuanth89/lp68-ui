@@ -45,23 +45,14 @@
             // strict: true
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 6 || col === 7) {
+                if (col === 1 || col === 2 || col === 8) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
 
-                // if (col === 2 || col === 3) {
-                //     cellPrp.className = "handsontable-td-red";
-                // }
-
                 return cellPrp;
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {
-                // if (event.realTarget.className.indexOf('btnPay') >= 0) {
-                //     hotInstance.setDataAtCell(rowCol.row, 5, parseInt(event.realTarget.innerText) * 1000);
-                //     return;
-                // }
-
                 if (event.realTarget.className.indexOf('cusRow') >= 0) {
                     let selectedCus = angular.copy($scope.contracts[rowCol.row]);
                     $scope.$parent.getContractsByCus(selectedCus);
@@ -89,10 +80,6 @@
             hotInstance = hotRegisterer.getInstance('my-handsontable');
         }, 0);
 
-        // $scope.viewCustomerCalendar = function (data) {
-        //     alert(data);
-        // };
-
         function myBtns(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             if (col === 1) {
@@ -101,16 +88,16 @@
 
             }
 
-            if (col === 2 || col === 6) {
+            if (col === 2 || col === 8) {
                 if (value)
                     td.innerHTML = moment(value).format("DD/MM/YYYY");
                 else
                     td.innerHTML = '';
             }
 
-            if (col === 7) {
-                td.innerHTML = '<button class="btnStatus btn status-0" value="' + 0 + '">' + 'Đóng' + '</button>';
-            }
+            // if (col === 7) {
+            //     td.innerHTML = '<button class="btnStatus btn status-0" value="' + 0 + '">' + 'Đóng' + '</button>';
+            // }
 
         }
 

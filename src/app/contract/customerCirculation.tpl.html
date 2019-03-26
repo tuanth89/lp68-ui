@@ -37,7 +37,7 @@
 <!--</div>-->
 
 <div class="row col-md-12">
-    <h5>Tổng thu được: </h5>&nbsp;&nbsp;<h5 class="text-danger">{{totalMoneyPaid() | number}}</h5>
+    <h5>Tổng thu được: </h5>&nbsp;&nbsp;<h5 class="text-danger">{{totalMoneyPaid | number}}</h5>
 </div>
 
 <div class="row col-md-12">
@@ -52,7 +52,7 @@
            datarows="contracts">
     <hot-column data="isActive" title="' '" type="'checkbox'" checked-template="true"
                 unchecked-template="false" width="40"></hot-column>
-    <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="140" read-only></hot-column>
+    <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="150" read-only></hot-column>
     <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>
     <hot-column data="contractCreatedAt" title="'Ngày vay'" type="'text'" width="100" read-only></hot-column>
     <hot-column data="loanMoney" title="'Gói vay'" width="100" type="'numeric'" format="'#,###'"
@@ -64,7 +64,7 @@
     <!--<hot-column title="'Đóng nhanh'" type="'text'" width="140" read-only></hot-column>-->
     <hot-column data="moneyPaid" title="'Đóng ngày'" width="100" type="'numeric'"
                 format="'#,###'"></hot-column>
-    <hot-column data="contractStatus" title="'Thao tác'" type="'text'" width="150" read-only></hot-column>
+    <hot-column data="contractStatus" title="'Thao tác'" type="'text'" width="220" read-only></hot-column>
     <hot-column data="status" title="'Trạng thái'" type="'text'" width="80" read-only></hot-column>
     <hot-column data="contractStatus" title="'Hợp đồng'" type="'text'" width="80" read-only></hot-column>
 
@@ -135,10 +135,19 @@
                         </div>
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
-                                Đóng:
+                                Đóng lãi:
                             </label>
                             <div class="col-md-7">
                                 <input type="text" ng-model="selectedCirculation.newPayMoney" format-number
+                                       class="form-control textAlign"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Đóng trả gốc:
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" ng-model="selectedCirculation.payMoneyOriginal" format-number
                                        class="form-control textAlign"/>
                             </div>
                         </div>
