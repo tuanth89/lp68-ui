@@ -1034,6 +1034,16 @@ input.textAlign {
     }
 }
 
+@media (min-width: 992px) {
+    .col-md-offset-4 {
+        margin-left: 33.33333333%;
+    }
+
+    .col-md-4 {
+        width: 33.33333333%;
+    }
+}
+
 /*.file {*/
 /*position: relative;*/
 /*height: 30px;*/

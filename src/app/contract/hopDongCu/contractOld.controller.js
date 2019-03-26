@@ -219,7 +219,7 @@
                         }
                     }
 
-                    if (source[0][1] === "loanMoney") {
+                    if (source[0][1] === "loanMoney" && $scope.customers[rowChecked].isHdLaiDung) {
                         $scope.customers[rowChecked].actuallyCollectedMoney = newValue;
                     }
 

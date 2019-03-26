@@ -5,15 +5,17 @@
         .controller('CustomerCirculationController', CustomerCirculationController)
     ;
 
-    function CustomerCirculationController($scope, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThong, CONTRACT_EVENT) {
+    function CustomerCirculationController($scope, $state, $stateParams, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThong, CONTRACT_EVENT) {
         let hotInstance = "";
         $scope.formProcessing = false;
         $scope.filter = {
             date: "",
             status: "",
             storeId: $scope.$parent.storeSelected.storeId,
-            userId: $scope.$parent.storeSelected.userId
+            userId: $scope.$parent.storeSelected.userId,
         };
+        let STATE_NAME = "app.root.contract.cusCirculation";
+
         $scope.selectedCirculation = {};
         // $('#lai-dung-dp').datepicker({startDate: new Date()});
 
@@ -58,6 +60,12 @@
 
         $scope.filterDateFormat = "";
 
+        $scope.pagination = {
+            page: $stateParams.p ? parseInt($stateParams.p) : 1,
+            per_page: 12,
+            totalItems: 0
+        };
+
         $scope.checkedList = [];
         $scope.checkbox = {checkAll: false};
         $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
@@ -97,6 +105,10 @@
                 $scope.filterDateFormat = moment(newValue, "YYYY-MM-DD").format("DD/MM/YYYY");
                 $scope.getData();
             }
+        });
+
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            $scope.getData($scope.pagination.page, $scope.pagination.per_page);
         });
 
         $scope.newLoanMoneyFunc = (money) => {
@@ -438,21 +450,58 @@
             }
         }
 
-        $scope.getData = function () {
-            HdLuuThong
-                .one('listByDate')
-                .one('all')
-                .getList("", $scope.filter)
-                .then(function (resp) {
-                    $scope.contracts = angular.copy(Restangular.stripRestangular(resp));
-                });
-        };
-
         $scope.convertToDate = function (stringDate) {
             let dateOut = new Date(stringDate);
             dateOut.setDate(dateOut.getDate());
             return dateOut;
         };
+
+        $scope.pageChanged = function () {
+            $scope.goToGetData();
+        };
+
+        $scope.goToGetData = () => {
+            let currentPage = $scope.pagination.page;
+            let per_page = $scope.pagination.per_page;
+
+            $state.go(STATE_NAME, {
+                // date: $scope.filter.date,
+                p: currentPage === 1 ? null : currentPage
+            }, {notify: false});
+
+            document.documentElement.scrollTop = 0;
+
+            $scope.getData(currentPage, per_page);
+        };
+
+        $scope.getData = function (page, per_page) {
+            $scope.filter.page = page;
+            $scope.filter.per_page = per_page;
+
+            HdLuuThong
+                .one('listByDate')
+                .customGET("all", $scope.filter)
+                .then(function (resp) {
+                    if (resp) {
+                        let data = resp.plain();
+                        $scope.contracts = angular.copy(data.docs);
+                        $scope.pagination.totalItems = data.totalItems;
+                    }
+                    else {
+                        $scope.orders = [];
+                        $scope.pagination.totalItems = 0;
+                    }
+                });
+        };
+
+        $timeout(function () {
+            hotInstance = hotRegisterer.getInstance('my-handsontable');
+
+            $scope.onAfterInit = function () {
+                hotInstance.validateCells();
+            };
+
+        }, 0);
 
         $scope.saveCirculation = () => {
             if ($scope.formProcessing)
@@ -467,27 +516,11 @@
             HdLuuThong.one("contract").one("updateMany")
                 .customPUT(contracts)
                 .then((items) => {
-                    // _.map($scope.contracts, function (x) {
-                    //     x.isActive = false;
-                    //     return x;
-                    // });
-
-                    // _.remove($scope.contracts, (item, index) => {
-                    //     if (item.isActive)
-                    //         $scope.checkedList.splice(index, 1);
-                    //
-                    //     return item.isActive;
-                    // });
-
-                    // _.each($scope.checkedList, (rowValue) => {
-                    //     $scope.contracts[rowValue].status = 1;
-                    //     $scope.contracts[rowValue].isActive = false;
-                    // });
-                    //
                     $scope.checkedList = [];
                     $scope.checkbox.checkAll = false;
 
-                    $scope.getData();
+                    $scope.goToGetData();
+
                     toastr.success('Cập nhật thành công!');
                 })
                 .catch((error) => {
@@ -497,17 +530,6 @@
                     $scope.formProcessing = false;
                 });
         };
-
-        $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
-
-            $scope.onAfterInit = function () {
-                hotInstance.validateCells();
-            };
-
-        }, 0);
-
-        $scope.getData();
 
         $scope.saveLaiDungModal = () => {
             if ($scope.formProcessing)

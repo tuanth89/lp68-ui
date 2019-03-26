@@ -44,7 +44,7 @@
                 }
             })
             .state('contract.cusCirculation', {
-                url: '/luu-thong',
+                url: '/luu-thong?q&date&p',
                 views: {
                     'content@app.root.contract': {
                         controller: 'CustomerCirculationController',
