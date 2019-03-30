@@ -31,18 +31,18 @@
         };
 
         let hotInstance = "";
-
         $scope.settings = {
             stretchH: "all",
-            autoWrapRow: true,
+            // autoWrapRow: true,
             // rowHeaders: true,
             colHeaders: true,
             minSpareRows: 0,
+            wordWrap: false,
             fixedColumnsLeft: 3,
             manualColumnFreeze: true,
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 6 || col === 7 || col === 8) {
+                if (col === 1 || col === 2 || col === 8 || col === 9 || col === 10) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }
@@ -56,29 +56,36 @@
                 }
 
                 if (event.realTarget.className.indexOf('btnDuyet') >= 0 && $scope.$parent.storeSelected.userId) {
-                    $scope.contractSelected = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
+                    let contractSelected = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
+                    let {actuallyCollectedMoney, totalMoneyPaid, moneyPaid} = contractSelected;
+
+                    contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
+                    contractSelected.moneyNotEnough = 0;
+
+                    contractSelected.totalMoney = contractSelected.moneyContractOld;
+                    $scope.$parent.contractSelected = angular.copy(Restangular.stripRestangular(contractSelected));
                     $scope.$apply();
 
-                    $scope.accountantEnd();
+                    $('#duyetModal').modal('show');
                 }
             }
         };
 
         function myBtns(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
-            if (col === 1) {
+            if (cellProperties.prop === "customer.name") {
                 // td.innerHTML = '<u><a ng-click="viewCustomerCalendar(' + value + ')">' + value + '</a></u>';
                 td.innerHTML = '<u><a class="linkable cusRow" value="' + value + '" ng-click="viewCustomerCalendar(' + value + ')">' + value + '</a></u>';
             }
 
-            if (col === 2 || col === 6) {
+            if (cellProperties.prop === "createdAt" || cellProperties.prop === "transferDate") {
                 if (value)
                     td.innerHTML = moment(value).format("DD/MM/YYYY");
                 else
                     td.innerHTML = '';
             }
 
-            if (col === 7) {
+            if (cellProperties.prop === "status") {
                 let statusName = "";
                 switch (value) {
                     case 6:
@@ -92,7 +99,7 @@
                 td.innerHTML = '<button class="btnStatus btn status-' + value + '" value="' + 0 + '">' + statusName + '</button>';
             }
 
-            if (col === 8) {
+            if (cellProperties.prop === "actionTransf") {
                 td.innerHTML = '<button class="btnStatus btnDuyet btn status-0">' + 'Duyệt' + '</button>';
             }
         }
@@ -104,6 +111,8 @@
                 .customPUT({status: CONTRACT_STATUS.ACCOUNTANT_END})
                 .then((contract) => {
                     toastr.success('Cập nhật thành công!');
+
+                    $('#duyetModal').modal('hide');
                     $scope.getData();
                 })
                 .catch((error) => {

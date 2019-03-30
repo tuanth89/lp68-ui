@@ -5,15 +5,15 @@
         .constant('ENTRY_STATE', 'login')
         .config(config)
         .constant('CONTRACT_STATUS', {
-            NEW: 0,
-            MATURITY: 1,
-            STAND: 2,
-            COLLECT: 3,
-            CLOSE_DEAL: 4,
-            ESCAPE: 5,
-            END: 6,
-            MATURITY_END: 7,
-            ACCOUNTANT_END: 8
+            NEW: 0, //Mới
+            MATURITY: 1, //Đáo
+            STAND: 2, //Lãi Đứng
+            COLLECT: 3, //Thu Về
+            CLOSE_DEAL: 4, //Chôt
+            ESCAPE: 5, //Bễ
+            END: 6, // kết thúc chờ kế toán duyệt hết họ
+            MATURITY_END: 7, //kết thúc đáo với hợp đồng đáo chờ kế toán duyệt
+            ACCOUNTANT_END: 8 //Kế toán xác nhận hợp đồng hết họ
         })
         .constant('IMGUR_API', {
             URL: 'https://api.imgur.com/3/image',

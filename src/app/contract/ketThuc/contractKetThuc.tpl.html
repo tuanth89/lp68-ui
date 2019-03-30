@@ -1,16 +1,99 @@
 <hot-table hot-id="my-handsontable"
            settings="settings"
+           style="overflow: hidden; width: 100%;"
            datarows="contracts">
     <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="170" read-only></hot-column>
     <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>
-    <hot-column data="createdAt" title="'Ngày vay'" type="'text'" width="90" read-only></hot-column>
+    <hot-column data="createdAt" title="'Ngày vay'" type="'text'" width="100" read-only></hot-column>
     <hot-column data="loanMoney" title="'Gói vay'" width="120" type="'numeric'" format="'#,###'"
                 read-only></hot-column>
     <hot-column data="actuallyCollectedMoney" title="'Thực thu'" width="120" type="'numeric'"
                 format="'#,###'" read-only></hot-column>
-    <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="90" read-only></hot-column>
-    <!--<hot-column data="customer.phone" title="'Điện thoại'" type="'text'" width="100" read-only></hot-column>-->
-    <hot-column data="transferDate" title="'Ngày chuyển'" type="'text'" width="90" read-only></hot-column>
+    <hot-column data="totalMoneyNeedPay" title="'Dư nợ'" width="120" type="'numeric'"
+                format="'#,###'" read-only></hot-column>
+    <hot-column data="totalMoneyPaid" title="'Đã đóng'" width="100" type="'numeric'"
+                format="'#,###'" read-only></hot-column>
+    <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100" read-only></hot-column>
+    <hot-column data="transferDate" title="'Ngày chuyển'" type="'text'" width="100" read-only></hot-column>
     <hot-column data="status" title="'Trạng thái'" type="'text'" width="90" read-only></hot-column>
-    <hot-column ng-if="isAccountant || isRoot" title="'Thao tác'" type="'text'" width="60" read-only>
+    <hot-column data="actionTransf" ng-if="isAccountant || isRoot" title="'Thao tác'" type="'text'" width="60" read-only>
 </hot-table>
+
+<div class="modal fade" id="duyetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Duyệt hợp đồng</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="widget-box">
+                    <form class="form-inline row-border label-style">
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Họ và tên:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{contractSelected.customer.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Số hợp đồng:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{contractSelected.contractNo}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Gói vay:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label class="text-red-bold"> {{contractSelected.loanMoney | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Dư nợ:
+                            </label>
+                            <div class="col-md-7">
+                                <label class="text-red-bold"> {{contractSelected.moneyContractOld | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Số tiền:
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" ng-model="contractSelected.moneyNotEnough" format-number
+                                       class="form-control textAlign"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Ghi chú:
+                            </label>
+                            <div class="col-md-7">
+                                <textarea ng-model="contractSelected.note"
+                                          class="form-control" style="width: 100%;"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary" ng-click="accountantEnd()"
+                        ng-disabled="contractSelected.newPayMoney === 0 || contractSelected.newPayMoney > contractSelected.moneyContractOld">
+                    <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

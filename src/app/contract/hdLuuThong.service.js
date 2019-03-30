@@ -3,9 +3,9 @@
 
     angular
         .module('ati.contract')
-        .factory('HdLuuThong', HdLuuThong);
+        .factory('HdLuuThongManager', HdLuuThongManager);
 
-    function HdLuuThong(adminRestangular) {
+    function HdLuuThongManager(adminRestangular) {
         let RESOURCE_NAME = 'hdLuuThongs';
 
         return adminRestangular.service(RESOURCE_NAME);
