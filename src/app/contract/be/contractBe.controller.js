@@ -48,7 +48,7 @@
             manualColumnFreeze: true,
             cells: function (row, col) {
                 let cellPrp = {};
-                if (col === 1 || col === 2 || col === 6 || col === 7 || col === 9) {
+                if (col === 1 || col === 2 || col === 7 || col === 8 || col === 10) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }

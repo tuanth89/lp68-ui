@@ -22,7 +22,7 @@
             {
                 title: "Hợp đồng",
                 icon: "c-blue-500 ti-briefcase",
-                state: ".contract.cusNew",
+                state: ".contract.contractNew",
                 noneDropdown: true,
                 visible: true,
                 featureName: "contract",
@@ -31,7 +31,7 @@
             {
                 title: "Khách hàng",
                 icon: "c-blue-500 ti-user",
-                state: ".customer",
+                state: ".customer.cusInput",
                 noneDropdown: true,
                 visible: true,
                 featureName: "customer",

@@ -15,31 +15,49 @@
                     }
                 }
             })
-            .state('contract.cusNew', {
+            // .state('contract.cusNew', {
+            //     url: '/hop-dong-moi-cu',
+            //     views: {
+            //         'content@app.root.contract': {
+            //             controller: 'CustomerNewController',
+            //             templateUrl: 'contract/customerNew.tpl.html'
+            //         }
+            //     },
+            //     resolve: {
+            //         customerSource: function ($stateParams, CustomerManager, Auth) {
+            //             return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId, userId: Auth.getSession().selectedUserId});
+            //         }
+            //     }
+            // })
+            // .state('contract.cusOld', {
+            //     url: '/hop-dong-cu',
+            //     views: {
+            //         'content@app.root.contract': {
+            //             controller: 'ContractOldController',
+            //             templateUrl: 'contract/hopDongCu/contractOld.tpl.html'
+            //         }
+            //     },
+            //     resolve: {
+            //         customerSource: function ($stateParams, CustomerManager, Auth) {
+            //             return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId, userId: Auth.getSession().selectedUserId});
+            //         }
+            //     }
+            // })
+            .state('contract.contractNew', {
                 url: '/hop-dong-moi',
                 views: {
                     'content@app.root.contract': {
-                        controller: 'CustomerNewController',
-                        templateUrl: 'contract/customerNew.tpl.html'
-                    }
-                },
-                resolve: {
-                    customerSource: function ($stateParams, CustomerManager, Auth) {
-                        return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId, userId: Auth.getSession().selectedUserId});
+                        controller: 'ContractNewController',
+                        templateUrl: 'contract/hopDongMoi/contractNew.tpl.html'
                     }
                 }
             })
-            .state('contract.cusOld', {
+            .state('contract.contractOld', {
                 url: '/hop-dong-cu',
                 views: {
                     'content@app.root.contract': {
-                        controller: 'ContractOldController',
-                        templateUrl: 'contract/hopDongCu/contractOld.tpl.html'
-                    }
-                },
-                resolve: {
-                    customerSource: function ($stateParams, CustomerManager, Auth) {
-                        return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId, userId: Auth.getSession().selectedUserId});
+                        controller: 'ContractTypeOldController',
+                        templateUrl: 'contract/hopDongMoi/contractOld.tpl.html'
                     }
                 }
             })

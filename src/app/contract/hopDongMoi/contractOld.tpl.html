@@ -1,0 +1,36 @@
+<div class="row mb-20">
+    <!--<div class="col-sm-1" e-route-name="contract.update" ng-if="storeSelected.userId">-->
+    <!--<button type="button" class="btn btn-primary" ng-click="saveContract()"-->
+    <!--ng-disabled="(isAccountant || isRoot) && !userSelected.id">-->
+    <!--Lưu-->
+    <!--</button>-->
+
+    <!--</div>-->
+    <div class="col-sm-2" e-route-name="contract.viewDate">
+        <input input-value="filter.date" e-datepicker class="form-control" type="text" placeholder="Chọn ngày">
+    </div>
+
+</div>
+
+<hot-table hot-id="my-handsontable"
+           settings="settings"
+           row-headers="settings.rowHeaders"
+           min-spare-rows="settings.minSpareRows"
+           on-after-init="onAfterInit"
+           datarows="contracts">
+    <!--<hot-column data="statusType" title="'Loại'" type="'text'" width="30"></hot-column>-->
+    <hot-column data="customer.name" title="'Họ và tên'" width="80" type="'text'"></hot-column>
+    <hot-column data="createdAt" title="'Ngày vay'" type="'date'" date-format="'DD/MM/YYYY'" width="60"></hot-column>
+    <hot-column data="loanMoney" title="'Gói vay'" width="60" type="'numeric'" format="'#,###'"></hot-column>
+    <hot-column data="actuallyCollectedMoney" title="'Thực thu'" width="60" type="'numeric'"
+                format="'#,###'"></hot-column>
+    <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="50"></hot-column>
+    <hot-column data="totalMoneyPaid" title="'Đã đóng'" type="'numeric'" format="'#,###'" width="55"></hot-column>
+    <hot-column data="totalMoneyNeedPay" title="'Dư nợ'" width="50" type="'numeric'"
+                format="'#,###'"></hot-column>
+    <!--<hot-column data="dateEnd" title="'Ngày chốt'" type="'date'" date-format="'DD/MM/YYYY'" width="60"></hot-column>-->
+    <!--<hot-column data="isCustomerNew" title="'Khách mới'" type="'checkbox'" checked-template="true"-->
+    <!--unchecked-template="false" width="40"></hot-column>-->
+    <hot-column data="actionDel" title="' '" type="'text'" width="20"
+                read-only></hot-column>
+</hot-table>

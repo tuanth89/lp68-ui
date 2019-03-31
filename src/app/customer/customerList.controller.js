@@ -111,7 +111,7 @@
         $scope.fileImgDoc = "";
         $scope.showResource = false;
         $scope.customers = [];
-        $scope.customers.push(angular.copy(customerItem));
+        // $scope.customers.push(angular.copy(customerItem));
         // $scope.customers = angular.copy(Restangular.stripRestangular(contracts));
 
         $scope.settings = {
@@ -130,15 +130,15 @@
             //     //     }
             //     // }
             // },
-            beforeRemoveRow: function (index, amount) {
-                if (hotInstance.countRows() <= 1)
-                    return false;
-            },
-            afterCreateRow: function (index) {
-                setTimeout(function () {
-                    hotInstance.selectCell(index, 0);
-                }, 1);
-            },
+            // beforeRemoveRow: function (index, amount) {
+            //     if (hotInstance.countRows() <= 1)
+            //         return false;
+            // },
+            // afterCreateRow: function (index) {
+            //     setTimeout(function () {
+            //         hotInstance.selectCell(index, 0);
+            //     }, 1);
+            // },
             // afterCreateRow: function (index) {
             //     setTimeout(function () {
             //         this.selectCell(index, 0, 0, 0, true);
@@ -207,7 +207,9 @@
                 }
             },
             stretchH: "all",
-            autoWrapRow: true
+            autoWrapRow: true,
+            colHeaders: true,
+            minSpareRows: 0,
         };
 
         function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
@@ -260,12 +262,12 @@
                                 if (result.removed) {
                                     $scope.customers.splice(rowIndex, 1);
 
-                                    if ($scope.customers === 0) {
-                                        $scope.customers.push(angular.copy(customerItem));
-                                        setTimeout(function () {
-                                            hotInstance.render();
-                                        }, 0);
-                                    }
+                                    // if ($scope.customers === 0) {
+                                    //     $scope.customers.push(angular.copy(customerItem));
+                                    //     setTimeout(function () {
+                                    //         hotInstance.render();
+                                    //     }, 0);
+                                    // }
 
                                     AlertService.replaceAlerts({
                                         type: 'success',
@@ -342,7 +344,7 @@
                 .getList("", {storeId: storeId, userId: $scope.$parent.storeSelected.userId})
                 .then(function (resp) {
                     $scope.customers = angular.copy(Restangular.stripRestangular(resp));
-                    $scope.customers.push(angular.copy(customerItem));
+                    // $scope.customers.push(angular.copy(customerItem));
 
                     setTimeout(function () {
                         hotInstance.render();
@@ -374,29 +376,29 @@
             //     hotInstance.selectCell(index, 0);
             // });
 
-            document.addEventListener('keydown', function (e) {
-                if (e.which === 9 && hotInstance) {
-                    if (!hotInstance.getSelected())
-                        return;
-
-                    let rowIndex = $('.current').parent().index();
-                    let colIndex = hotInstance.getSelected()[1];
-                    let totalCols = hotInstance.countCols();
-                    let totalRows = hotInstance.countRows();
-                    if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
-                        if (!$scope.customers[rowIndex].name) {
-                            toastr.error("Họ và tên không được để trống!");
-                            setTimeout(function () {
-                                hotInstance.selectCell(rowIndex, 0);
-                            }, 1);
-
-                            return;
-                        }
-                        hotInstance.alter("insert_row", totalRows + 1);
-                        $scope.customers[totalRows] = angular.copy(customerItem);
-                    }
-                }
-            }, true);
+            // document.addEventListener('keydown', function (e) {
+            //     if (e.which === 9 && hotInstance) {
+            //         if (!hotInstance.getSelected())
+            //             return;
+            //
+            //         let rowIndex = $('.current').parent().index();
+            //         let colIndex = hotInstance.getSelected()[1];
+            //         let totalCols = hotInstance.countCols();
+            //         let totalRows = hotInstance.countRows();
+            //         if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
+            //             if (!$scope.customers[rowIndex].name) {
+            //                 toastr.error("Họ và tên không được để trống!");
+            //                 setTimeout(function () {
+            //                     hotInstance.selectCell(rowIndex, 0);
+            //                 }, 1);
+            //
+            //                 return;
+            //             }
+            //             hotInstance.alter("insert_row", totalRows + 1);
+            //             $scope.customers[totalRows] = angular.copy(customerItem);
+            //         }
+            //     }
+            // }, true);
 
         }, 0);
 
@@ -434,7 +436,8 @@
                 .then((items) => {
                     // $scope.customers = angular.copy(Restangular.stripRestangular(items));
                     // $scope.customers.push(angular.copy(customerItem));
-                    $scope.$parent.newUsers.push(...angular.copy(items));
+
+                    // $scope.$parent.newUsers.push(...angular.copy(items));
 
                     $('#avatarModal').modal('hide');
 

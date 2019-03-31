@@ -48,7 +48,7 @@
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.readOnly = true;
-                if (col === 1 || col === 2 || col === 7 || col === 8 || col === 10) {
+                if (col === 1 || col === 2 || col === 8 || col === 9 || col === 11) {
                     cellPrp.renderer = myBtns;
                     cellPrp.readOnly = true;
                 }

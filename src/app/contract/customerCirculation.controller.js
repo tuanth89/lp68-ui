@@ -166,7 +166,10 @@
                             cellPrp.renderer = myBtnsRemove;
                             break;
                         case 9:
-                            cellPrp.renderer = btnThuVeChotBe;
+                            if (item.contractStatus === CONTRACT_STATUS.STAND)
+                                cellPrp.renderer = myBtnsRemove;
+                            else
+                                cellPrp.renderer = btnThuVeChotBe;
                             break;
                         case 2:
                         case 3:

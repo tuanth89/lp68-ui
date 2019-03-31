@@ -28,10 +28,10 @@
         <!--</div>-->
     </div>
 
+    <!--row-headers="settings.rowHeaders"-->
+    <!--min-spare-rows="settings.minSpareRows"-->
     <hot-table hot-id="my-handsontable"
                settings="settings"
-               row-headers="settings.rowHeaders"
-               min-spare-rows="settings.minSpareRows"
                datarows="customers">
         <hot-column data="name" title="'Họ và tên'" type="'text'" width="100"></hot-column>
         <hot-column ng-if="isAccountant || isRoot" data="numberId" title="'Số CMT'" type="'text'" width="90"></hot-column>
