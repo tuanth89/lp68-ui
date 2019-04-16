@@ -219,7 +219,9 @@
                                        class="form-control textAlign"/>
                             </div>
                             <div class="col-md-5">
-                                - (<span class="text-red-bold">{{selectedCirculation.moneyContractOld | number}}</span>&nbsp;<span ng-if="selectedCirculation.moneyPayOld > 0" class="text-red-bold"> - {{selectedCirculation.moneyPayOld | number}}</span>) =
+                                - (<span class="text-red-bold">{{selectedCirculation.moneyContractOld | number}}</span>&nbsp;<span
+                                    ng-if="selectedCirculation.moneyPayOld > 0" class="text-red-bold"> - {{selectedCirculation.moneyPayOld | number}}</span>)
+                                =
                                 <span class="text-red-bold">{{selectedCirculation.totalMoney
                                 | number}}</span> (VNĐ)
                             </div>
@@ -317,12 +319,12 @@
                             </div>
                         </div>
                         <!--<div class="form-group col-md-12 ptb5">-->
-                            <!--<label class="col-md-5 control-label">Đóng hàng ngày:-->
-                            <!--</label>-->
-                            <!--<div class="col-md-7">-->
-                                <!--<label class="text-red-bold"> {{selectedCirculation.dailyMoneyPay | number}}-->
-                                <!--</label>-->
-                            <!--</div>-->
+                        <!--<label class="col-md-5 control-label">Đóng hàng ngày:-->
+                        <!--</label>-->
+                        <!--<div class="col-md-7">-->
+                        <!--<label class="text-red-bold"> {{selectedCirculation.dailyMoneyPay | number}}-->
+                        <!--</label>-->
+                        <!--</div>-->
                         <!--</div>-->
                         <div class="form-group col-md-12 ptb5">
                             <label class="col-md-5 control-label">
@@ -695,6 +697,102 @@
                 <button type="button" class="btn btn-primary" ng-click="saveKetThucModal()"
                         ng-disabled="selectedCirculation.newPayMoney === 0 || selectedCirculation.newPayMoney > selectedCirculation.moneyContractOld">
                     <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dongNhieuNgayModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Đóng tiền</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="widget-box">
+                    <form class="form-inline row-border label-style">
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Họ và tên:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.customer.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Số hợp đồng:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label> {{selectedCirculation.contractNo}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Gói vay:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label class="text-red-bold"> {{selectedCirculation.loanMoney | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Dư nợ:
+                            </label>
+                            <div class="col-md-7">
+                                <label class="text-red-bold"> {{selectedCirculation.moneyContractOld | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Ngày vay:
+                            </label>
+                            <div class="col-md-7 control-label">
+                                <label>
+                                    {{selectedCirculation.contractCreatedAt}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Đóng hàng ngày:
+                            </label>
+                            <div class="col-md-7">
+                                <label class="text-red-bold"> {{selectedCirculation.dailyMoneyPay | number}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 ptb5">
+                            <label class="col-md-5 control-label">
+                                Đóng:
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       ng-model="selectedCirculation.newPayMoney"
+                                       callback-fn="numOfDayPaidFunc(money)"
+                                       format-number
+                                       class="form-control textAlign"/>
+                            </div>
+                            <div class="col-md-3">= <span class="text-red-bold">{{selectedCirculation.numOfDayPaid | number}} </span>
+                                ngày
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary"
+                        ng-disabled="selectedCirculation.newPayMoney <= 0"
+                        ng-click="saveDongThemModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
                 </button>
             </div>
         </div>

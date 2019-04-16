@@ -351,12 +351,32 @@
         $scope.saveCustomer = () => {
             let checkValid = true;
             let indexInvalid = -1;
+            let colIndex = -1;
             let validCustomers = angular.copy($scope.customers);
 
             _.filter(validCustomers, (item, index) => {
                 if (!item.customer.name || !item.loanMoney
-                    || !item.paidMoney || !item.totalMoneyNeedPay
-                    || (!item.isHdLaiDung && (!item.actuallyCollectedMoney || !item.loanDate || !item.dateEnd))) {
+                    // || !item.paidMoney
+                    // || !item.totalMoneyNeedPay
+                    || (!item.isHdLaiDung && (!item.actuallyCollectedMoney || !item.loanDate))) {
+
+                    if (!item.customer.name)
+                        colIndex = 1;
+                    else if (!item.loanMoney)
+                        colIndex = 3;
+                    // else if (!item.paidMoney)
+                    //     colIndex = 6;
+                    // else if (!item.totalMoneyNeedPay)
+                    //     colIndex = 7;
+
+                    if (!item.isHdLaiDung && colIndex < 0) {
+                        if (!item.actuallyCollectedMoney)
+                            colIndex = 4;
+                        else if (!item.loanDate)
+                            colIndex = 5;
+                        else if (!item.dateEnd)
+                            colIndex = 8;
+                    }
 
                     checkValid = false;
                     indexInvalid = index;
@@ -365,7 +385,7 @@
             });
 
             if (!checkValid) {
-                hotInstance.selectCell(indexInvalid, 1);
+                hotInstance.selectCell(indexInvalid, colIndex);
 
                 AlertService.replaceAlerts({
                     type: 'error',
@@ -389,6 +409,7 @@
                 .customPOST(customers)
                 .then((items) => {
                     $scope.customers = [];
+                    $scope.customers.push(angular.copy(customerItem));
                     toastr.success('Thêm dữ liệu khách thành công!');
                 })
                 .catch((error) => {

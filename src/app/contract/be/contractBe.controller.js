@@ -41,6 +41,7 @@
             stretchH: "all",
             // autoWrapRow: true,
             // rowHeaders: true,
+            copyPaste: false,
             colHeaders: true,
             minSpareRows: 0,
             wordWrap: false,

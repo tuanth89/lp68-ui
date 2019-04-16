@@ -33,6 +33,7 @@
         let hotInstance = "";
         $scope.settings = {
             stretchH: "all",
+            copyPaste: false,
             // autoWrapRow: true,
             // rowHeaders: true,
             colHeaders: true,

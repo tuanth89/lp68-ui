@@ -111,6 +111,10 @@
             $scope.getData($scope.pagination.page, $scope.pagination.per_page);
         });
 
+        $scope.numOfDayPaidFunc = (money) => {
+            $scope.selectedCirculation.numOfDayPaid = Math.trunc(parseInt(money) / ($scope.selectedCirculation.dailyMoneyPay === 0 ? parseInt(money) : $scope.selectedCirculation.dailyMoneyPay));
+        };
+
         $scope.newLoanMoneyFunc = (money) => {
             $scope.selectedCirculation.totalMoney = parseInt(money) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt($scope.selectedCirculation.moneyPayOld));
         };
@@ -138,6 +142,7 @@
         $scope.settings = {
             data: $scope.contracts,
             // rowHeaders: true,
+            copyPaste: false,
             colHeaders: true,
             minSpareRows: 0,
             stretchH: "all",
@@ -166,10 +171,10 @@
                             cellPrp.renderer = myBtnsRemove;
                             break;
                         case 9:
-                            if (item.contractStatus === CONTRACT_STATUS.STAND)
-                                cellPrp.renderer = myBtnsRemove;
-                            else
+                            if (item.contractStatus !== CONTRACT_STATUS.STAND && item.contractStatus !== CONTRACT_STATUS.END)
                                 cellPrp.renderer = btnThuVeChotBe;
+                            else
+                                cellPrp.renderer = myBtnsRemove;
                             break;
                         case 2:
                         case 3:
@@ -306,6 +311,16 @@
 
                             $('#laiDungModal').modal('show');
                             break;
+
+                        case 6:
+                            $scope.selectedCirculation.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid);
+                            $scope.selectedCirculation.contractCreatedAt = moment($scope.selectedCirculation.contractCreatedAt).utc().format("DD/MM/YYYY");
+                            $scope.selectedCirculation.newPayMoney = 0;
+                            $scope.selectedCirculation.numOfDayPaid = 0;
+                            $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
+
+                            $('#dongNhieuNgayModal').modal('show');
+                            break;
                     }
 
                     setTimeout(function () {
@@ -429,11 +444,12 @@
                             td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 5 + '">' + 'Chốt lãi' + '</button>';
                             break;
                         case 0:
-                            td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 0 + '">' + 'Đáo' + '</button>&nbsp;&nbsp;' +
-                                '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
-                                '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' +
-                                '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>' +
-                                '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
+                            td.innerHTML = '<button class="btnAction btn btn-success btAction-' + 0 + '" value="' + 0 + '">' + 'Đáo' + '</button>&nbsp;&nbsp;' +
+                                '<button class="btnAction btn btn-success btAction-' + 1 + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
+                                '<button class="btnAction btn btn-success btAction-' + 2 + '" value="' + 2 + '">' + 'Chốt' + '</button>&nbsp;&nbsp;' +
+                                '<button class="btnAction btn btn-success btAction-' + 3 + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
+                                '<button class="btnAction btn btn-success btAction-' + 4 + '" value="' + 4 + '">' + 'Kết thúc' + '</button>&nbsp;&nbsp;' +
+                                '<button class="btnAction btn btn-success btAction-' + 6 + '" value="' + 6 + '">' + 'Đóng trước' + '</button>';
                             break;
                         default:
                             td.innerHTML = '';
@@ -498,33 +514,35 @@
             if ($scope.$parent.storeSelected.userId) {
                 switch (value) {
                     case CONTRACT_STATUS.STAND:
-                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 5 + '">' + 'Chốt lãi' + '</button>';
+                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + 5 + '" value="' + 5 + '">' + 'Chốt lãi' + '</button>';
                         break;
                     case CONTRACT_STATUS.COLLECT:
-                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' +
-                            '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
-                            '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
+                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + 2 + '" value="' + 2 + '">' + 'Chốt' +
+                            '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + 3 + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
+                            '<button class="btnAction btn btn-success btAction-' + 4 + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
                         break;
                     case CONTRACT_STATUS.CLOSE_DEAL:
-                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
-                            '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
-                            '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
+                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + 1 + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
+                            '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + 3 + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
+                            '<button class="btnAction btn btn-success btAction-' + 4 + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
                         break;
                     case CONTRACT_STATUS.ESCAPE:
                         td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
-                            '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' + '</button>&nbsp;&nbsp;' +
-                            '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
+                            '<button class="btnAction btn btn-success btAction-' + 2 + '" value="' + 2 + '">' + 'Chốt' + '</button>&nbsp;&nbsp;' +
+                            '<button class="btnAction btn btn-success btAction-' + 4 + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
                         break;
                     case CONTRACT_STATUS.END:
                         td.innerHTML = '';
                         break;
                     default:
-                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
-                            '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' +
-                            '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
-                            '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
+                        td.innerHTML = '<button class="btnAction btn btn-success btAction-' + 1 + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
+                            '<button class="btnAction btn btn-success btAction-' + 2 + '" value="' + 2 + '">' + 'Chốt' +
+                            '</button>&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + 3 + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
+                            '<button class="btnAction btn btn-success btAction-' + 4 + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
                         break;
                 }
+
+                td.innerHTML += '&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + 6 + '" value="' + 6 + '">' + 'Đóng trước' + '</button>';
             }
             else
                 td.innerHTML = '';
@@ -818,7 +836,7 @@
             $scope.selectedCirculation.statusContract = CONTRACT_STATUS.END;
             $scope.selectedCirculation.newTransferDate = moment($scope.selectedCirculation.newTransferDate).format("YYYY-MM-DD");
 
-            ContractManager
+            HdLuuThongManager
                 .one($scope.selectedCirculation.contractId)
                 .one('transferType')
                 // .customPUT({
@@ -827,7 +845,7 @@
                 //     payMoneyOriginal: $scope.selectedCirculation.payMoneyOriginal,
                 //     newTransferDate: $scope.selectedCirculation.newTransferDate
                 // })
-                .customPUT($scope.contractSelected)
+                .customPUT($scope.selectedCirculation)
                 .then((contract) => {
                     toastr.success('Chuyển hợp đồng Kết Thúc thành công!');
 
@@ -848,6 +866,38 @@
             // });
 
         };
+
+        $scope.saveDongThemModal = () => {
+            if ($scope.formProcessing)
+                return;
+
+            $scope.formProcessing = true;
+
+            $scope.selectedCirculation.statusContract = CONTRACT_STATUS.ESCAPE;
+            $scope.selectedCirculation.newAppointmentDate = moment($scope.selectedCirculation.newAppointmentDate).format("DD/MM/YYYY");
+            $scope.selectedCirculation.moneyHavePay = $scope.selectedCirculation.moneyPaid = $scope.selectedCirculation.newPayMoney;
+
+            HdLuuThongManager
+                .one($scope.selectedCirculation.contractId)
+                .one('updateDongTruoc')
+                .customPUT($scope.selectedCirculation)
+                .then((contract) => {
+                    toastr.success('Cập nhật thành công!');
+
+                    $scope.selectedCirculation = {};
+                    $('#dongNhieuNgayModal').modal('hide');
+
+                    $scope.getData();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    toastr.error("Có lỗi xảy ra! Hãy thử lại");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
+                });
+        };
+
 
         $scope.opened = false;
         $scope.opened2 = false;

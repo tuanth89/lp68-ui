@@ -98,6 +98,7 @@
                     $scope.$parent.getContractsByCus(selectedCus);
                 }
             },
+            copyPaste: false,
             stretchH: "all",
             autoWrapRow: true,
             colHeaders: true,

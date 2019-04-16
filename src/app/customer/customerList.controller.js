@@ -206,6 +206,7 @@
                     }
                 }
             },
+            copyPaste: false,
             stretchH: "all",
             autoWrapRow: true,
             colHeaders: true,

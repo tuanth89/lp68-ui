@@ -40,6 +40,7 @@
             stretchH: "all",
             // autoWrapRow: true,
             // rowHeaders: true,
+            copyPaste: false,
             colHeaders: true,
             minSpareRows: 0,
             wordWrap: false,
@@ -275,7 +276,7 @@
 
             $scope.contractSelected.newTransferDate = moment($scope.contractSelected.newTransferDate).format("YYYY-MM-DD");
 
-            ContractManager
+            HdLuuThongManager
                 .one($scope.contractSelected._id)
                 .one('transferType')
                 .customPUT($scope.contractSelected)
