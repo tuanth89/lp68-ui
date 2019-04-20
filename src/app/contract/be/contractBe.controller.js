@@ -88,33 +88,22 @@
 
                     switch (parseInt(event.realTarget.value)) {
                         case 1:
-                            setTimeout(function () {
-                                $scope.$apply();
-                                $scope.showModalThuVe(actuallyCollectedMoney, totalMoneyPaid);
-                            }, 1);
-
+                            $scope.showModalThuVe(actuallyCollectedMoney, totalMoneyPaid);
                             break;
                         case 2:
-                            setTimeout(function () {
-                                $scope.$apply();
-                                $scope.showModalChot(actuallyCollectedMoney, totalMoneyPaid);
-                            }, 1);
-
+                            $scope.showModalChot(actuallyCollectedMoney, totalMoneyPaid);
                             break;
                         case 4:
-                            setTimeout(function () {
-                                $scope.$apply();
-                                $scope.showModalKetThuc(actuallyCollectedMoney, totalMoneyPaid);
-                            }, 1);
-
+                            $scope.showModalKetThuc(actuallyCollectedMoney, totalMoneyPaid);
+                            break;
+                        case 5:
+                            $scope.showModalDongTien(actuallyCollectedMoney, totalMoneyPaid);
                             break;
                     }
 
                     setTimeout(function () {
                         $scope.$apply();
                     }, 1);
-
-
                 }
             }
             // strict: true
@@ -141,12 +130,25 @@
                 if ($scope.$parent.storeSelected.userId) {
                     td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 1 + '">' + 'Thu về' + '</button>&nbsp;&nbsp;' +
                         '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' + '</button>&nbsp;&nbsp;' +
-                        '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
+                        '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>&nbsp;&nbsp;' +
+                        '<button class="btnAction btn btn-success btAction-' + 5 + '" value="' + 5 + '">' + 'Đóng' + '</button>';
                 }
                 else
                     td.innerHTML = '';
             }
         }
+
+        $scope.showModalDongTien = (actuallyCollectedMoney, totalMoneyPaid) => {
+            $scope.contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
+            $scope.contractSelected.newPayMoney = 0;
+
+            $scope.contractSelected.totalMoney = $scope.contractSelected.moneyContractOld;
+            $scope.contractSelected.contractCreatedAt = moment($scope.contractSelected.createdAt).utc().format("DD/MM/YYYY");
+            $scope.contractSelected.payDate = "";
+            $scope.$parent.contractSelected = angular.copy($scope.contractSelected);
+
+            $('#dongTienModal').modal('show');
+        };
 
         $scope.showModalThuVe = (actuallyCollectedMoney, totalMoneyPaid) => {
             let nowDate = moment();

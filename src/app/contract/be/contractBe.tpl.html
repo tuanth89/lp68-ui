@@ -18,7 +18,7 @@
     <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100" read-only></hot-column>
     <hot-column data="transferDate" title="'Ngày chuyển'" type="'text'" width="100" read-only></hot-column>
     <hot-column data="beDate" title="'Ngày bễ'" type="'text'" width="100" read-only></hot-column>
-    <hot-column data="actionTransf" title="'Thao tác'" type="'text'" width="210" read-only></hot-column>
+    <hot-column data="actionTransf" title="'Thao tác'" type="'text'" width="270" read-only></hot-column>
 </hot-table>
 
 <div class="modal fade" id="hopDongThuVeModal" tabindex="-1">
@@ -123,7 +123,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
                 <button type="button" class="btn btn-primary"
-                        ng-disabled="contractSelected.newActuallyCollectedMoney <= 0"
                         ng-click="saveThuVeModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
                 </button>
             </div>
@@ -235,7 +234,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
                 <button type="button" class="btn btn-primary"
-                        ng-disabled="contractSelected.newPayMoney <= 0"
                         ng-click="saveChotModal()"><i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
                 </button>
             </div>
@@ -326,7 +324,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
                 <button type="button" class="btn btn-primary" ng-click="saveKetThucModal()"
-                        ng-disabled="contractSelected.newPayMoney === 0 || contractSelected.newPayMoney > contractSelected.moneyContractOld">
+                        ng-disabled="contractSelected.payMoneyOriginal > contractSelected.moneyContractOld">
                     <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
                 </button>
             </div>

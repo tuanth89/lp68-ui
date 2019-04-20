@@ -2,11 +2,10 @@
     'use strict';
 
     angular.module('ati.contract')
-        .controller('CustomerCirculationController', CustomerCirculationController)
+        .controller('CustomerCirculationVer2Controller', CustomerCirculationVer2Controller)
     ;
 
-    function CustomerCirculationController($scope, $state, $stateParams, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
-        let hotInstance = "";
+    function CustomerCirculationVer2Controller($scope, $state, $stateParams, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
         $scope.formProcessing = false;
         $scope.filter = {
             date: "",
@@ -16,139 +15,127 @@
         };
         let STATE_NAME = "app.root.contract.cusCirculation";
 
+        $scope.contracts = [];
+
         $scope.selectedCirculation = {};
         // $('#lai-dung-dp').datepicker({startDate: new Date()});
 
-        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-            hotInstance.render();
-        });
-
-        $scope.status = [
-            {
-                value: -1,
-                title: "Tất cả"
-            },
-            {
-                value: 0,
-                title: "Lưu thông"
-            },
-            {
-                value: 1,
-                title: "Đáo"
-            },
-            {
-                value: 2,
-                title: "Lãi đứng"
-            },
-            {
-                value: 3,
-                title: "Thu về"
-            },
-            {
-                value: 4,
-                title: "Chốt"
-            },
-            {
-                value: 5,
-                title: "Bễ"
-            },
-            {
-                value: 6,
-                title: "Kết thúc"
-            }
-        ];
-
-        $scope.filterDateFormat = "";
-
-        $scope.pagination = {
-            page: $stateParams.p ? parseInt($stateParams.p) : 1,
-            per_page: 30,
-            totalItems: 0
-        };
-
-        $scope.checkedList = [];
-        $scope.checkbox = {checkAll: false};
-        $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                _.map($scope.contracts, function (x, index) {
-                    if (x.status === 0) {
-                        x.isActive = newValue;
-
-                        let checkedIndex = $scope.checkedList.indexOf(index);
-                        if (checkedIndex >= 0) {
-                            $scope.checkedList.splice(checkedIndex, 1);
-                        }
-                        else
-                            $scope.checkedList.push(index);
-                    }
-
-                    return x;
-                });
-
-                if (newValue) {
-                    hotInstance.selectCell(0, 0, hotInstance.countRows() - 1, hotInstance.countCols() - 1);
-                }
-                else {
-                    hotInstance.selectCell(0, 0, 0, 0, true);
-                }
-            }
-        });
-
-        $scope.$watch('filter.status', function (newValue, oldValue) {
-            if (newValue != oldValue) {
-                $scope.getData();
-            }
-        });
-
-        $scope.$watch('filter.date', function (newValue, oldValue) {
-            if (newValue != oldValue) {
-                $scope.filterDateFormat = moment(newValue, "YYYY-MM-DD").format("DD/MM/YYYY");
-                $scope.getData();
-            }
-        });
-
-        $scope.$on('$viewContentLoaded', function (event, data) {
-            $scope.getData($scope.pagination.page, $scope.pagination.per_page);
-        });
-
-        $scope.numOfDayPaidFunc = (money) => {
-            $scope.selectedCirculation.numOfDayPaid = Math.trunc(parseInt(money) / ($scope.selectedCirculation.dailyMoneyPay === 0 ? parseInt(money) : $scope.selectedCirculation.dailyMoneyPay));
-        };
-
-        $scope.newLoanMoneyFunc = (money) => {
-            $scope.selectedCirculation.totalMoney = parseInt(money) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt($scope.selectedCirculation.moneyPayOld));
-        };
-
-        $scope.newActuallyCollectedMoneyFunc = function (money) {
-            $scope.selectedCirculation.newDailyMoney = parseInt(money) / parseInt(!$scope.selectedCirculation.newLoanDate === 0 ? 1 : $scope.selectedCirculation.newLoanDate);
-        };
-
-        $scope.newLoanDateFunc = function () {
-            $scope.selectedCirculation.newDailyMoney = parseInt($scope.selectedCirculation.newActuallyCollectedMoney) / parseInt($scope.selectedCirculation.newLoanDate);
-        };
-
-        $scope.moneyPayOldDaoFunc = function (money) {
-            $scope.selectedCirculation.totalMoney = parseInt($scope.selectedCirculation.newLoanMoney) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt(money));
-        };
-
-        if ($scope.$parent.isAccountant)
-            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
-        else
-            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
-
-        $scope.contracts = [];
-        $scope.rowHeaders = true;
-        $scope.colHeaders = true;
-        $scope.settings = {
+        const container = document.getElementById('hotTable');
+        const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
-            // rowHeaders: true,
+            columns: [
+                {
+                    data: 'isActive',
+                    type: 'checkbox',
+                    checkedTemplate: 'true',
+                    uncheckedTemplate: 'false',
+                    width: 40
+                },
+                {
+                    data: 'contractNo',
+                    type: 'text',
+                    width: 150,
+                    readOnly: true
+                },
+                {
+                    data: 'customer.name',
+                    type: 'text',
+                    width: 150,
+                    readOnly: true
+                },
+                {
+                    data: 'contractCreatedAt',
+                    type: 'text',
+                    width: 100,
+                    readOnly: true,
+                },
+                {
+                    data: 'loanMoney',
+                    type: 'numeric',
+                    width: 100,
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    readOnly: true
+                },
+                {
+                    data: 'actuallyCollectedMoney',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'totalHavePay',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'totalMoneyPaid',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'moneyPaid',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 120,
+                    readOnly: true
+                },
+                {
+                    data: 'contractStatus',
+                    type: 'text',
+                    width: 250,
+                    readOnly: true
+                },
+                {
+                    data: 'status',
+                    type: 'text',
+                    width: 80,
+                    readOnly: true
+                },
+                {
+                    data: 'contractStatus',
+                    type: 'text',
+                    width: 80,
+                    readOnly: true
+                }
+            ],
+            stretchH: 'all',
             copyPaste: false,
-            colHeaders: true,
-            minSpareRows: 0,
-            stretchH: "all",
-            wordWrap: false,
+            autoWrapRow: true,
+            // wordWrap: false,
             fixedColumnsLeft: 3,
-            manualColumnFreeze: true,
+            // manualColumnFreeze: true,
+            // viewportColumnRenderingOffset: 100,
+            // viewportRowRenderingOffset:100,
+            // autoRowSize: true,
+            colHeaders: [
+                ' ',
+                'Số hợp đồng',
+                'Họ và tên',
+                'Ngày vay',
+                'Gói vay',
+                'Thực thu',
+                'Dư nợ',
+                'Đã đóng',
+                'Đóng trong ngày',
+                'Thao tác',
+                'Trạng thái',
+                'Hợp đồng'
+            ],
             cells: function (row, col) {
                 let cellPrp = {};
                 let item = $scope.contracts[row];
@@ -350,7 +337,128 @@
                     }
                 }
             }
+        });
+
+        // $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+        //     hotInstance.render();
+        // });
+
+        $scope.status = [
+            {
+                value: -1,
+                title: "Tất cả"
+            },
+            {
+                value: 0,
+                title: "Lưu thông"
+            },
+            {
+                value: 1,
+                title: "Đáo"
+            },
+            {
+                value: 2,
+                title: "Lãi đứng"
+            },
+            {
+                value: 3,
+                title: "Thu về"
+            },
+            {
+                value: 4,
+                title: "Chốt"
+            },
+            {
+                value: 5,
+                title: "Bễ"
+            },
+            {
+                value: 6,
+                title: "Kết thúc"
+            }
+        ];
+
+        $scope.filterDateFormat = "";
+
+        $scope.pagination = {
+            page: $stateParams.p ? parseInt($stateParams.p) : 1,
+            per_page: 30,
+            totalItems: 0
         };
+
+        $scope.checkedList = [];
+        $scope.checkbox = {checkAll: false};
+        $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                _.map($scope.contracts, function (x, index) {
+                    if (x.status === 0) {
+                        x.isActive = newValue;
+
+                        let checkedIndex = $scope.checkedList.indexOf(index);
+                        if (checkedIndex >= 0) {
+                            $scope.checkedList.splice(checkedIndex, 1);
+                        }
+                        else
+                            $scope.checkedList.push(index);
+                    }
+
+                    return x;
+                });
+
+                if (newValue) {
+                    hotTableInstance.selectCell(0, 0, hotTableInstance.countRows() - 1, hotTableInstance.countCols() - 1);
+                }
+                else {
+                    hotTableInstance.selectCell(0, 0, 0, 0, true);
+                }
+            }
+        });
+
+        $scope.$watch('filter.status', function (newValue, oldValue) {
+            if (newValue != oldValue) {
+                $scope.getData();
+            }
+        });
+
+        $scope.$watch('filter.date', function (newValue, oldValue) {
+            if (newValue != oldValue) {
+                $scope.filterDateFormat = moment(newValue, "YYYY-MM-DD").format("DD/MM/YYYY");
+                $scope.getData();
+            }
+        });
+
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            $scope.getData($scope.pagination.page, $scope.pagination.per_page);
+        });
+
+        $scope.numOfDayPaidFunc = (money) => {
+            $scope.selectedCirculation.numOfDayPaid = Math.trunc(parseInt(money) / ($scope.selectedCirculation.dailyMoneyPay === 0 ? parseInt(money) : $scope.selectedCirculation.dailyMoneyPay));
+        };
+
+        $scope.newLoanMoneyFunc = (money) => {
+            $scope.selectedCirculation.totalMoney = parseInt(money) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt($scope.selectedCirculation.moneyPayOld));
+        };
+
+        $scope.newActuallyCollectedMoneyFunc = function (money) {
+            $scope.selectedCirculation.newDailyMoney = parseInt(money) / parseInt(!$scope.selectedCirculation.newLoanDate === 0 ? 1 : $scope.selectedCirculation.newLoanDate);
+        };
+
+        $scope.newLoanDateFunc = function () {
+            $scope.selectedCirculation.newDailyMoney = parseInt($scope.selectedCirculation.newActuallyCollectedMoney) / parseInt($scope.selectedCirculation.newLoanDate);
+        };
+
+        $scope.moneyPayOldDaoFunc = function (money) {
+            $scope.selectedCirculation.totalMoney = parseInt($scope.selectedCirculation.newLoanMoney) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt(money));
+        };
+
+        if ($scope.$parent.isAccountant)
+            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
+        else
+            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
+
+        $scope.contracts = [];
+        $scope.rowHeaders = true;
+        $scope.colHeaders = true;
 
         $scope.totalMoneyPaid = 0;
         $scope.totalMoneyPayDraft = () => {
@@ -360,7 +468,6 @@
                 if (item.isActive)
                     totalFee += item.moneyPaid;
             });
-
 
             return totalFee;
         };
@@ -598,19 +705,25 @@
                         $scope.totalMoneyPaid = 0;
                     }
 
-                    // setTimeout(function () {
-                    //     hotInstance.render();
-                    // }, 1);
+                    setTimeout(function () {
+                        // hotTableInstance.render();
+                        hotTableInstance.updateSettings({
+                            data: $scope.contracts
+
+                        });
+
+                        hotTableInstance.getInstance().render();
+                    }, 1);
 
                 });
         };
 
         $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
+            // hotInstance = hotRegisterer.getInstance('my-handsontable');
 
-            $scope.onAfterInit = function () {
-                hotInstance.validateCells();
-            };
+            // $scope.onAfterInit = function () {
+            //     hotInstance.validateCells();
+            // };
 
         }, 0);
 
@@ -650,13 +763,11 @@
 
             $scope.formProcessing = true;
 
-            // if (!$scope.selectedCirculation.newPayMoney
-            //     || parseInt($scope.selectedCirculation.newPayMoney) <= 0) {
-            //     toastr.error("Số tiền đóng không được <= 0");
-            //
-            //     $scope.formProcessing = false;
-            //     return;
-            // }
+            if (!$scope.selectedCirculation.newPayMoney
+                || parseInt($scope.selectedCirculation.newPayMoney) <= 0) {
+                toastr.error("Số tiền đóng không được <= 0");
+                return;
+            }
 
             // if (!$scope.selectedCirculation.newAppointmentDate) {
             //     toastr.error("Chưa chọn ngày hẹn!");

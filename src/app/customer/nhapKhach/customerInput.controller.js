@@ -166,7 +166,7 @@
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {
                 if (event.realTarget.className.indexOf('delRow') >= 0) {
-                    $scope.delCustomer(rowCol.row, $scope.customers[rowCol.row]._id);
+                    $scope.delCustomer(rowCol.row, $scope.customers[rowCol.row]);
                 }
             },
             beforeKeyDown: function (event) {
@@ -261,62 +261,23 @@
             }
         }
 
-        $scope.delCustomer = function (rowIndex, customerId) {
-            if (!customerId && $scope.customers.length === 1) {
-                return;
-            }
-
-            if (!customerId) {
-                $scope.customers.splice(rowIndex, 1);
+        $scope.delCustomer = function (rowIndex, customer) {
+            if ($scope.customers.length === 1) {
+                $scope.customers[0] = angular.copy(customerItem);
 
                 setTimeout(function () {
                     $scope.$apply();
                     hotInstance.render();
                 }, 0);
+                return;
             }
-            else {
-                swal({
-                    title: 'Bạn có chắc chắn muốn xóa khách hàng này ?',
-                    text: "",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Có',
-                    cancelButtonText: 'Không',
-                }).then((result) => {
-                    if (result.value) {
-                        CustomerManager.one(customerId).remove()
-                            .then(function (result) {
-                                if (result.removed) {
-                                    $scope.customers.splice(rowIndex, 1);
 
-                                    if ($scope.customers === 0) {
-                                        $scope.customers.push(angular.copy(customerItem));
-                                        setTimeout(function () {
-                                            hotInstance.render();
-                                        }, 0);
-                                    }
+            $scope.customers.splice(rowIndex, 1);
 
-                                    AlertService.replaceAlerts({
-                                        type: 'success',
-                                        message: "Xóa khách hàng thành công!"
-                                    });
-                                }
-                                else {
-                                    AlertService.replaceAlerts({
-                                        type: 'error',
-                                        message: "Xóa thất bại. Khách hàng đã tồn tại số hợp đồng"
-                                    });
-                                }
-                            })
-                            .catch(function () {
-                                AlertService.replaceAlerts({
-                                    type: 'error',
-                                    message: "Có lỗi xảy ra!"
-                                });
-                            });
-                    }
-                });
-            }
+            setTimeout(function () {
+                $scope.$apply();
+                hotInstance.render();
+            }, 0);
         };
 
         $timeout(function () {
@@ -332,14 +293,15 @@
                     let totalCols = hotInstance.countCols();
                     let totalRows = hotInstance.countRows();
                     if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
-                        if (!$scope.customers[rowIndex].name) {
-                            toastr.error("Họ và tên không được để trống!");
-                            setTimeout(function () {
-                                hotInstance.selectCell(rowIndex, 0);
-                            }, 1);
+                        // if (!$scope.customers[rowIndex].name) {
+                        //     toastr.error("Họ và tên không được để trống!");
+                        //     setTimeout(function () {
+                        //         hotInstance.selectCell(rowIndex, 0);
+                        //     }, 1);
+                        //
+                        //     return;
+                        // }
 
-                            return;
-                        }
                         hotInstance.alter("insert_row", totalRows + 1);
                         $scope.customers[totalRows] = angular.copy(customerItem);
                     }

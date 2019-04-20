@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractController', ContractController);
 
-    function ContractController($scope, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, Restangular, CustomerManager, CONTRACT_EVENT) {
+    function ContractController($scope, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, HdLuuThongManager, Restangular, CustomerManager, CONTRACT_EVENT) {
 
         $scope.showInfoCus = false;
 
@@ -58,29 +58,28 @@
         $scope.contractSelected = {};
 
         $scope.dongTienFunc = () => {
-            ContractManager
+            HdLuuThongManager
                 .one($scope.contractSelected._id)
-                .one('updateTotalMoneyPaid')
-                .customPUT({totalMoneyPaid: $scope.contractSelected.newPayMoney})
+                .one('updateTotalMoneyPaidTCB')
+                .customPUT({
+                    newPayMoney: $scope.contractSelected.newPayMoney,
+                    payDate: $scope.contractSelected.payDate
+                })
                 .then((contract) => {
-                    toastr.success('Cập nhật thành công!');
+                    toastr.success('Đóng tiền thành công!');
 
                     $('#dongTienModal').modal('hide');
                     $scope.$broadcast(CONTRACT_EVENT.UPDATE_SUCCESS);
                 })
                 .catch((error) => {
-                    toastr.error('Cập nhật không thành công!');
+                    toastr.error('Có lỗi xảy ra. Hãy thử lại!');
                 });
         };
 
-        // $('#customerContractModal').on('hidden.bs.modal', function () {
-        //     $scope.selectedCustomer = {};
-        //     $scope.formProcessing = false;
-        //     $scope.contracts = [];
-        //     $scope.filter = {contractNo: ""};
-        //     $scope.contractInfo = {};
-        //     uiCalendarConfig.calendars['myCalendar1'].fullCalendar('removeEvents');
-        // });
+        $('#dongTienModal').on('hidden.bs.modal', function () {
+            $scope.contractSelected = {};
+            $scope.$apply();
+        });
 
         let contractNo = "";
         $scope.fromSelected = function (item, model) {

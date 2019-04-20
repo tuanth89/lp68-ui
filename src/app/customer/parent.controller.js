@@ -57,31 +57,6 @@
 
         $scope.contractSelected = {};
 
-        $scope.dongTienFunc = () => {
-            ContractManager
-                .one($scope.contractSelected._id)
-                .one('updateTotalMoneyPaid')
-                .customPUT({totalMoneyPaid: $scope.contractSelected.newPayMoney})
-                .then((contract) => {
-                    toastr.success('Cập nhật thành công!');
-
-                    $('#dongTienModal').modal('hide');
-                    $scope.$broadcast(CONTRACT_EVENT.UPDATE_SUCCESS);
-                })
-                .catch((error) => {
-                    toastr.error('Cập nhật không thành công!');
-                });
-        };
-
-        // $('#customerContractModal').on('hidden.bs.modal', function () {
-        //     $scope.selectedCustomer = {};
-        //     $scope.formProcessing = false;
-        //     $scope.contracts = [];
-        //     $scope.filter = {contractNo: ""};
-        //     $scope.contractInfo = {};
-        //     uiCalendarConfig.calendars['myCalendar1'].fullCalendar('removeEvents');
-        // });
-
         let contractNo = "";
         $scope.fromSelected = function (item, model) {
             if (contractNo === item.contractNo)

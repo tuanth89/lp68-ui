@@ -84,32 +84,22 @@
 
                     switch (parseInt(event.realTarget.value)) {
                         case 2:
-                            setTimeout(function () {
-                                $scope.$apply();
-                                $scope.showModalChot(actuallyCollectedMoney, totalMoneyPaid);
-                            }, 1);
-
+                            $scope.showModalChot(actuallyCollectedMoney, totalMoneyPaid);
                             break;
                         case 3:
-                            setTimeout(function () {
-                                $scope.$apply();
-                                $scope.showModalBe(actuallyCollectedMoney, totalMoneyPaid);
-                            }, 1);
+                            $scope.showModalBe(actuallyCollectedMoney, totalMoneyPaid);
                             break;
-
                         case 4:
-                            setTimeout(function () {
-                                $scope.$apply();
-                                $scope.showModalKetThuc(actuallyCollectedMoney, totalMoneyPaid);
-                            }, 1);
-
+                            $scope.showModalKetThuc(actuallyCollectedMoney, totalMoneyPaid);
+                            break;
+                        case 5:
+                            $scope.showModalDongTien(actuallyCollectedMoney, totalMoneyPaid);
                             break;
                     }
 
                     setTimeout(function () {
                         $scope.$apply();
                     }, 1);
-
 
                 }
             }
@@ -135,14 +125,27 @@
 
             if (cellProperties.prop === "actionTransf") {
                 if ($scope.$parent.storeSelected.userId) {
-                    td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' + '</button>' +
+                    td.innerHTML = '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 2 + '">' + 'Chốt' + '</button>&nbsp;&nbsp;' +
                         '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
-                        '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>';
+                        '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>&nbsp;&nbsp;' +
+                        '<button class="btnAction btn btn-success btAction-' + 5 + '" value="' + 5 + '">' + 'Đóng' + '</button>';
                 }
                 else
                     td.innerHTML = '';
             }
         }
+
+        $scope.showModalDongTien = (actuallyCollectedMoney, totalMoneyPaid) => {
+            $scope.contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
+            $scope.contractSelected.newPayMoney = 0;
+
+            $scope.contractSelected.totalMoney = $scope.contractSelected.moneyContractOld;
+            $scope.contractSelected.contractCreatedAt = moment($scope.contractSelected.createdAt).utc().format("DD/MM/YYYY");
+            $scope.contractSelected.payDate = "";
+            $scope.$parent.contractSelected = angular.copy($scope.contractSelected);
+
+            $('#dongTienModal').modal('show');
+        };
 
         $scope.showModalChot = (actuallyCollectedMoney, totalMoneyPaid) => {
             let nowDate = moment();
@@ -151,7 +154,7 @@
             $scope.contractSelected.newAppointmentDate = "";
             $scope.contractSelected.newPayMoney = 0;
             $scope.contractSelected.payMoneyOriginal = 0;
-            $scope.contractSelected.createdAt = moment($scope.contractSelected.createdAt).format("DD/MM/YYYY");
+            $scope.contractSelected.contractCreatedAt = moment($scope.contractSelected.createdAt).utc().format("DD/MM/YYYY");
             $('.datepicker-ui').val('');
 
             $scope.contractSelected.totalMoney = $scope.contractSelected.moneyContractOld;
@@ -162,7 +165,7 @@
         $scope.showModalBe = (actuallyCollectedMoney, totalMoneyPaid) => {
             let nowDate = moment();
             $scope.contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); //- parseInt(moneyPaid);
-            $scope.contractSelected.createdAt = moment($scope.contractSelected.createdAt).format("DD/MM/YYYY");
+            $scope.contractSelected.contractCreatedAt = moment($scope.contractSelected.createdAt).utc().format("DD/MM/YYYY");
             $scope.contractSelected.newBeLoanDate = nowDate.format("DD/MM/YYYY");
             $scope.contractSelected.newTransferDate = nowDate.format("YYYY-MM-DD");
             $scope.contractSelected.newAppointmentDate = "";
@@ -176,7 +179,7 @@
 
         $scope.showModalKetThuc = (actuallyCollectedMoney, totalMoneyPaid) => {
             let nowDate = moment();
-            $scope.contractSelected.createdAt = moment($scope.contractSelected.createdAt).format("DD/MM/YYYY");
+            $scope.contractSelected.contractCreatedAt = moment($scope.contractSelected.createdAt).utc().format("DD/MM/YYYY");
             $scope.contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
             $scope.contractSelected.newTransferDate = nowDate.format("YYYY-MM-DD");
             $scope.contractSelected.payMoneyOriginal = 0;
