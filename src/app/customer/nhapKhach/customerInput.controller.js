@@ -4,7 +4,7 @@
     angular.module('ati.customer')
         .controller('CustomerInputController', CustomerInputController);
 
-    function CustomerInputController($scope, $timeout, CONTRACT_EVENT, hotRegisterer, ContractManager, Restangular, storeList, customerSource, AlertService, AdminService) {
+    function CustomerInputController($scope, $timeout, ContractManager, Restangular, storeList, customerSource, AlertService, AdminService) {
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
 
@@ -17,17 +17,13 @@
             {name: "Bễ", value: true}
         ];
 
-        AdminService.checkRole(['customer.remove']).then(function (allowRole) {
-            $scope.roleRemove = allowRole;
-        });
+        // AdminService.checkRole(['customer.remove']).then(function (allowRole) {
+        //     $scope.roleRemove = allowRole;
+        // });
 
         $scope.userSelected = {storeId: $scope.$parent.storeSelected.storeId, id: $scope.$parent.storeSelected.userId};
         $scope.stores = [];
         $scope.usersByStore = [];
-
-        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-            hotInstance.render();
-        });
 
         let isPaid = false, isNeedPay = false, currRow = 0, currCol = 0;
         $scope.isPaste = false;
@@ -72,7 +68,7 @@
                 });
 
                 $scope.isPaste = false;
-                hotInstance.render();
+                hotTableInstance.getInstance().render();
             }
         });
 
@@ -83,11 +79,6 @@
             storeCode = storeItem.storeId;
         }
 
-        // let isAccountant = $scope.$parent.isAccountant;
-        // let isRoot = $scope.$parent.isRoot;
-
-        // let currentUser = Auth.getSession();
-        let hotInstance = "";
         let customerItem = {
             _id: "",
             customer: {
@@ -113,26 +104,132 @@
             creator: $scope.$parent.storeSelected.userId
         };
 
-        $scope.formProcessing = false;
-        $scope.fileImgDoc = "";
-        $scope.showResource = false;
         $scope.customers = [];
         $scope.customers.push(angular.copy(customerItem));
 
-        $scope.settings = {
+        const container = document.getElementById('hotTable');
+        let columnsSetting = [
+            {
+                data: 'statusType',
+                type: 'dropdown',
+                width: 70
+            },
+            {
+                data: 'customer.name',
+                type: 'text',
+                width: 100
+            },
+            {
+                data: 'createdAt',
+                type: 'date',
+                dateFormat: 'DD/MM/YYYY',
+                correctFormat: true,
+                width: 70,
+            },
+            {
+                data: 'loanMoney',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###',
+                    culture: 'en-US' // this is the default culture, set up for USD
+                },
+                width: 60
+            },
+            {
+                data: 'actuallyCollectedMoney',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 60,
+            },
+            {
+                data: 'loanDate',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 60,
+            },
+            {
+                data: 'paidMoney',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 60,
+            },
+            {
+                data: 'totalMoneyNeedPay',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 60,
+            },
+            {
+                data: 'dateEnd',
+                type: 'date',
+                dateFormat: 'DD/MM/YYYY',
+                correctFormat: true,
+                width: 70,
+            },
+            {
+                data: 'isCustomerNew',
+                type: 'checkbox',
+                checkedTemplate: 'true',
+                uncheckedTemplate: 'false',
+                width: 55,
+            },
+            {
+                data: 'actionDel',
+                type: 'text',
+                width: 25,
+                readOnly: true
+            }
+        ];
+        let colHeaderSetting = [
+            'Loại',
+            'Họ và tên',
+            'Ngày vay',
+            'Gói vay',
+            'Thực thu',
+            'Số ngày vay',
+            'Đã đóng',
+            'Dư nợ',
+            'Ngày chốt',
+            'Khách mới',
+            ' '
+        ];
+        let userIdSelected = $scope.$parent.storeSelected.userId;
+        const hotTableInstance = new Handsontable(container, {
+            data: $scope.customers,
+            columns: columnsSetting,
+            stretchH: 'all',
+            copyPaste: true,
+            // autoWrapRow: true,
+            // wordWrap: false,
+            // preventOverflow: 'horizontal',
+            // fixedColumnsLeft: 3,
+            // manualColumnFreeze: true,
+            // viewportColumnRenderingOffset: 100,
+            // viewportRowRenderingOffset: 100,
+            rowHeights: 35,
+            licenseKey: 'non-commercial-and-evaluation',
+            colHeaders: colHeaderSetting,
             beforeRemoveRow: function (index, amount) {
-                if (hotInstance.countRows() <= 1)
+                if (hotTableInstance.countRows() <= 1)
                     return false;
             },
             afterCreateRow: function (index) {
                 setTimeout(function () {
-                    hotInstance.selectCell(index, 0);
+                    hotTableInstance.selectCell(index, 0);
                 }, 1);
             },
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
-                if (!$scope.$parent.storeSelected.userId) {
+                if (!userIdSelected) {
                     cellPrp.readOnly = true;
                 }
 
@@ -153,13 +250,24 @@
                 }
 
                 // if (col === 3) {
+                //     cellPrp.renderer = columnNumericRenderer;
+                // }
+
+                // if (col === 3) {
+                //     cellPrp = {
+                //         format: '#,###',
+                //         language: 'en-US'
+                //     };
+                // }
+
+                // if (col === 3) {
                 //     cellPrp.type = 'date';
                 //     cellPrp.dateFormat = 'DD/MM/YYYY';
                 //     cellPrp.defaultDate = '01/01/1900';
                 //     cellPrp.correctFormat = true;
                 // }
 
-                if (!$scope.$parent.storeSelected.userId)
+                if (!userIdSelected)
                     cellPrp.readOnly = true;
 
                 return cellPrp;
@@ -203,10 +311,10 @@
                     }
 
                     if (source[0][1] === "customer.name") {
-                        let customerItem = _.find(customerS, {name: newValue});
-                        if (customerItem) {
-                            $scope.customers[rowChecked].customer._id = customerItem._id;
-                            $scope.customers[rowChecked].customerId = customerItem._id;
+                        let cusItem = _.find(customerS, {name: newValue});
+                        if (cusItem) {
+                            $scope.customers[rowChecked].customer._id = cusItem._id;
+                            $scope.customers[rowChecked].customerId = cusItem._id;
                         }
                         else {
                             $scope.customers[rowChecked].customer._id = "";
@@ -220,8 +328,8 @@
                     }
 
                     if (source[0][1] === "actuallyCollectedMoney") {
-                        hotInstance.setDataAtCell(rowChecked, 6, "");
-                        hotInstance.setDataAtCell(rowChecked, 7, "");
+                        hotTableInstance.setDataAtCell(rowChecked, 6, "");
+                        hotTableInstance.setDataAtCell(rowChecked, 7, "");
                     }
 
                     if (source[0][1] === "paidMoney" && isPaid) {
@@ -229,7 +337,7 @@
                         if (realMoney > 0) {
                             let paidMoney = parseInt($scope.customers[rowChecked].paidMoney);
                             let totalMoneyNeedPay = realMoney - paidMoney;
-                            hotInstance.setDataAtCell(rowChecked, 7, totalMoneyNeedPay >= 0 ? totalMoneyNeedPay : "");
+                            hotTableInstance.setDataAtCell(rowChecked, 7, totalMoneyNeedPay >= 0 ? totalMoneyNeedPay : "");
                         }
                     }
 
@@ -238,25 +346,38 @@
                         if (realMoney > 0) {
                             let totalMoneyNeedPay = parseInt($scope.customers[rowChecked].totalMoneyNeedPay);
                             let moneyPaid = realMoney - totalMoneyNeedPay;
-                            hotInstance.setDataAtCell(rowChecked, 6, moneyPaid >= 0 ? moneyPaid : "");
+                            hotTableInstance.setDataAtCell(rowChecked, 6, moneyPaid >= 0 ? moneyPaid : "");
                         }
                     }
 
                 }
-            },
-            stretchH: "all",
-            autoWrapRow: true,
-            colHeaders: true,
-            minSpareRows: 0,
-            // wordWrap: false,
-            // fixedColumnsLeft: 3,
-            // manualColumnFreeze: true
-        };
+            }
+        });
+
+        AdminService.checkRole(['customer.remove']).then(function (allowRole) {
+            $scope.roleRemove = allowRole;
+
+            if (!allowRole) {
+                columnsSetting.splice(-1, 1);
+                colHeaderSetting.splice(-1, 1);
+
+                hotTableInstance.updateSettings({
+                    columns: columnsSetting,
+                    colHeaders: colHeaderSetting
+                });
+
+                hotTableInstance.getInstance().render();
+            }
+        });
+
+        $scope.formProcessing = false;
+        $scope.fileImgDoc = "";
+        $scope.showResource = false;
 
         function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             if (cellProperties.prop === "actionDel") {
-                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '"><span class="fa fa-trash"></span>&nbsp;Xóa</button>';
+                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '" style="width:22px;"><span class="fa fa-trash delRow"></span></button>';
                 return;
             }
         }
@@ -265,44 +386,49 @@
             if ($scope.customers.length === 1) {
                 $scope.customers[0] = angular.copy(customerItem);
 
-                setTimeout(function () {
-                    $scope.$apply();
-                    hotInstance.render();
-                }, 0);
+                hotTableInstance.updateSettings({
+                    data: $scope.customers
+
+                });
+
+                hotTableInstance.getInstance().render();
+
                 return;
             }
 
             $scope.customers.splice(rowIndex, 1);
 
-            setTimeout(function () {
-                $scope.$apply();
-                hotInstance.render();
-            }, 0);
+            hotTableInstance.updateSettings({
+                data: $scope.customers
+
+            });
+
+            hotTableInstance.getInstance().render();
         };
 
         $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
+            // hotTableInstance = hotRegisterer.getInstance('my-handsontable');
 
             document.addEventListener('keydown', function (e) {
-                if (e.which === 9 && hotInstance) {
-                    if (!hotInstance.getSelected())
+                if (e.which === 9 && hotTableInstance) {
+                    if (!hotTableInstance.getSelected())
                         return;
 
                     let rowIndex = $('.current').parent().index();
-                    let colIndex = hotInstance.getSelected()[1];
-                    let totalCols = hotInstance.countCols();
-                    let totalRows = hotInstance.countRows();
+                    let colIndex = hotTableInstance.getSelected()[1];
+                    let totalCols = hotTableInstance.countCols();
+                    let totalRows = hotTableInstance.countRows();
                     if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
                         // if (!$scope.customers[rowIndex].name) {
                         //     toastr.error("Họ và tên không được để trống!");
                         //     setTimeout(function () {
-                        //         hotInstance.selectCell(rowIndex, 0);
+                        //         hotTableInstance.selectCell(rowIndex, 0);
                         //     }, 1);
                         //
                         //     return;
                         // }
 
-                        hotInstance.alter("insert_row", totalRows + 1);
+                        hotTableInstance.alter("insert_row", totalRows + 1);
                         $scope.customers[totalRows] = angular.copy(customerItem);
                     }
                 }
@@ -347,7 +473,7 @@
             });
 
             if (!checkValid) {
-                hotInstance.selectCell(indexInvalid, colIndex);
+                hotTableInstance.selectCell(indexInvalid, colIndex);
 
                 AlertService.replaceAlerts({
                     type: 'error',
@@ -373,6 +499,13 @@
                     $scope.customers = [];
                     $scope.customers.push(angular.copy(customerItem));
                     toastr.success('Thêm dữ liệu khách thành công!');
+
+                    hotTableInstance.updateSettings({
+                        data: $scope.customers
+
+                    });
+
+                    hotTableInstance.getInstance().render();
                 })
                 .catch((error) => {
                     toastr.error("Có lỗi xảy ra! Hãy thử lại");

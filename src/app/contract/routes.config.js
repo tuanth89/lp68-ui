@@ -65,8 +65,8 @@
                 url: '/luu-thong?q&date&p',
                 views: {
                     'content@app.root.contract': {
-                        controller: 'CustomerCirculationController',
-                        templateUrl: 'contract/customerCirculation.tpl.html'
+                        controller: 'CustomerCirculationVer2Controller',
+                        templateUrl: 'contract/customerCirculationVer2.tpl.html'
                     }
                 }
             })

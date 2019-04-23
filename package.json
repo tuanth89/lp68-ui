@@ -38,6 +38,7 @@
     "bootstrap": "^3.3.7",
     "gem": "^2.4.3",
     "grunt-sync": "0.0.7",
+    "numeral": "^2.0.6",
     "perfect-scrollbar": "^1.4.0",
     "popper.js": "^1.0.4"
   }

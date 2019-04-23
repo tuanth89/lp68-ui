@@ -4,10 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractThuVeController', ContractThuVeController);
 
-    function ContractThuVeController($scope, CONTRACT_EVENT, $timeout, CONTRACT_STATUS, hotRegisterer, ContractManager, HdLuuThongManager, Restangular) {
-        $scope.rowHeaders = true;
-        $scope.colHeaders = true;
-
+    function ContractThuVeController($scope, CONTRACT_EVENT, $timeout, CONTRACT_STATUS, ContractManager, HdLuuThongManager, Restangular) {
         $scope.contractSelected = {};
 
         $scope.$on('$viewContentLoaded', function (event, data) {
@@ -18,10 +15,6 @@
             $scope.getData();
         });
 
-        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-            hotInstance.render();
-        });
-
         $scope.getData = () => {
             ContractManager.one('allContract').one('byType').getList("", {
                 type: CONTRACT_STATUS.COLLECT,
@@ -30,28 +23,128 @@
             })
                 .then((contracts) => {
                     $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+
+                    hotTableInstance.updateSettings({
+                        data: $scope.contracts
+
+                    });
+
+                    hotTableInstance.getInstance().render();
                 })
                 .catch((error) => {
 
                 });
         };
 
-        let hotInstance = "";
-        $scope.settings = {
-            stretchH: "all",
+        const container = document.getElementById('hotTable');
+        const hotTableInstance = new Handsontable(container, {
+            data: $scope.contracts,
+            columns: [
+                {
+                    data: 'contractNo',
+                    type: 'text',
+                    width: 150,
+                    readOnly: true
+                },
+                {
+                    data: 'customer.name',
+                    type: 'text',
+                    width: 150,
+                    readOnly: true
+                },
+                {
+                    data: 'createdAt',
+                    type: 'text',
+                    width: 100,
+                    readOnly: true,
+                },
+                {
+                    data: 'loanMoney',
+                    type: 'numeric',
+                    width: 100,
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    readOnly: true
+                },
+                {
+                    data: 'actuallyCollectedMoney',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'totalMoneyNeedPay',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'totalMoneyPaid',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'loanDate',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'transferDate',
+                    type: 'text',
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'actionTransf',
+                    type: 'text',
+                    width: 280,
+                    readOnly: true
+                }
+            ],
+            stretchH: 'all',
             copyPaste: false,
-            // autoWrapRow: true,
-            // rowHeaders: true,
-            colHeaders: true,
-            minSpareRows: 0,
-            wordWrap: false,
+            autoWrapRow: true,
+            // wordWrap: false,
+            // preventOverflow: 'horizontal',
             fixedColumnsLeft: 3,
-            manualColumnFreeze: true,
+            // manualColumnFreeze: true,
+            viewportColumnRenderingOffset: 100,
+            viewportRowRenderingOffset: 100,
+            rowHeights: 35,
+            licenseKey: 'non-commercial-and-evaluation',
+            colHeaders: [
+                'Số hợp đồng',
+                'Họ và tên',
+                'Ngày vay',
+                'Gói vay',
+                'Thực thu',
+                'Dư nợ',
+                'Đã đóng',
+                'Số ngày vay',
+                'Ngày chuyển',
+                'Thao tác'
+            ],
             cells: function (row, col) {
                 let cellPrp = {};
+                cellPrp.className = "hot-normal";
+                cellPrp.readOnly = true;
                 if (col === 1 || col === 2 || col === 8 || col === 9) {
                     cellPrp.renderer = myBtns;
-                    cellPrp.readOnly = true;
                 }
 
                 return cellPrp;
@@ -103,7 +196,7 @@
 
                 }
             }
-        };
+        });
 
         function myBtns(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -318,11 +411,11 @@
         };
 
         $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
+            // hotInstance = hotRegisterer.getInstance('my-handsontable');
 
-            $scope.onAfterInit = function () {
-                hotInstance.validateCells();
-            };
+            // $scope.onAfterInit = function () {
+            //     hotInstance.validateCells();
+            // };
         }, 0);
 
     }

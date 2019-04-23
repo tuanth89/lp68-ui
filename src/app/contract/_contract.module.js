@@ -1,5 +1,5 @@
 (function() {
     'use strict';
 
-    angular.module('ati.contract', ['ngHandsontable', 'ui.calendar', 'ngFileUpload']);
+    angular.module('ati.contract', ['ui.calendar', 'ngFileUpload']);
 })();

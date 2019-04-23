@@ -1,22 +1,24 @@
-<hot-table hot-id="my-handsontable"
-           settings="settings"
-           style="overflow: hidden; width: 100%;"
-           datarows="contracts">
-    <hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="170" read-only></hot-column>
-    <hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>
-    <hot-column data="createdAt" title="'Ngày vay'" type="'text'" width="100" read-only></hot-column>
-    <hot-column data="loanMoney" title="'Gói vay'" width="100" type="'numeric'" format="'#,###'"
-                read-only></hot-column>
-    <hot-column data="actuallyCollectedMoney" title="'Thực thu'" width="100" type="'numeric'"
-                format="'#,###'" read-only></hot-column>
-    <hot-column data="totalMoneyNeedPay" title="'Dư nợ'" width="120" type="'numeric'"
-                format="'#,###'" read-only></hot-column>
-    <hot-column data="totalMoneyPaid" title="'Đã đóng'" width="100" type="'numeric'"
-                format="'#,###'" read-only></hot-column>
-    <hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100" read-only></hot-column>
-    <hot-column data="transferDate" title="'Ngày chuyển'" type="'text'" width="100" read-only></hot-column>
-    <hot-column data="actionTransf" title="'Thao tác'" type="'text'" width="280" read-only></hot-column>
-</hot-table>
+<!--<hot-table hot-id="my-handsontable"-->
+           <!--settings="settings"-->
+           <!--style="overflow: hidden; width: 100%;"-->
+           <!--datarows="contracts">-->
+    <!--<hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="170" read-only></hot-column>-->
+    <!--<hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>-->
+    <!--<hot-column data="createdAt" title="'Ngày vay'" type="'text'" width="100" read-only></hot-column>-->
+    <!--<hot-column data="loanMoney" title="'Gói vay'" width="100" type="'numeric'" format="'#,###'"-->
+                <!--read-only></hot-column>-->
+    <!--<hot-column data="actuallyCollectedMoney" title="'Thực thu'" width="100" type="'numeric'"-->
+                <!--format="'#,###'" read-only></hot-column>-->
+    <!--<hot-column data="totalMoneyNeedPay" title="'Dư nợ'" width="120" type="'numeric'"-->
+                <!--format="'#,###'" read-only></hot-column>-->
+    <!--<hot-column data="totalMoneyPaid" title="'Đã đóng'" width="100" type="'numeric'"-->
+                <!--format="'#,###'" read-only></hot-column>-->
+    <!--<hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100" read-only></hot-column>-->
+    <!--<hot-column data="transferDate" title="'Ngày chuyển'" type="'text'" width="100" read-only></hot-column>-->
+    <!--<hot-column data="actionTransf" title="'Thao tác'" type="'text'" width="280" read-only></hot-column>-->
+<!--</hot-table>-->
+
+<div style="width: 100%; height: auto; overflow: auto" id="hotTable"></div>
 
 <div class="modal fade" id="hopDongChotModal" tabindex="-1">
     <div class="modal-dialog">

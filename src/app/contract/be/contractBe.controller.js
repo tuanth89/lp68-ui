@@ -4,9 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractBeController', ContractBeController);
 
-    function ContractBeController($scope, CONTRACT_EVENT, $timeout, CONTRACT_STATUS, hotRegisterer, ContractManager, HdLuuThongManager, Restangular) {
-        $scope.rowHeaders = true;
-        $scope.colHeaders = true;
+    function ContractBeController($scope, CONTRACT_EVENT, $timeout, CONTRACT_STATUS, ContractManager, HdLuuThongManager, Restangular) {
 
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
@@ -16,11 +14,9 @@
             $scope.getData();
         });
 
-        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-            hotInstance.render();
-        });
-
         $scope.getData = () => {
+            $scope.formTableProcessing = true;
+
             ContractManager.one('allContract').one('byType').getList("",
                 {
                     type: CONTRACT_STATUS.ESCAPE,
@@ -29,29 +25,139 @@
                 })
                 .then((contracts) => {
                     $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+
+                    hotTableInstance.updateSettings({
+                        data: $scope.contracts
+
+                    });
+
+                    hotTableInstance.getInstance().render();
                 })
                 .catch((error) => {
 
+                })
+                .finally(() => {
+                    $scope.formTableProcessing = false;
                 });
         };
 
-        let hotInstance = "";
-
-        $scope.settings = {
-            stretchH: "all",
-            // autoWrapRow: true,
-            // rowHeaders: true,
+        const container = document.getElementById('hotTable');
+        const hotTableInstance = new Handsontable(container, {
+            data: $scope.contracts,
+            licenseKey: 'non-commercial-and-evaluation',
+            columns: [
+                {
+                    data: 'contractNo',
+                    type: 'text',
+                    width: 170,
+                    readOnly: true
+                },
+                {
+                    data: 'customer.name',
+                    type: 'text',
+                    width: 150,
+                    readOnly: true
+                },
+                {
+                    data: 'createdAt',
+                    type: 'text',
+                    width: 100,
+                    readOnly: true,
+                },
+                {
+                    data: 'loanMoney',
+                    type: 'numeric',
+                    width: 100,
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    readOnly: true
+                },
+                {
+                    data: 'actuallyCollectedMoney',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'totalMoneyNeedPay',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 120,
+                    readOnly: true
+                },
+                {
+                    data: 'totalMoneyPaid',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'loanDate',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'transferDate',
+                    type: 'text',
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'beDate',
+                    type: 'text',
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'actionTransf',
+                    type: 'text',
+                    width: 270,
+                    readOnly: true
+                }
+            ],
+            stretchH: 'all',
             copyPaste: false,
-            colHeaders: true,
-            minSpareRows: 0,
-            wordWrap: false,
+            autoWrapRow: true,
+            // wordWrap: false,
+            // preventOverflow: 'horizontal',
             fixedColumnsLeft: 3,
-            manualColumnFreeze: true,
+            // manualColumnFreeze: true,
+            viewportColumnRenderingOffset: 100,
+            viewportRowRenderingOffset: 100,
+            rowHeights: 35,
+            colHeaders: [
+                'Số hợp đồng',
+                'Họ và tên',
+                'Ngày vay',
+                'Gói vay',
+                'Thực thu',
+                'Dư nợ',
+                'Đã đóng',
+                'Số ngày vay',
+                'Ngày chuyển',
+                'Ngày bễ',
+                'Thao tác'
+            ],
             cells: function (row, col) {
                 let cellPrp = {};
+                cellPrp.className = "hot-normal";
+                cellPrp.readOnly = true;
                 if (col === 1 || col === 2 || col === 7 || col === 8 || col === 10) {
                     cellPrp.renderer = myBtns;
-                    cellPrp.readOnly = true;
+                    // cellPrp.readOnly = true;
                 }
 
                 // if (col === 2 || col === 3) {
@@ -106,12 +212,7 @@
                     }, 1);
                 }
             }
-            // strict: true
-        };
-
-        $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
-        }, 0);
+        });
 
         function myBtns(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);

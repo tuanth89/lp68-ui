@@ -48,28 +48,12 @@
         }])
         .controller('CustomerListController', CustomerListController);
 
-    function CustomerListController($scope, Upload, $timeout, CONTRACT_EVENT, IMGUR_API, hotRegisterer, CustomerManager, Restangular, FileUploader, StoreManager, Auth, AlertService, AdminService) {
+    function CustomerListController($scope, Upload, $timeout, IMGUR_API, CustomerManager, Restangular, FileUploader, StoreManager, Auth, AlertService, AdminService) {
         $scope.settings = {rowHeaders: true, colHeaders: true, minSpareRows: 1};
-
-        AdminService.checkRole(['customer.remove']).then(function (allowRole) {
-            $scope.roleRemove = allowRole;
-        });
 
         let isAccountant = $scope.$parent.isAccountant;
         let isRoot = $scope.$parent.isRoot;
 
-        // let currentUser = Auth.getSession();
-        let hotInstance = "";
-        let customerItem = {
-            _id: "",
-            name: "",
-            address: "",
-            phone: "",
-            photo: "",
-            imgDocs: [],
-            storeId: $scope.storeSelected.storeId,
-            visitor: $scope.storeSelected.userId
-        };
         let avatarIndex = -1;
         let imgDocsIndex = -1;
 
@@ -103,47 +87,76 @@
                 });
         };
 
-        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-            hotInstance.render();
-        });
-
         $scope.formProcessing = false;
+        $scope.formTableProcessing = false;
         $scope.fileImgDoc = "";
         $scope.showResource = false;
         $scope.customers = [];
-        // $scope.customers.push(angular.copy(customerItem));
-        // $scope.customers = angular.copy(Restangular.stripRestangular(contracts));
 
-        $scope.settings = {
-            // contextMenu: {
-            //     items: {
-            //         'row_above': {name: 'Thêm dòng trên'},
-            //         'row_below': {name: 'Thêm dòng dưới'},
-            //         'remove_row': {name: 'Xóa'}
-            //     }
-            //     // callback: function (key, options) {
-            //     //     if (key === 'remove_row') {
-            //     //         if (hotInstance.countRows() > 1) {
-            //     //             var indexArr = hot.getSelected();
-            //     //             var selectedData = hot.getDataAtRow(indexArr[0]);
-            //     //         }
-            //     //     }
-            //     // }
-            // },
-            // beforeRemoveRow: function (index, amount) {
-            //     if (hotInstance.countRows() <= 1)
-            //         return false;
-            // },
-            // afterCreateRow: function (index) {
-            //     setTimeout(function () {
-            //         hotInstance.selectCell(index, 0);
-            //     }, 1);
-            // },
-            // afterCreateRow: function (index) {
-            //     setTimeout(function () {
-            //         this.selectCell(index, 0, 0, 0, true);
-            //     }, 1);
-            // },
+        const container = document.getElementById('hotTable');
+        let columnsSetting = [
+            {
+                data: 'name',
+                type: 'text',
+                width: 100
+            },
+            {
+                data: 'numberId',
+                type: 'text',
+                width: 90
+            },
+            {
+                data: 'houseHolderNo',
+                type: 'text',
+                width: 90
+            },
+            {
+                data: 'address',
+                type: 'text',
+                width: 150
+            },
+            {
+                data: 'phone',
+                type: 'text',
+                width: 90
+            },
+            {
+                data: 'photo',
+                type: 'text',
+                width: 80,
+                readOnly: true
+            },
+            {
+                data: 'imgResource',
+                type: 'text',
+                width: 50,
+                readOnly: true
+            },
+            {
+                data: 'actionDel',
+                type: 'text',
+                width: 30,
+                readOnly: true
+            }
+        ];
+        let colHeaderSetting = [
+            'Họ và tên',
+            'Số CMT',
+            'Số sổ HK',
+            'Địa chỉ',
+            'Số điện thoại',
+            'Ảnh đại diện',
+            'Tài liệu',
+            ' '
+        ];
+        const hotTableInstance = new Handsontable(container, {
+            data: $scope.contracts,
+            columns: columnsSetting,
+            stretchH: 'all',
+            // copyPaste: false,
+            rowHeights: 35,
+            licenseKey: 'non-commercial-and-evaluation',
+            colHeaders: colHeaderSetting,
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
@@ -160,7 +173,7 @@
                 if (event.realTarget.className.indexOf('avaRow') >= 0) {
                     if (!$scope.customers[rowCol.row].name) {
                         toastr.error("Bạn hãy nhập Họ và tên trước!");
-                        hotInstance.selectCell(rowCol.row, 0);
+                        hotTableInstance.selectCell(rowCol.row, 0);
                         return;
                     }
 
@@ -173,7 +186,7 @@
                 if (event.realTarget.className.indexOf('resourceRow') >= 0) {
                     if (!$scope.customers[rowCol.row].name) {
                         toastr.error("Bạn hãy nhập Họ và tên trước!");
-                        hotInstance.selectCell(rowCol.row, 0);
+                        hotTableInstance.selectCell(rowCol.row, 0);
                         return;
                     }
 
@@ -205,13 +218,49 @@
                         $scope.checkPersonalIdExists(row, newValue, false);
                     }
                 }
-            },
-            copyPaste: false,
-            stretchH: "all",
-            autoWrapRow: true,
-            colHeaders: true,
-            minSpareRows: 0,
-        };
+            }
+        });
+
+        if (!isAccountant && !isRoot) {
+            _.remove(columnsSetting, item => {
+                return item.data === "numberId"
+                    || item.data === "houseHolderNo"
+                    || item.data === "address"
+                    || item.data === "phone"
+                    || item.data === "imgResource"
+            });
+
+            _.remove(colHeaderSetting, item => {
+                return item === "Số CMT"
+                    || item === "Số sổ HK"
+                    || item === "Địa chỉ"
+                    || item === "Số điện thoại"
+                    || item === "Tài liệu"
+            });
+
+            hotTableInstance.updateSettings({
+                columns: columnsSetting,
+                colHeaders: colHeaderSetting
+            });
+
+            hotTableInstance.getInstance().render();
+        }
+
+        AdminService.checkRole(['customer.remove']).then(function (allowRole) {
+            $scope.roleRemove = allowRole;
+
+            if (!allowRole || !$scope.storeSelected.userId) {
+                columnsSetting.splice(-1, 1);
+                colHeaderSetting.splice(-1, 1);
+
+                hotTableInstance.updateSettings({
+                    columns: columnsSetting,
+                    colHeaders: colHeaderSetting
+                });
+
+                hotTableInstance.getInstance().render();
+            }
+        });
 
         function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -229,7 +278,7 @@
             }
 
             if (cellProperties.prop === "actionDel") {
-                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '"><span class="fa fa-trash"></span>&nbsp;Xóa</button>';
+                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '" style="width:22px;"><span class="fa fa-trash delRow"></span></button>';
                 return;
             }
 
@@ -237,16 +286,26 @@
 
         $scope.delCustomer = function (rowIndex, customerId) {
             if (!customerId && $scope.customers.length === 1) {
+                $scope.customers[0] = angular.copy(customerItem);
+
+                hotTableInstance.updateSettings({
+                    data: $scope.customers
+
+                });
+
+                hotTableInstance.getInstance().render();
                 return;
             }
 
             if (!customerId) {
                 $scope.customers.splice(rowIndex, 1);
 
-                setTimeout(function () {
-                    $scope.$apply();
-                    hotInstance.render();
-                }, 0);
+                hotTableInstance.updateSettings({
+                    data: $scope.customers
+
+                });
+
+                hotTableInstance.getInstance().render();
             }
             else {
                 swal({
@@ -263,12 +322,11 @@
                                 if (result.removed) {
                                     $scope.customers.splice(rowIndex, 1);
 
-                                    // if ($scope.customers === 0) {
-                                    //     $scope.customers.push(angular.copy(customerItem));
-                                    //     setTimeout(function () {
-                                    //         hotInstance.render();
-                                    //     }, 0);
-                                    // }
+                                    hotTableInstance.updateSettings({
+                                        data: $scope.customers
+
+                                    });
+                                    hotTableInstance.getInstance().render();
 
                                     AlertService.replaceAlerts({
                                         type: 'success',
@@ -301,8 +359,8 @@
 
                 if (isNumberId && customerItem.numberId && customerItem.numberId === item.numberId) {
                     toastr.error("Số CMT không được trùng!");
-                    hotInstance.selectCell(rowIndex, 1);
-                    hotInstance.setDataAtCell(rowIndex, 1, "");
+                    hotTableInstance.selectCell(rowIndex, 1);
+                    hotTableInstance.setDataAtCell(rowIndex, 1, "");
 
                     // setTimeout(function () {
                     //     // hotInstance.selectCell(rowIndex, 2);
@@ -316,8 +374,8 @@
 
                 if (!isNumberId && customerItem.houseHolderNo && customerItem.houseHolderNo === item.houseHolderNo) {
                     toastr.error("Số sổ hộ khẩu không được trùng!");
-                    hotInstance.selectCell(rowIndex, 2);
-                    hotInstance.setDataAtCell(rowIndex, 2, "");
+                    hotTableInstance.selectCell(rowIndex, 2);
+                    hotTableInstance.setDataAtCell(rowIndex, 2, "");
 
                     return false;
                 }
@@ -334,6 +392,7 @@
         };
 
         $scope.getData = function () {
+            $scope.formTableProcessing = true;
             let storeId = "";
             if ($scope.$parent.isRoot)
                 storeId = !$scope.userSelected.storeId ? "none" : $scope.userSelected.storeId;
@@ -345,63 +404,18 @@
                 .getList("", {storeId: storeId, userId: $scope.$parent.storeSelected.userId})
                 .then(function (resp) {
                     $scope.customers = angular.copy(Restangular.stripRestangular(resp));
-                    // $scope.customers.push(angular.copy(customerItem));
 
-                    setTimeout(function () {
-                        hotInstance.render();
-                    }, 0);
+                    hotTableInstance.updateSettings({
+                        data: $scope.customers
+
+                    });
+                    hotTableInstance.getInstance().render();
+                })
+                .finally(() => {
+                    $scope.formTableProcessing = false;
                 });
         };
 
-        $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
-
-            // hotInstance.addHook('afterSelectionEnd',
-            //     function (rowId, colId, rowEndId, colEndId) {
-            //         if (colId === 2 || colId === 3)
-            //             hotInstance.setDataAtCell(rowId, 4, 100);
-            //     });
-
-            // hotInstance.addHook('afterChange',
-            //     function(changes, source) {
-            //         if (changes !== null) {
-            //             changes.forEach(function(item) {
-            //                 if (hotInstance.propToCol(item[1]) === 2 || hotInstance.propToCol(item[1]) === 3) {
-            //                     hotInstance.setDataAtCell(item[0], 4, 100);
-            //                 }
-            //             });
-            //         }
-            //     }), hotInstance;
-
-            // hotInstance.addHook('afterCreateRow', function (index, amount) {
-            //     hotInstance.selectCell(index, 0);
-            // });
-
-            // document.addEventListener('keydown', function (e) {
-            //     if (e.which === 9 && hotInstance) {
-            //         if (!hotInstance.getSelected())
-            //             return;
-            //
-            //         let rowIndex = $('.current').parent().index();
-            //         let colIndex = hotInstance.getSelected()[1];
-            //         let totalCols = hotInstance.countCols();
-            //         let totalRows = hotInstance.countRows();
-            //         if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
-            //             if (!$scope.customers[rowIndex].name) {
-            //                 toastr.error("Họ và tên không được để trống!");
-            //                 setTimeout(function () {
-            //                     hotInstance.selectCell(rowIndex, 0);
-            //                 }, 1);
-            //
-            //                 return;
-            //             }
-            //             hotInstance.alter("insert_row", totalRows + 1);
-            //             $scope.customers[totalRows] = angular.copy(customerItem);
-            //         }
-            //     }
-            // }, true);
-
-        }, 0);
 
         // $scope.hideImageResource = (() => {
         //     $scope.showResource = false;
@@ -419,7 +433,7 @@
             });
 
             if (removeCustomerInvalid.length === 0) {
-                hotInstance.selectCell(0, 0);
+                hotTableInstance.selectCell(0, 0);
                 toastr.error("Hãy nhập đầy đủ thông tin khách hàng!");
                 return;
             }

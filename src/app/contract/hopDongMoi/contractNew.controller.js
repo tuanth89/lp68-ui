@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractNewController', ContractNewController);
 
-    function ContractNewController($scope, CONTRACT_EVENT, $timeout, StoreManager, hotRegisterer, ContractManager, Restangular, AlertService, CustomerManager, storeList) {
+    function ContractNewController($scope, $timeout, ContractManager, AdminService, Restangular, storeList) {
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         $scope.contracts = [];
 
@@ -33,8 +33,143 @@
         });
         $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
 
-        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-            hotInstance.render();
+        const container = document.getElementById('hotTable');
+        let columnsSetting = [
+            {
+                data: 'contractNo',
+                type: 'text',
+                width: 160,
+                readOnly: true
+            },
+            {
+                data: 'customer.name',
+                type: 'text',
+                width: 150,
+                readOnly: true
+            },
+            {
+                data: 'createdAt',
+                type: 'text',
+                width: 100,
+                readOnly: true,
+            },
+            {
+                data: 'loanMoney',
+                type: 'numeric',
+                width: 100,
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                readOnly: true
+            },
+            {
+                data: 'actuallyCollectedMoney',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 100,
+                readOnly: true
+            },
+            {
+                data: 'totalMoneyNeedPay',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 100,
+                readOnly: true
+            },
+            {
+                data: 'totalMoneyPaid',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 100,
+                readOnly: true
+            },
+            {
+                data: 'loanDate',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '#,###'
+                },
+                width: 90,
+                readOnly: true
+            },
+            {
+                data: 'actionDel',
+                type: 'text',
+                width: 40,
+                readOnly: true
+            }
+        ];
+        let colHeaderSetting = [
+            'Số hợp đồng',
+            'Họ và tên',
+            'Ngày vay',
+            'Gói vay',
+            'Thực thu',
+            'Dư nợ',
+            'Đã đóng',
+            'Số ngày vay',
+            ' '
+        ];
+        const hotTableInstance = new Handsontable(container, {
+            data: $scope.contracts,
+            columns: columnsSetting,
+            stretchH: 'all',
+            copyPaste: false,
+            licenseKey: 'non-commercial-and-evaluation',
+            // autoWrapRow: true,
+            // wordWrap: false,
+            // preventOverflow: 'horizontal',
+            // fixedColumnsLeft: 3,
+            // manualColumnFreeze: true,
+            // viewportColumnRenderingOffset: 100,
+            // viewportRowRenderingOffset: 100,
+            rowHeights: 35,
+            colHeaders: colHeaderSetting,
+            cells: function (row, col) {
+                let cellPrp = {};
+                // let item = $scope.contracts[row];
+                cellPrp.className = "hot-normal";
+                cellPrp.readOnly = true;
+
+                if (col === 1 || col === 2 || col === 8) {
+                    cellPrp.renderer = columnRenderer;
+                }
+
+                // if (!$scope.$parent.storeSelected.userId)
+                //     cellPrp.readOnly = true;
+
+                return cellPrp;
+            },
+            afterOnCellMouseDown: function (event, rowCol, TD) {
+                if (event.realTarget.className.indexOf('cusRow') >= 0) {
+                    let selectedCus = angular.copy($scope.contracts[rowCol.row]);
+                    $scope.$parent.getContractsByCus(selectedCus);
+                }
+            }
+        });
+
+        AdminService.checkRole(['contract.remove']).then(function (allowRole) {
+            $scope.roleRemove = allowRole;
+
+            if (!allowRole) {
+                // $('td:nth-child(8),th:nth-child(8)').addClass('hidden');
+
+                columnsSetting.splice(-1, 1);
+                colHeaderSetting.splice(-1, 1);
+
+                hotTableInstance.updateSettings({
+                    columns: columnsSetting,
+                    colHeaders: colHeaderSetting
+                });
+
+                hotTableInstance.getInstance().render();
+            }
         });
 
         $scope.getData = () => {
@@ -50,60 +185,15 @@
                 .then(function (resp) {
                     $scope.contracts = angular.copy(Restangular.stripRestangular(resp));
 
-                    setTimeout(function () {
-                        hotInstance.render();
-                    }, 0);
+                    hotTableInstance.updateSettings({
+                        data: $scope.contracts
+
+                    });
+
+                    hotTableInstance.getInstance().render();
+
                 });
 
-        };
-
-        let hotInstance = "";
-        $scope.settings = {
-            beforeRemoveRow: function (index, amount) {
-                if (hotInstance.countRows() <= 1)
-                    return false;
-            },
-            afterCreateRow: function (index) {
-                if (hotInstance.getSelected().length === 0)
-                    return;
-                setTimeout(function () {
-                    let colIndex = hotInstance.getSelected()[1];
-                    if (colIndex === 4)
-                        hotInstance.selectCell(index, 0);
-                }, 1);
-            },
-            cells: function (row, col) {
-                let cellPrp = {};
-                // let item = $scope.contracts[row];
-                cellPrp.className = "hot-normal";
-                cellPrp.readOnly = true;
-                // if (typeof item === 'object' && item._id) {
-                //     cellPrp.readOnly = true;
-                // }
-                // else
-                //     cellPrp.className = "hot-normal";
-
-                if (col === 0 || col === 1 || col === 7) {
-                    cellPrp.renderer = columnRenderer;
-                }
-
-                // if (!$scope.$parent.storeSelected.userId)
-                //     cellPrp.readOnly = true;
-
-                return cellPrp;
-            },
-            afterOnCellMouseDown: function (event, rowCol, TD) {
-                if (event.realTarget.className.indexOf('cusRow') >= 0) {
-                    let selectedCus = angular.copy($scope.contracts[rowCol.row]);
-                    $scope.$parent.getContractsByCus(selectedCus);
-                }
-            },
-            copyPaste: false,
-            stretchH: "all",
-            autoWrapRow: true,
-            colHeaders: true,
-            minSpareRows: 0
-            // strict: true
         };
 
         function columnRenderer(instance, td, row, col, prop, value, cellProperties) {
@@ -122,18 +212,20 @@
 
             if (cellProperties.prop === "actionDel") {
                 if ($scope.$parent.storeSelected.userId)
-                    td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '" style="width: 22px;"><span class="fa fa-trash"></span>&nbsp;</button>';
+                    td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '" style="width: 22px;"><span class="fa fa-trash delRow"></span>&nbsp;</button>';
                 else
                     td.innerHTML = '';
+
+                // td.hidden = $scope.roleRemove;
             }
         }
 
         $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
-
-            $scope.onAfterInit = function () {
-                hotInstance.validateCells();
-            };
+            // hotInstance = hotRegisterer.getInstance('my-handsontable');
+            //
+            // $scope.onAfterInit = function () {
+            //     hotInstance.validateCells();
+            // };
 
             // hotInstance.addHook('afterSelectionEnd',
             //     function (rowId, colId, rowEndId, colEndId) {
@@ -166,8 +258,14 @@
                 $scope.contracts.splice(rowIndex, 1);
             }
 
-            $scope.$apply();
-            hotInstance.render();
+            // $scope.$apply();
+
+            hotTableInstance.updateSettings({
+                data: $scope.contracts
+
+            });
+
+            hotTableInstance.getInstance().render();
 
         };
     }

@@ -5,7 +5,7 @@
         .controller('CustomerCirculationVer2Controller', CustomerCirculationVer2Controller)
     ;
 
-    function CustomerCirculationVer2Controller($scope, $state, $stateParams, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
+    function CustomerCirculationVer2Controller($scope, $state, $stateParams, $timeout, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
         $scope.formProcessing = false;
         $scope.filter = {
             date: "",
@@ -19,6 +19,8 @@
 
         $scope.selectedCirculation = {};
         // $('#lai-dung-dp').datepicker({startDate: new Date()});
+
+        $scope.formTableProcessing = false;
 
         const container = document.getElementById('hotTable');
         const hotTableInstance = new Handsontable(container, {
@@ -117,11 +119,13 @@
             copyPaste: false,
             autoWrapRow: true,
             // wordWrap: false,
+            // preventOverflow: 'horizontal',
             fixedColumnsLeft: 3,
             // manualColumnFreeze: true,
-            // viewportColumnRenderingOffset: 100,
-            // viewportRowRenderingOffset:100,
-            // autoRowSize: true,
+            viewportColumnRenderingOffset: 100,
+            viewportRowRenderingOffset: 100,
+            rowHeights: 35,
+            licenseKey: 'non-commercial-and-evaluation',
             colHeaders: [
                 ' ',
                 'Số hợp đồng',
@@ -688,6 +692,7 @@
         $scope.getData = function (page, per_page) {
             $scope.filter.page = page;
             $scope.filter.per_page = per_page;
+            $scope.formTableProcessing = true;
 
             HdLuuThongManager
                 .one('listByDate')
@@ -715,6 +720,9 @@
                         hotTableInstance.getInstance().render();
                     }, 1);
 
+                })
+                .finally(() => {
+                    $scope.formTableProcessing = false;
                 });
         };
 
