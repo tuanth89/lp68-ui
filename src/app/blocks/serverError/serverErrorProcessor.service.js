@@ -73,7 +73,7 @@
                         return;
                     }
 
-                    // todo check if form is actually a FormController
+                    // do check if form is actually a FormController
                     form[fieldName].$setValidity('server', false);
 
                     var humanFieldName = fieldName;

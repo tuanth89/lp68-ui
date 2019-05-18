@@ -21,7 +21,7 @@
             },
             {
                 title: "Hợp đồng",
-                icon: "c-blue-500 ti-briefcase",
+                icon: "c-deep-orange-500 ti-briefcase",
                 state: ".contract.contractNew",
                 noneDropdown: true,
                 visible: true,
@@ -30,7 +30,7 @@
             },
             {
                 title: "Khách hàng",
-                icon: "c-blue-500 ti-user",
+                icon: "c-light-blue-500 ti-id-badge",
                 state: ".customer.cusInput",
                 noneDropdown: true,
                 visible: true,
@@ -46,18 +46,18 @@
                 visible: true,
                 actions: ["list"]
             },
-            {
-                title: "Thống kê",
-                icon: "c-blue-500 ti-stats-up",
-                state: "",
-                noneDropdown: true,
-                visible: true,
-                featureName: "statistic",
-                actions: ["list"]
-            },
+            // {
+            //     title: "Thống kê",
+            //     icon: "c-blue-500 ti-stats-up",
+            //     state: "",
+            //     noneDropdown: true,
+            //     visible: true,
+            //     featureName: "statistic",
+            //     actions: ["list"]
+            // },
             {
                 title: "Cấu hình phế",
-                icon: "c-blue-500 ti-money",
+                icon: "c-pink-500 ti-money",
                 state: "",
                 featureName: "",
                 actions: ["list"],
@@ -79,10 +79,19 @@
             {
                 title: "Cửa hàng",
                 state: ".store.list",
-                icon: "c-blue-500 ti-list",
+                icon: "c-blue-500 ti-view-list",
                 noneDropdown: true,
                 visible: true,
                 featureName: "store",
+                actions: ["list"]
+            },
+            {
+                title: "Báo cáo",
+                state: ".reportDaily.list",
+                icon: "c-red-500 ti-view-grid",
+                noneDropdown: true,
+                visible: true,
+                featureName: "reportDaily",
                 actions: ["list"]
             },
             {

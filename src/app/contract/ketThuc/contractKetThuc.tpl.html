@@ -1,25 +1,37 @@
-<!--<hot-table hot-id="my-handsontable"-->
-           <!--settings="settings"-->
-           <!--style="overflow: hidden; width: 100%;"-->
-           <!--datarows="contracts">-->
-    <!--<hot-column data="contractNo" title="'Số hợp đồng'" type="'text'" width="170" read-only></hot-column>-->
-    <!--<hot-column data="customer.name" title="'Họ và tên'" type="'text'" width="150" read-only></hot-column>-->
-    <!--<hot-column data="createdAt" title="'Ngày vay'" type="'text'" width="100" read-only></hot-column>-->
-    <!--<hot-column data="loanMoney" title="'Gói vay'" width="120" type="'numeric'" format="'#,###'"-->
-                <!--read-only></hot-column>-->
-    <!--<hot-column data="actuallyCollectedMoney" title="'Thực thu'" width="120" type="'numeric'"-->
-                <!--format="'#,###'" read-only></hot-column>-->
-    <!--<hot-column data="totalMoneyNeedPay" title="'Dư nợ'" width="120" type="'numeric'"-->
-                <!--format="'#,###'" read-only></hot-column>-->
-    <!--<hot-column data="totalMoneyPaid" title="'Đã đóng'" width="100" type="'numeric'"-->
-                <!--format="'#,###'" read-only></hot-column>-->
-    <!--<hot-column data="loanDate" title="'Số ngày vay'" type="'numeric'" width="100" read-only></hot-column>-->
-    <!--<hot-column data="transferDate" title="'Ngày chuyển'" type="'text'" width="100" read-only></hot-column>-->
-    <!--<hot-column data="status" title="'Trạng thái'" type="'text'" width="90" read-only></hot-column>-->
-    <!--<hot-column data="actionTransf" ng-if="isAccountant || isRoot" title="'Thao tác'" type="'text'" width="60" read-only>-->
-<!--</hot-table>-->
+<!--<div class="row mb-20">-->
+    <!--<div class="col-sm-2" e-route-name="contract.viewDate">-->
+        <!--<input e-datepicker-->
+               <!--data-inputmask-alias="datetime"-->
+               <!--data-inputmask-inputformat="dd/mm/yyyy"-->
+               <!--type="text"-->
+               <!--class="form-control datemask" input-value="filter.date"-->
+               <!--placeholder="Chọn ngày"-->
+               <!--ng-required="true">-->
+    <!--</div>-->
+<!--</div>-->
 
-<div style="width: 100%; height: auto; overflow: auto" id="hotTable"></div>
+<!--<div class="row col-md-12">-->
+    <!--<h5>Tổng thu: </h5>&nbsp;&nbsp;<h5 class="text-danger">{{totalMoneyPaid | number}}</h5>-->
+<!--</div>-->
+
+<div style="width: 100%; height: auto; overflow: auto" id="hotKetThucTable"></div>
+
+<div class="row col-sm-12">
+    <div class="search-result col-md-4" style="margin: 27px 0 27px -15px;">
+        Hiển thị <b>{{pagination.totalByPages}}</b> của <b>{{pagination.totalItems}}</b> bản ghi
+    </div>
+    <div ng-if="pagination.totalItems/pagination.per_page > 1" class="cold-md-5">
+        <div class="col-md-offset-2">
+            <div class="search-result-page--pagination-container-variant">
+                <pagination total-items="pagination.totalItems" ng-model="pagination.page"
+                            ng-click="pageChanged()"
+                            class="pagination-sm" items-per-page="pagination.per_page" previous-text="&lsaquo;"
+                            next-text="&rsaquo;"
+                            first-text="&laquo;"></pagination>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="duyetModal" tabindex="-1">
     <div class="modal-dialog">
@@ -91,7 +103,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                <button type="button" class="btn btn-primary" ng-click="accountantEnd()">
+                <button type="button" class="btn btn-primary" ng-click="accountantEnd()"
+                        ng-disabled="formProcessing">
                     <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
                 </button>
             </div>

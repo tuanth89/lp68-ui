@@ -4,7 +4,7 @@
     angular.module('ati.customer')
         .controller('CustomerInputController', CustomerInputController);
 
-    function CustomerInputController($scope, $timeout, ContractManager, Restangular, storeList, customerSource, AlertService, AdminService) {
+    function CustomerInputController($scope, $timeout, ContractManager, Restangular, storeList, customerSource, AlertService, AdminService, CONTRACT_EVENT) {
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
 
@@ -20,6 +20,13 @@
         // AdminService.checkRole(['customer.remove']).then(function (allowRole) {
         //     $scope.roleRemove = allowRole;
         // });
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
 
         $scope.userSelected = {storeId: $scope.$parent.storeSelected.storeId, id: $scope.$parent.storeSelected.userId};
         $scope.stores = [];
@@ -288,7 +295,7 @@
                 currCol = col;
             },
             afterChange: function (source, changes) {
-                $scope.isPaste = changes === 'paste';
+                $scope.isPaste = changes === 'CopyPaste.paste';
                 if (changes === 'edit') {
                     let rowChecked = source[0][0];
                     let newValue = source[0][3];
@@ -315,8 +322,7 @@
                         if (cusItem) {
                             $scope.customers[rowChecked].customer._id = cusItem._id;
                             $scope.customers[rowChecked].customerId = cusItem._id;
-                        }
-                        else {
+                        } else {
                             $scope.customers[rowChecked].customer._id = "";
                             $scope.customers[rowChecked].customerId = "";
                         }
@@ -350,6 +356,22 @@
                         }
                     }
 
+                }
+
+                setTimeout(function () {
+                    $scope.$apply();
+                }, 100);
+
+            },
+            beforeChange: function (changes) {
+                if (changes[0][1] === "loanMoney"
+                    || changes[0][1] === "actuallyCollectedMoney"
+                    || changes[0][1] === "loanDate"
+                    || changes[0][1] === "paidMoney"
+                    || changes[0][1] === "totalMoneyNeedPay"
+                    || changes[0][1] === "totalMoneyNeedPay"
+                ) {
+                    changes[0][3] = numbro.unformat(changes[0][3]);
                 }
             }
         });
@@ -415,7 +437,7 @@
                         return;
 
                     let rowIndex = $('.current').parent().index();
-                    let colIndex = hotTableInstance.getSelected()[1];
+                    let colIndex = hotTableInstance.getSelected()[0][1];
                     let totalCols = hotTableInstance.countCols();
                     let totalRows = hotTableInstance.countRows();
                     if (colIndex === (totalCols - 1) && rowIndex === (totalRows - 1)) {
@@ -430,6 +452,7 @@
 
                         hotTableInstance.alter("insert_row", totalRows + 1);
                         $scope.customers[totalRows] = angular.copy(customerItem);
+                        hotTableInstance.getInstance().render();
                     }
                 }
             }, true);

@@ -17,4 +17,21 @@
     <!--&lt;!&ndash;<hot-column title="'Thao tác'" type="'text'" width="80" read-only></hot-column>&ndash;&gt;-->
 <!--</hot-table>-->
 
-<div style="width: 100%; height: auto; overflow: auto" id="hotTable"></div>
+<div style="width: 100%; height: auto; overflow: auto" id="hotLaiDungTable"></div>
+
+<div class="row col-sm-12">
+    <div class="search-result col-md-4" style="margin: 27px 0 27px -15px;">
+        Hiển thị <b>{{pagination.totalByPages}}</b> của <b>{{pagination.totalItems}}</b> bản ghi
+    </div>
+    <div ng-if="pagination.totalItems/pagination.per_page > 1" class="cold-md-5">
+        <div class="col-md-offset-2">
+            <div class="search-result-page--pagination-container-variant">
+                <pagination total-items="pagination.totalItems" ng-model="pagination.page"
+                            ng-click="pageChanged()"
+                            class="pagination-sm" items-per-page="pagination.per_page" previous-text="&lsaquo;"
+                            next-text="&rsaquo;"
+                            first-text="&laquo;"></pagination>
+            </div>
+        </div>
+    </div>
+</div>

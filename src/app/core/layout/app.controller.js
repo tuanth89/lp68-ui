@@ -2,9 +2,23 @@
     'use strict';
 
     angular.module('ati.core.layout')
-        .controller('AppController', App);
+        .controller('AppController', App)
+        .directive('bindHtmlCompile', ['$compile', function ($compile) {
+            return {
+                restrict: 'A',
+                link: function (scope, element, attrs) {
+                    scope.$watch(function () {
+                        return scope.$eval(attrs.bindHtmlCompile);
+                    }, function (value) {
+                        element.html(value);
+                        $compile(element.contents())(scope);
+                    });
+                }
+            };
+        }]);
+    ;
 
-    function App($rootScope, $scope, Auth, userSession, $timeout, AUTH_EVENTS, RELOAD_PAGE, LANG_KEY, storeList, Restangular, CONTRACT_EVENT, StoreManager, CustomerManager) {
+    function App($rootScope, $scope, Auth, userSession, $timeout, blockUI, AUTH_EVENTS, RELOAD_PAGE, LANG_KEY, storeList, Restangular, CONTRACT_EVENT, StoreManager) {
         $scope.storeList = angular.copy(Restangular.stripRestangular(storeList));
         $scope.currentUser = userSession;
         $scope.isRoot = Auth.isRoot();
@@ -27,8 +41,7 @@
 
         if (!$scope.currentUser.selectedStoreId && !$scope.isRoot) {
             $('#storeModal').modal({show: true, backdrop: 'static', keyboard: false});
-        }
-        else
+        } else
             $scope.storeDraff = angular.copy($scope.storeSelected);
 
         $scope.selectedStoreEvent = function (item) {
@@ -45,8 +58,7 @@
                 $scope.storeDraff.userId = $scope.currentUser.id;
                 $scope.storeDraff.userCode = $scope.currentUser.username;
                 $scope.storeDraff.userName = $scope.currentUser.fullName;
-            }
-            else {
+            } else {
                 // $scope.storeSelected.userId = "";
                 // $scope.storeSelected.userCode = "";
                 // $scope.storeSelected.userName = "";
@@ -118,6 +130,30 @@
             //
             // }
         };
+
+        $scope.$on(CONTRACT_EVENT.BLOCKING_UI, function (event, data) {
+            if (data.isShow) {
+                blockUI.start();
+            } else {
+                $scope.$apply(function () {
+                    blockUI.stop();
+                });
+            }
+
+            // setTimeout(function () {
+            //     $scope.$apply(function () {
+            //         blockUI.stop();
+            //     });
+            // }, 4000);
+        });
+
+        // $scope.showBlockUI = (isShow) => {
+        //     if (isShow) {
+        //         blockUI.start();
+        //     } else {
+        //         blockUI.stop();
+        //     }
+        // };
 
         $scope.admin = {
             layout: 'wide',

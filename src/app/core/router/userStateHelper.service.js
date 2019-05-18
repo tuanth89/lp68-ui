@@ -104,7 +104,7 @@
 
                     // var baseState = null;
 
-                    // // todo this should be configured by a provider instead of hard coded
+                    // // do this should be configured by a provider instead of hard coded
                     // if (Auth.isAuthorized(USER_ROLES.root)) {
                     //     baseState = BASE_USER_STATES.root;
                     // } else if (Auth.isAuthorized(USER_ROLES.admin)) {

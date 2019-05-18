@@ -4,9 +4,10 @@
     angular.module('ati.contract')
         .controller('ContractNewController', ContractNewController);
 
-    function ContractNewController($scope, $timeout, ContractManager, AdminService, Restangular, storeList) {
+    function ContractNewController($scope, $timeout, ContractManager, AdminService, Restangular, storeList, CONTRACT_EVENT) {
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         $scope.contracts = [];
+        $scope.$parent.hideInfoCus();
 
         let selectedStoreId = $scope.$parent.storeSelected.storeId;
         let storeCode = "";
@@ -18,6 +19,13 @@
         $scope.userSelected = {storeId: $scope.$parent.storeSelected.storeId, id: $scope.$parent.storeSelected.userId};
         $scope.stores = [];
         $scope.usersByStore = [];
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
 
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
@@ -33,7 +41,7 @@
         });
         $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotContractNewTable');
         let columnsSetting = [
             {
                 data: 'contractNo',
@@ -253,8 +261,7 @@
         $scope.delContract = function (rowIndex, contractId) {
             if (!contractId && $scope.contracts.length === 1) {
                 $scope.contracts.splice(rowIndex, 1);
-            }
-            else if (!contractId) {
+            } else if (!contractId) {
                 $scope.contracts.splice(rowIndex, 1);
             }
 

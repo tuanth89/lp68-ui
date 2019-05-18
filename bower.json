@@ -34,7 +34,9 @@
     "angular-ui-calendar": "^1.0.2",
     "fullcalendar": "^3.9.0",
     "datatables.net": "^1.10.19",
-    "datatables.net-bs4": "^3.2.2"
+    "datatables.net-bs4": "^3.2.2",
+    "angular-block-ui": "^0.2.2",
+    "inputmask": "^4.0.2"
   },
   "resolutions": {
     "angular": "1.6.9"

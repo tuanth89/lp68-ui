@@ -9,5 +9,6 @@ angular.module('ati', [
     'ati.adminManagement',
     'ati.pheConfig',
     'ati.pheNv',
+    'ati.reportDaily',
     'angularMoment'
 ]);

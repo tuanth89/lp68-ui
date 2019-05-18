@@ -175,9 +175,7 @@
                                 $(element).datepicker("setDate", date);
                              }
                         }
-                          
-                      
-                    
+
                     })
                 },
                 controller: function ($scope, ) {

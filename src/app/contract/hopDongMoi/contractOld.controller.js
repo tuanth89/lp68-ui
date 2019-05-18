@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractTypeOldController', ContractTypeOldController);
 
-    function ContractTypeOldController($scope, $timeout, ContractManager, AdminService, Restangular, storeList) {
+    function ContractTypeOldController($scope, $timeout, ContractManager, AdminService, Restangular, storeList, CONTRACT_EVENT) {
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         $scope.contracts = [];
 
@@ -18,6 +18,13 @@
         $scope.userSelected = {storeId: $scope.$parent.storeSelected.storeId, id: $scope.$parent.storeSelected.userId};
         $scope.stores = [];
         $scope.usersByStore = [];
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
 
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
@@ -56,7 +63,7 @@
 
         };
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotContractOldTable');
         let columnsSetting = [
             {
                 data: 'contractNo',
@@ -221,19 +228,18 @@
         }
 
         // $timeout(function () {
-            // hotInstance = hotRegisterer.getInstance('my-handsontable');
-            //
-            // $scope.onAfterInit = function () {
-            //     hotInstance.validateCells();
-            // };
+        // hotInstance = hotRegisterer.getInstance('my-handsontable');
+        //
+        // $scope.onAfterInit = function () {
+        //     hotInstance.validateCells();
+        // };
 
         // }, 0);
 
         $scope.delContract = function (rowIndex, contractId) {
             if (!contractId && $scope.contracts.length === 1) {
                 $scope.contracts.splice(rowIndex, 1);
-            }
-            else if (!contractId) {
+            } else if (!contractId) {
                 $scope.contracts.splice(rowIndex, 1);
             }
 

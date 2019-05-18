@@ -5,7 +5,7 @@
         .controller('CustomerCirculationVer2Controller', CustomerCirculationVer2Controller)
     ;
 
-    function CustomerCirculationVer2Controller($scope, $state, $stateParams, $timeout, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
+    function CustomerCirculationVer2Controller($scope, $rootScope, $state, $stateParams, $timeout, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
         $scope.formProcessing = false;
         $scope.filter = {
             date: "",
@@ -22,7 +22,7 @@
 
         $scope.formTableProcessing = false;
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotCirculationTable');
         const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
             columns: [
@@ -93,8 +93,7 @@
                     numericFormat: {
                         pattern: '#,###'
                     },
-                    width: 120,
-                    readOnly: true
+                    width: 120
                 },
                 {
                     data: 'contractStatus',
@@ -118,6 +117,7 @@
             stretchH: 'all',
             copyPaste: false,
             autoWrapRow: true,
+            rowHeaders: true,
             // wordWrap: false,
             // preventOverflow: 'horizontal',
             fixedColumnsLeft: 3,
@@ -149,8 +149,7 @@
 
                     if (item.contractStatus === CONTRACT_STATUS.STAND) {
                         cellPrp.className += " handsontable-td-red";
-                    }
-                    else {
+                    } else {
                         cellPrp.className += " handsontable-td-black";
                     }
 
@@ -182,7 +181,7 @@
                     case 0:
                         if (typeof item === 'object'
                             && (item.contractStatus === CONTRACT_STATUS.COLLECT ||
-                            item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
+                                item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
                             cellPrp.readOnly = true;
                             // cellPrp.renderer = myBtnsRemove;
                             cellPrp.renderer = myBtns;
@@ -191,18 +190,16 @@
                     case 8:
                         if (typeof item === 'object'
                             && (item.contractStatus === CONTRACT_STATUS.COLLECT ||
-                            item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
+                                item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
                             cellPrp.readOnly = true;
-                        }
-                        else
+                        } else
                             cellPrp.className = "hot-normal";
 
                         break;
                     case 9:
                         if (typeof item === 'object' && item.status > 0) {
                             cellPrp.renderer = myBtnsRemove;
-                        }
-                        else {
+                        } else {
                             cellPrp.renderer = myBtns;
                             cellPrp.readOnly = true;
                         }
@@ -325,14 +322,22 @@
                     if (source[0][1] === "isActive") {
                         let rowChecked = source[0][0];
                         let checkedIndex = $scope.checkedList.indexOf(rowChecked);
+                        let moneyDraft = parseInt($scope.contracts[rowChecked].moneyPaid) || 0;
 
                         if (checkedIndex >= 0) {
+                            $scope.totalMoneyPayDraft -= moneyDraft;
                             $scope.checkedList.splice(checkedIndex, 1);
                             if ($scope.checkedList.length === 0)
                                 $scope.checkbox.checkAll = false;
-                        }
-                        else
+                        } else
+                        {
                             $scope.checkedList.push(rowChecked);
+                            $scope.totalMoneyPayDraft += moneyDraft;
+                        }
+
+                        setTimeout(function () {
+                            $scope.$apply();
+                        }, 1)
 
                         // console.log('row: ' + source[0][0]);
                         // console.log('col: ' + source[0][1]);
@@ -340,12 +345,20 @@
                         // console.log('new value: ' + source[0][3]);
                     }
                 }
+            },
+            beforeChange: function (changes) {
+                if (changes[0][1] === "moneyPaid") {
+                    changes[0][3] = numbro.unformat(changes[0][3]);
+                }
             }
         });
 
-        // $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-        //     hotInstance.render();
-        // });
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
 
         $scope.status = [
             {
@@ -387,10 +400,12 @@
         $scope.pagination = {
             page: $stateParams.p ? parseInt($stateParams.p) : 1,
             per_page: 30,
-            totalItems: 0
+            totalItems: 0,
+            totalByPages: 0
         };
 
         $scope.checkedList = [];
+        $scope.totalMoney
         $scope.checkbox = {checkAll: false};
         $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
             if (newValue !== oldValue) {
@@ -401,8 +416,7 @@
                         let checkedIndex = $scope.checkedList.indexOf(index);
                         if (checkedIndex >= 0) {
                             $scope.checkedList.splice(checkedIndex, 1);
-                        }
-                        else
+                        } else
                             $scope.checkedList.push(index);
                     }
 
@@ -411,8 +425,7 @@
 
                 if (newValue) {
                     hotTableInstance.selectCell(0, 0, hotTableInstance.countRows() - 1, hotTableInstance.countCols() - 1);
-                }
-                else {
+                } else {
                     hotTableInstance.selectCell(0, 0, 0, 0, true);
                 }
             }
@@ -465,16 +478,7 @@
         $scope.colHeaders = true;
 
         $scope.totalMoneyPaid = 0;
-        $scope.totalMoneyPayDraft = () => {
-            let totalFee = 0;
-
-            $scope.contracts.forEach(item => {
-                if (item.isActive)
-                    totalFee += item.moneyPaid;
-            });
-
-            return totalFee;
-        };
+        $scope.totalMoneyPayDraft = 0;
 
         $scope.showModalThuVe = (actuallyCollectedMoney, totalMoneyPaid) => {
             // let nowDate = moment($scope.filter.date, "YYYYMMDD");
@@ -564,8 +568,7 @@
                             td.innerHTML = '';
                             break;
                     }
-                }
-                else
+                } else
                     td.innerHTML = '';
             }
 
@@ -653,8 +656,7 @@
                 }
 
                 // td.innerHTML += '&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + 6 + '" value="' + 6 + '">' + 'Đóng trước' + '</button>';
-            }
-            else
+            } else
                 td.innerHTML = '';
         }
 
@@ -690,6 +692,8 @@
         };
 
         $scope.getData = function (page, per_page) {
+            // $scope.$broadcast(CONTRACT_EVENT.BLOCKING_UI, {isShow: true});
+
             $scope.filter.page = page;
             $scope.filter.per_page = per_page;
             $scope.formTableProcessing = true;
@@ -703,26 +707,32 @@
                         $scope.contracts = angular.copy(data.docs);
                         $scope.pagination.totalItems = data.totalItems;
                         $scope.totalMoneyPaid = data.totalMoneyStatusEnd;
-                    }
-                    else {
+
+                        let totalContract = $scope.contracts.length;
+
+                        if ($scope.filter.page > 1) {
+                            $scope.pagination.totalByPages = (($scope.filter.page - 1) * $scope.filter.per_page) + totalContract;
+                        } else {
+                            $scope.pagination.totalByPages = totalContract;
+                        }
+                    } else {
                         $scope.contracts = [];
                         $scope.pagination.totalItems = 0;
+                        $scope.pagination.totalByPages = 0;
                         $scope.totalMoneyPaid = 0;
                     }
 
-                    setTimeout(function () {
-                        // hotTableInstance.render();
-                        hotTableInstance.updateSettings({
-                            data: $scope.contracts
+                    // hotTableInstance.render();
+                    hotTableInstance.updateSettings({
+                        data: $scope.contracts
+                    });
 
-                        });
-
-                        hotTableInstance.getInstance().render();
-                    }, 1);
+                    hotTableInstance.getInstance().render();
 
                 })
                 .finally(() => {
                     $scope.formTableProcessing = false;
+                    // $scope.$broadcast(CONTRACT_EVENT.BLOCKING_UI, {isShow: false});
                 });
         };
 
@@ -733,6 +743,7 @@
             //     hotInstance.validateCells();
             // };
 
+            Inputmask({}).mask(document.querySelectorAll(".datemask"));
         }, 0);
 
         $scope.saveCirculation = () => {
@@ -1031,13 +1042,11 @@
             if (type === 1) {
                 $scope.opened = true;
                 $scope.opened2 = false;
-            }
-            else {
+            } else {
                 $scope.opened2 = true;
                 $scope.opened = false;
             }
         };
-
 
     }
 })();

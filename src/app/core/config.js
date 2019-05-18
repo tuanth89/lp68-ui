@@ -22,7 +22,8 @@
         .constant('IMGUR_CLIENT_ID', 'Client-ID 5039840147cebbb')
         .constant('CONTRACT_EVENT', {
             UPDATE_SUCCESS: 'UPDATE_SUCCESS',
-            RESIZE_TABLE: "RESIZE_TABLE"
+            RESIZE_TABLE: 'RESIZE_TABLE',
+            BLOCKING_UI: 'BLOCKING_UI'
         })
     ;
 

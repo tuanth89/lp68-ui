@@ -5,7 +5,26 @@
         .controller('ContractThuVeController', ContractThuVeController);
 
     function ContractThuVeController($scope, CONTRACT_EVENT, $timeout, CONTRACT_STATUS, ContractManager, HdLuuThongManager, Restangular) {
+
         $scope.contractSelected = {};
+        $scope.filter = {
+            date: ""
+        };
+        $scope.totalMoneyPaid = 0;
+
+        $scope.$watch('filter.date', function (newValue, oldValue) {
+            if (newValue != oldValue) {
+                // $scope.filterDateFormat = moment(newValue, "YYYY-MM-DD").format("DD/MM/YYYY");
+                $scope.getData();
+            }
+        });
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
 
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
@@ -15,14 +34,55 @@
             $scope.getData();
         });
 
+        if ($scope.$parent.isAccountant)
+            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
+        else
+            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
+
+        $scope.pagination = {
+            page: 1,
+            per_page: 1,
+            totalItems: 0,
+            totalByPages: 0
+        };
+
+        $scope.pageChanged = function () {
+            $scope.getData();
+        };
+
         $scope.getData = () => {
-            ContractManager.one('allContract').one('byType').getList("", {
+            ContractManager
+                .one('allContract')
+                .one('byType')
+                .customGET("", {
                 type: CONTRACT_STATUS.COLLECT,
+                date: $scope.filter.date,
                 storeId: $scope.$parent.storeSelected.storeId,
-                userId: $scope.$parent.storeSelected.userId
+                userId: $scope.$parent.storeSelected.userId,
+                // page: $scope.pagination.page,
+                // per_page: $scope.pagination.per_page
             })
-                .then((contracts) => {
-                    $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+                .then((resp) => {
+                    if (resp) {
+                        let data = resp.plain();
+                        $scope.contracts = angular.copy(Restangular.stripRestangular(data.docs));
+                        $scope.pagination.totalItems = data.totalItems;
+                        $scope.totalMoneyPaid = data.totalMoneyStatus;
+
+                        let totalContract = $scope.contracts.length;
+
+                        if ($scope.pagination.page > 1) {
+                            $scope.pagination.totalByPages = (($scope.pagination.page - 1) * $scope.pagination.per_page) + totalContract;
+                        } else {
+                            $scope.pagination.totalByPages = totalContract;
+                        }
+                    } else {
+                        $scope.contracts = [];
+                        $scope.pagination.page = 1;
+                        $scope.pagination.totalItems = 0;
+                        $scope.pagination.totalByPages = 0;
+                        $scope.totalMoneyPaid = 0;
+                    }
 
                     hotTableInstance.updateSettings({
                         data: $scope.contracts
@@ -36,7 +96,7 @@
                 });
         };
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotThuVeTable');
         const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
             columns: [
@@ -59,6 +119,15 @@
                     readOnly: true,
                 },
                 {
+                    data: 'loanDate',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
                     data: 'loanMoney',
                     type: 'numeric',
                     width: 100,
@@ -77,7 +146,7 @@
                     readOnly: true
                 },
                 {
-                    data: 'totalMoneyNeedPay',
+                    data: 'totalHavePay',
                     type: 'numeric',
                     numericFormat: {
                         pattern: '#,###'
@@ -86,16 +155,7 @@
                     readOnly: true
                 },
                 {
-                    data: 'totalMoneyPaid',
-                    type: 'numeric',
-                    numericFormat: {
-                        pattern: '#,###'
-                    },
-                    width: 100,
-                    readOnly: true
-                },
-                {
-                    data: 'loanDate',
+                    data: 'moneyPaid',
                     type: 'numeric',
                     numericFormat: {
                         pattern: '#,###'
@@ -131,21 +191,23 @@
                 'Số hợp đồng',
                 'Họ và tên',
                 'Ngày vay',
+                'Số ngày vay',
                 'Gói vay',
                 'Thực thu',
                 'Dư nợ',
                 'Đã đóng',
-                'Số ngày vay',
                 'Ngày chuyển',
                 'Thao tác'
             ],
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
-                cellPrp.readOnly = true;
                 if (col === 1 || col === 2 || col === 8 || col === 9) {
                     cellPrp.renderer = myBtns;
                 }
+
+                if (col === 7)
+                    cellPrp.className = "handsontable-td-red";
 
                 return cellPrp;
             },
@@ -222,8 +284,7 @@
                         '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
                         '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>&nbsp;&nbsp;' +
                         '<button class="btnAction btn btn-success btAction-' + 5 + '" value="' + 5 + '">' + 'Đóng' + '</button>';
-                }
-                else
+                } else
                     td.innerHTML = '';
             }
         }
@@ -236,7 +297,9 @@
             $scope.contractSelected.contractCreatedAt = moment($scope.contractSelected.createdAt).utc().format("DD/MM/YYYY");
             $scope.contractSelected.payDate = "";
             $scope.$parent.contractSelected = angular.copy($scope.contractSelected);
-
+            setTimeout(function () {
+                $scope.$apply();
+            }, 0);
             $('#dongTienModal').modal('show');
         };
 
@@ -403,8 +466,7 @@
             if (type === 1) {
                 $scope.opened = true;
                 $scope.opened2 = false;
-            }
-            else {
+            } else {
                 $scope.opened2 = true;
                 $scope.opened = false;
             }
@@ -416,6 +478,8 @@
             // $scope.onAfterInit = function () {
             //     hotInstance.validateCells();
             // };
+
+            Inputmask({}).mask(document.querySelectorAll(".datemask"));
         }, 0);
 
     }

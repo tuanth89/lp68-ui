@@ -43,10 +43,17 @@
         'angular-loading-bar',
         'ui.bootstrap',
         'ui.select',
-        'daterangepicker',
-        'base64'
-
+        // 'daterangepicker',
+        'base64',
+        'blockUI'
     ]);
+
+    core.config(function (blockUIConfig) {
+        // Disable auto body block
+        blockUIConfig.autoBlock = false;
+        // blockUIConfig.delay = 0;
+        blockUIConfig.template = '<div class="block-ui-overlay"></div><div class="block-ui-message-container"><div class="loader"></div></div>';
+    });
 
     core.directive('currencyInput', function ($filter, $browser) {
         return {

@@ -93,7 +93,7 @@
         $scope.showResource = false;
         $scope.customers = [];
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotCustomerInfoTable');
         let columnsSetting = [
             {
                 data: 'name',

@@ -50,6 +50,12 @@
                         controller: 'ContractNewController',
                         templateUrl: 'contract/hopDongMoi/contractNew.tpl.html'
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('contract.contractOld', {
@@ -59,7 +65,13 @@
                         controller: 'ContractTypeOldController',
                         templateUrl: 'contract/hopDongMoi/contractOld.tpl.html'
                     }
-                }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
+                },
             })
             .state('contract.cusCirculation', {
                 url: '/luu-thong?q&date&p',
@@ -68,6 +80,12 @@
                         controller: 'CustomerCirculationVer2Controller',
                         templateUrl: 'contract/customerCirculationVer2.tpl.html'
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('contract.daoHan', {
@@ -82,6 +100,12 @@
                         //     }
                         // }
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('contract.laiDung', {
@@ -96,6 +120,12 @@
                         //     }
                         // }
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('contract.thuVe', {
@@ -110,6 +140,12 @@
                         //     }
                         // }
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('contract.chot', {
@@ -124,6 +160,12 @@
                         //     }
                         // }
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('contract.be', {
@@ -138,6 +180,12 @@
                         //     }
                         // }
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('contract.ketThuc', {
@@ -152,7 +200,13 @@
                         //     }
                         // }
                     }
-                }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
+                },
             })
             .state('contract.hetHo', {
                 url: '/het-ho',
@@ -166,6 +220,12 @@
                         //     }
                         // }
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
         // .state('contract.test', {

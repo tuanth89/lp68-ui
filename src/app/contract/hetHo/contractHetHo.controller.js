@@ -6,14 +6,49 @@
 
     function ContractHetHoController($scope, CONTRACT_STATUS, $timeout, CONTRACT_EVENT, ContractManager, Restangular) {
 
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
+
+        $scope.pagination = {
+            page: 1,
+            per_page: 1,
+            totalItems: 0,
+            totalByPages: 0
+        };
+
         $scope.$on('$viewContentLoaded', function (event, data) {
-            ContractManager.one('allContract').one('byType').getList("", {
-                type: CONTRACT_STATUS.ACCOUNTANT_END,
-                storeId: $scope.$parent.storeSelected.storeId,
-                userId: $scope.$parent.storeSelected.userId
-            })
-                .then((contracts) => {
-                    $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+            ContractManager.one('allContract').one('byType')
+                .customGET("", {
+                    type: CONTRACT_STATUS.ACCOUNTANT_END,
+                    // date: $scope.filter.date,
+                    storeId: $scope.$parent.storeSelected.storeId,
+                    userId: $scope.$parent.storeSelected.userId,
+                    // page: $scope.pagination.page,
+                    // per_page: $scope.pagination.per_page
+                })
+                .then((resp) => {
+                    if (resp) {
+                        let data = resp.plain();
+                        $scope.contracts = angular.copy(Restangular.stripRestangular(data.docs));
+                        $scope.pagination.totalItems = data.totalItems;
+
+                        let totalContract = $scope.contracts.length;
+
+                        if ($scope.pagination.page > 1) {
+                            $scope.pagination.totalByPages = (($scope.pagination.page - 1) * $scope.pagination.per_page) + totalContract;
+                        } else {
+                            $scope.pagination.totalByPages = totalContract;
+                        }
+                    } else {
+                        $scope.contracts = [];
+                        $scope.pagination.page = 1;
+                        $scope.pagination.totalItems = 0;
+                        $scope.pagination.totalByPages = 0;
+                    }
 
                     hotTableInstance.updateSettings({
                         data: $scope.contracts
@@ -27,10 +62,9 @@
                 });
         });
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotHetHoTable');
         const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
-            licenseKey: 'non-commercial-and-evaluation',
             columns: [
                 {
                     data: 'contractNo',
@@ -117,11 +151,11 @@
                 'Số hợp đồng',
                 'Họ và tên',
                 'Ngày vay',
+                'Số ngày vay',
                 'Gói vay',
                 'Thực thu',
                 'Dư nợ',
                 'Đã đóng',
-                'Số ngày vay',
                 'Ngày chuyển'
             ],
             cells: function (row, col) {

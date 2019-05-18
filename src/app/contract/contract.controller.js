@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('ContractController', ContractController);
 
-    function ContractController($scope, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, HdLuuThongManager, Restangular, CustomerManager, CONTRACT_EVENT) {
+    function ContractController($scope, $timeout, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, HdLuuThongManager, Restangular, CustomerManager, CONTRACT_EVENT) {
 
         $scope.showInfoCus = false;
 
@@ -53,6 +53,8 @@
             _.remove($scope.events, function (item) {
                 return item;
             });
+
+            $scope.$broadcast(CONTRACT_EVENT.RESIZE_TABLE);
         };
 
         $scope.contractSelected = {};
@@ -77,8 +79,13 @@
         };
 
         $('#dongTienModal').on('hidden.bs.modal', function () {
+            $scope.contractSelected.payDate = "";
             $scope.contractSelected = {};
-            $scope.$apply();
+            $('#payDate').val("");
+        });
+
+        $('#dongTienModal').on('show.bs.modal', function () {
+            $scope.contractSelected.payDate = "";
         });
 
         let contractNo = "";
@@ -103,6 +110,8 @@
                     $scope.contractInfo.createdAt = moment(contract.createdAt).format("DD/MM/YYYY");
                     $scope.contractInfo.loanMoney = contract.loanMoney;
                     $scope.contractInfo.actuallyCollectedMoney = contract.actuallyCollectedMoney;
+                    $scope.contractInfo.moneyContractOld = parseInt(contract.actuallyCollectedMoney) - parseInt(contract.totalMoneyPaid); // - parseInt(moneyPaid);
+
 
                     $scope.events.push(...contract.histories);
 
@@ -275,6 +284,16 @@
             //
             // }
         };
+
+        $timeout(function () {
+            // hotInstance = hotRegisterer.getInstance('my-handsontable');
+
+            // $scope.onAfterInit = function () {
+            //     hotInstance.validateCells();
+            // };
+
+            Inputmask({}).mask(document.querySelectorAll(".datemask"));
+        }, 0);
 
     }
 })();

@@ -6,6 +6,13 @@
 
     function ContractLaiDungController($scope, CONTRACT_STATUS, $timeout, ContractManager, Restangular, CONTRACT_EVENT) {
 
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
+
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
         });
@@ -14,18 +21,45 @@
             $scope.getData();
         });
 
+        $scope.pagination = {
+            page: 1,
+            per_page: 1,
+            totalItems: 0,
+            totalByPages: 0
+        };
+
         $scope.getData = () => {
-            ContractManager.one('allContract').one('byType').getList("", {
-                type: CONTRACT_STATUS.STAND,
-                storeId: $scope.$parent.storeSelected.storeId,
-                userId: $scope.$parent.storeSelected.userId
-            })
-                .then((contracts) => {
-                    $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+            ContractManager.one('allContract').one('byType')
+                .customGET("", {
+                    type: CONTRACT_STATUS.STAND,
+                    // date: $scope.filter.date,
+                    storeId: $scope.$parent.storeSelected.storeId,
+                    userId: $scope.$parent.storeSelected.userId,
+                    // page: $scope.pagination.page,
+                    // per_page: $scope.pagination.per_page
+                })
+                .then((resp) => {
+                    if (resp) {
+                        let data = resp.plain();
+                        $scope.contracts = angular.copy(Restangular.stripRestangular(data.docs));
+                        $scope.pagination.totalItems = data.totalItems;
+
+                        let totalContract = $scope.contracts.length;
+
+                        if ($scope.pagination.page > 1) {
+                            $scope.pagination.totalByPages = (($scope.pagination.page - 1) * $scope.pagination.per_page) + totalContract;
+                        } else {
+                            $scope.pagination.totalByPages = totalContract;
+                        }
+                    } else {
+                        $scope.contracts = [];
+                        $scope.pagination.page = 1;
+                        $scope.pagination.totalItems = 0;
+                        $scope.pagination.totalByPages = 0;
+                    }
 
                     hotTableInstance.updateSettings({
                         data: $scope.contracts
-
                     });
 
                     hotTableInstance.getInstance().render();
@@ -35,7 +69,7 @@
                 });
         };
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotLaiDungTable');
         const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
             licenseKey: 'non-commercial-and-evaluation',
@@ -57,6 +91,15 @@
                     type: 'text',
                     width: 100,
                     readOnly: true,
+                },
+                {
+                    data: 'loanDate',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
                 },
                 {
                     data: 'loanMoney',
@@ -93,15 +136,6 @@
                     },
                     width: 100,
                     readOnly: true
-                },
-                {
-                    data: 'loanDate',
-                    type: 'numeric',
-                    numericFormat: {
-                        pattern: '#,###'
-                    },
-                    width: 100,
-                    readOnly: true
                 }
             ],
             stretchH: 'all',
@@ -118,18 +152,18 @@
                 'Số hợp đồng',
                 'Họ và tên',
                 'Ngày vay',
+                'Số ngày vay',
                 'Gói vay',
                 'Thực thu',
                 'Dư nợ',
-                'Đã đóng',
-                'Số ngày vay'
+                'Đã đóng'
             ],
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "handsontable-td-red";
                 cellPrp.readOnly = true;
 
-                if (col === 1 || col === 2 || col === 8) {
+                if (col === 1 || col === 2) {
                     cellPrp.renderer = myBtns;
                 }
 
@@ -167,7 +201,7 @@
 
             }
 
-            if (col === 2 || col === 8) {
+            if (col === 2) {
                 if (value)
                     td.innerHTML = moment(value).format("DD/MM/YYYY");
                 else

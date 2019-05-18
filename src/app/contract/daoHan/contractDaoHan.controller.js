@@ -6,14 +6,49 @@
 
     function ContractDaoHanController($scope, CONTRACT_STATUS, CONTRACT_EVENT, $timeout, ContractManager, Restangular) {
 
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
+
+        $scope.pagination = {
+            page: 1,
+            per_page: 1,
+            totalItems: 0,
+            totalByPages: 0
+        };
+
         $scope.$on('$viewContentLoaded', function (event, data) {
-            ContractManager.one('allContract').one('byType').getList("", {
-                type: CONTRACT_STATUS.MATURITY,
-                storeId: $scope.$parent.storeSelected.storeId,
-                userId: $scope.$parent.storeSelected.userId
-            })
-                .then((contracts) => {
-                    $scope.contracts = angular.copy(Restangular.stripRestangular(contracts));
+            ContractManager.one('allContract').one('byType')
+                .customGET("", {
+                    type: CONTRACT_STATUS.MATURITY,
+                    // date: $scope.filter.date,
+                    storeId: $scope.$parent.storeSelected.storeId,
+                    userId: $scope.$parent.storeSelected.userId,
+                    // page: $scope.pagination.page,
+                    // per_page: $scope.pagination.per_page
+                })
+                .then((resp) => {
+                    if (resp) {
+                        let data = resp.plain();
+                        $scope.contracts = angular.copy(Restangular.stripRestangular(data.docs));
+                        $scope.pagination.totalItems = data.totalItems;
+
+                        let totalContract = $scope.contracts.length;
+
+                        if ($scope.pagination.page > 1) {
+                            $scope.pagination.totalByPages = (($scope.pagination.page - 1) * $scope.pagination.per_page) + totalContract;
+                        } else {
+                            $scope.pagination.totalByPages = totalContract;
+                        }
+                    } else {
+                        $scope.contracts = [];
+                        $scope.pagination.page = 1;
+                        $scope.pagination.totalItems = 0;
+                        $scope.pagination.totalByPages = 0;
+                    }
 
                     hotTableInstance.updateSettings({
                         data: $scope.contracts
@@ -27,7 +62,7 @@
                 });
         });
 
-        const container = document.getElementById('hotTable');
+        const container = document.getElementById('hotDaoHanTable');
         const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
             licenseKey: 'non-commercial-and-evaluation',
@@ -49,6 +84,15 @@
                     type: 'text',
                     width: 100,
                     readOnly: true,
+                },
+                {
+                    data: 'loanDate',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
                 },
                 {
                     data: 'loanMoney',
@@ -87,15 +131,6 @@
                     readOnly: true
                 },
                 {
-                    data: 'loanDate',
-                    type: 'numeric',
-                    numericFormat: {
-                        pattern: '#,###'
-                    },
-                    width: 100,
-                    readOnly: true
-                },
-                {
                     data: 'transferDate',
                     type: 'text',
                     width: 90,
@@ -116,25 +151,21 @@
                 'Số hợp đồng',
                 'Họ và tên',
                 'Ngày vay',
+                'Số ngày vay',
                 'Gói vay',
                 'Thực thu',
                 'Dư nợ',
                 'Đã đóng',
-                'Số ngày vay',
                 'Ngày đáo'
             ],
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
-                cellPrp.readOnly = true;
 
-                if (col === 1 || col === 2 || col === 7) {
+                if (col === 1 || col === 2 || col === 8) {
                     cellPrp.renderer = myBtns;
                 }
 
-                // if (col === 2 || col === 3) {
-                //     cellPrp.className = "handsontable-td-red";
-                // }
                 return cellPrp;
             },
             afterOnCellMouseDown: function (event, rowCol, TD) {

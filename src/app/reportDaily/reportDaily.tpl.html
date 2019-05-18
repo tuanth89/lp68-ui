@@ -1,0 +1,156 @@
+<h4 class="title-page">Báo cáo ngày {{filter.date | date:'dd/MM/yyyy'}}</h4>
+<div class="bgc-white bd bdrs-3 p-20 mB-20">
+    <div class="row mb-20">
+        <div class="col-sm-3" ng-if="isAccountant || isRoot">
+            <ui-select ng-model="filter.storeId" theme="bootstrap" search-enabled="true"
+                       on-select="selectedStoreEvent($item)">
+                <ui-select-match placeholder="Cửa hàng">
+                    <span ng-bind-html="$select.selected.name"></span>
+                </ui-select-match>
+                <ui-select-choices repeat="i._id as i in stores | filter : {name: $select.search}">
+                    <span ng-bind-html="i.name | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+        <div class="col-sm-2" style="padding-left: 0px;">
+            <input input-value="filter.date" e-datepicker class="form-control" type="text" placeholder="Chọn ngày">
+        </div>
+    </div>
+
+    <div class="table-responsive mt10 mb20" style="background: #ffffff;">
+        <table id="tableReport" class="table table-bordered table-bordered-row-span table-history"
+               style="margin-bottom: 0px !important;">
+            <thead>
+            <tr>
+                <th class="text-center" rowspan="2" style="width: 100px"></th>
+                <th class="text-center" colspan="2" style="width: 100px">Lưu thông</th>
+                <th class="text-center" colspan="2" style="width: 100px">Đáo</th>
+                <th class="text-center" colspan="2" style="width: 100px">Thu về</th>
+                <th class="text-center" colspan="2" style="width: 100px">Chốt</th>
+                <th class="text-center" colspan="2" style="width: 100px">Bễ</th>
+            </tr>
+            <tr>
+                <th>Số lượng</th>
+                <th>Số tiền</th>
+                <th>Số lượng</th>
+                <th>Số tiền</th>
+                <th>Số lượng</th>
+                <th>Số tiền</th>
+                <th>Số lượng</th>
+                <th>Số tiền</th>
+                <th>Số lượng</th>
+                <th>Số tiền</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th class="text-left" style="width:170px;">Tăng</th>
+                <td class="text-right text-red-bold">{{reportDailyItem.luuThongSLTang ? (reportDailyItem.luuThongSLTang
+                    | number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.luuThongMoneyTang ?
+                    (reportDailyItem.luuThongMoneyTang | number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.daoSLTang ? (reportDailyItem.daoSLTang | number)
+                    : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.daoMoneyTang ? (reportDailyItem.daoMoneyTang |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.thuVeSLTang ? (reportDailyItem.thuVeSLTang |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.thuVeMoneyTang ? (reportDailyItem.thuVeMoneyTang
+                    | number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.chotSLTang ? (reportDailyItem.chotSLTang |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.chotMoneyTang ? (reportDailyItem.chotMoneyTang |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.beSLTang ? (reportDailyItem.beSLTang | number) :
+                    ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.beMoneyTang ? (reportDailyItem.beMoneyTang |
+                    number) : ""}}
+                </td>
+            </tr>
+
+            <tr>
+                <th class="text-left">Giảm</th>
+                <td class="text-right text-red-bold">{{reportDailyItem.luuThongSLGiam ? (reportDailyItem.luuThongSLGiam
+                    | number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.luuThongMoneyGiam ?
+                    (reportDailyItem.luuThongMoneyGiam | number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.daoSLGiam ? (reportDailyItem.daoSLGiam | number)
+                    : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.daoMoneyGiam ? (reportDailyItem.daoMoneyGiam |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.thuVeSLGiam ? (reportDailyItem.thuVeSLGiam |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.thuVeMoneyGiam ? (reportDailyItem.thuVeMoneyGiam
+                    | number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.chotSLGiam ? (reportDailyItem.chotSLGiam |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.chotMoneyGiam ? (reportDailyItem.chotMoneyGiam |
+                    number) : ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.beSLGiam ? (reportDailyItem.beSLGiam | number) :
+                    ""}}
+                </td>
+                <td class="text-right text-red-bold">{{reportDailyItem.beMoneyGiam ? (reportDailyItem.beMoneyGiam |
+                    number) : ""}}
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th class="text-left">Tổng khách đáo</th>
+                <td class="text-center text-red-bold" colspan="10">{{reportDailyItem.totalCustomerMaturity ?
+                    (reportDailyItem.totalCustomerMaturity | number) : ""}}
+                </td>
+            </tr>
+            <tr>
+                <th class="text-left">Tổng khách mới</th>
+                <td class="text-center text-red-bold" colspan="10">{{reportDailyItem.totalCustomerNew ?
+                    (reportDailyItem.totalCustomerNew | number) : ""}}
+                </td>
+            </tr>
+            <tr>
+                <th class="text-left">Tổng khách lưu thông</th>
+                <td class="text-center text-red-bold" colspan="10">{{reportDailyItem.totalCustomerLuuThong ?
+                    (reportDailyItem.totalCustomerLuuThong | number) : ""}}
+                </td>
+            </tr>
+            <tr>
+                <th class="text-left">Tổng khách thu về</th>
+                <td class="text-center text-red-bold" colspan="10">{{reportDailyItem.totalCustomerCollect ?
+                    (reportDailyItem.totalCustomerCollect | number) : ""}}
+                </td>
+            </tr>
+            <tr>
+                <th class="text-left">Tổng khách chốt</th>
+                <td class="text-center text-red-bold" colspan="10">{{reportDailyItem.totalCustomerCloseDeal ?
+                    (reportDailyItem.totalCustomerCloseDeal | number) : ""}}
+                </td>
+            </tr>
+            <tr>
+                <th class="text-left">Tổng khách bễ</th>
+                <td class="text-center text-red-bold" colspan="10">{{reportDailyItem.totalCustomerEscape ?
+                    (reportDailyItem.totalCustomerEscape | number) : ""}}
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+</div>
