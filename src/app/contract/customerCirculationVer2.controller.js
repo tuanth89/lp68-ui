@@ -195,7 +195,10 @@
                     return cellPrp;
                 }
 
-                cellPrp.className = "hot-normal";
+                if (typeof item === 'object' && item.contractStatus === CONTRACT_STATUS.STAND) {
+                    cellPrp.className = "handsontable-td-red";
+                } else
+                    cellPrp.className = "hot-normal";
 
                 switch (col) {
                     // case 0:
@@ -237,9 +240,6 @@
                         break;
                 }
 
-                if (typeof item === 'object' && item.contractStatus === CONTRACT_STATUS.STAND) {
-                    cellPrp.className = "handsontable-td-red";
-                }
 
                 return cellPrp;
             },
@@ -409,25 +409,39 @@
                 }
 
                 if (isSelected && isMultiple) {
+                    if (col !== 7) {
+                        if ($scope.checkedList.length === 0)
+                        {
+                            $scope.totalMoneyPayDraft = 0;
+
+                            setTimeout(function () {
+                                $scope.$apply();
+                            }, 1);
+                        }
+                        return;
+                    }
+
                     inModeSelectMulti = true;
 
                     if (!isClickHeader)
                         $scope.totalMoneyPayDraft = 0;
 
-                    let selectedList = hotTableInstance.getSelected();
-                    for (let i = 0; i < selectedList.length; i += 1) {
-                        let item = selectedList[i];
-                        // let moneyPaids = hotTableInstance.getData.apply(hotTableInstance, item);
-                        let moneyPaids = hotTableInstance.getSourceData.apply(hotTableInstance, item);
-                        console.log(moneyPaids);
-                        if (moneyPaids.length > 0 && moneyPaids.length > 1) {
-                            moneyPaids.forEach((item) => {
-                                if (parseInt(item.moneyPaid) > 0)
-                                    $scope.totalMoneyPayDraft += parseInt(item.moneyPaid);
-                            });
-                        }
-
+                    for (let index = row; index < (row2 + 1); index++) {
+                        let contractItem = $scope.contracts[index];
+                        if (contractItem.status !== 1 && parseInt(contractItem.moneyPaid) > 0)
+                            $scope.totalMoneyPayDraft += parseInt(contractItem.moneyPaid);
                     }
+
+                    // let moneyPaids = hotTableInstance.getData.apply(hotTableInstance, item);
+                    // let moneyPaids = hotTableInstance.getSourceData.apply(hotTableInstance, item);
+                    // // console.log(moneyPaids);
+                    // if (moneyPaids.length > 0 && moneyPaids.length > 1) {
+                    //     moneyPaids.forEach((item) => {
+                    //         if (parseInt(item.moneyPaid) > 0)
+                    //             $scope.totalMoneyPayDraft += parseInt(item.moneyPaid);
+                    //     });
+                    // }
+                    // }
 
                     setTimeout(function () {
                         $scope.$apply();
