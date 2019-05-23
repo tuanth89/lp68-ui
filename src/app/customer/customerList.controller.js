@@ -93,7 +93,6 @@
         $scope.showResource = false;
         $scope.customers = [];
 
-        const container = document.getElementById('hotCustomerInfoTable');
         let columnsSetting = [
             {
                 data: 'name',
@@ -135,20 +134,22 @@
             {
                 data: 'actionDel',
                 type: 'text',
-                width: 30,
+                width: 40,
                 readOnly: true
             }
         ];
-        let colHeaderSetting = [
-            'Họ và tên',
-            'Số CMT',
-            'Số sổ HK',
-            'Địa chỉ',
-            'Số điện thoại',
-            'Ảnh đại diện',
-            'Tài liệu',
-            ' '
-        ];
+        // let colHeaderSetting = [
+        //     'Họ và tên',
+        //     'Số CMT',
+        //     'Số sổ HK',
+        //     'Địa chỉ',
+        //     'Số điện thoại',
+        //     'Ảnh đại diện',
+        //     'Tài liệu',
+        //     ' '
+        // ];
+        const container = document.getElementById('hotCustomerInfoTable');
+        let containerId = $("#hotCustomerInfoTable");
         const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
             columns: columnsSetting,
@@ -156,7 +157,26 @@
             // copyPaste: false,
             rowHeights: 35,
             licenseKey: 'non-commercial-and-evaluation',
-            colHeaders: colHeaderSetting,
+            colHeaders: function (col) {
+                switch (col) {
+                    case 0:
+                        return "Họ và tên";
+                    case 1:
+                        return "Số CMT";
+                    case 2:
+                        return "Số sổ HK";
+                    case 3:
+                        return "Địa chỉ";
+                    case 4:
+                        return "Số điện thoại";
+                    case 5:
+                        return "Ảnh đại diện";
+                    case 6:
+                        return "Tài liệu";
+                    case 7:
+                        return "<button class='btnAction btn btn-danger delRowAll' style='width:22px;'><span class='fa fa-trash delRowAll'></span></button>";
+                }
+            },
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
@@ -221,7 +241,57 @@
             }
         });
 
+        containerId.on('mouseup', 'button.delRowAll', function (event) {
+            if ($scope.customers.length === 0)
+                return;
+
+            swal({
+                title: 'Bạn có chắc chắn muốn xóa tất cả khách hàng ?',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Có',
+                cancelButtonText: 'Không',
+            }).then((result) => {
+                if (result.value) {
+                    CustomerManager
+                        .one($scope.userSelected.id)
+                        .one("delete")
+                        .one("all")
+                        .remove()
+                        .then(function (result) {
+                            if (result.removed) {
+                                $scope.customers = [];
+
+                                hotTableInstance.updateSettings({
+                                    data: $scope.customers
+
+                                });
+                                hotTableInstance.getInstance().render();
+
+                                AlertService.replaceAlerts({
+                                    type: 'success',
+                                    message: "Xóa khách hàng thành công!"
+                                });
+                            } else {
+                                AlertService.replaceAlerts({
+                                    type: 'error',
+                                    message: "Xóa thất bại. Khách hàng đã tồn tại số hợp đồng"
+                                });
+                            }
+                        })
+                        .catch(function () {
+                            AlertService.replaceAlerts({
+                                type: 'error',
+                                message: "Có lỗi xảy ra!"
+                            });
+                        });
+                }
+            });
+        });
+
         if (!isAccountant && !isRoot) {
+            // if (!isRoot) {
             _.remove(columnsSetting, item => {
                 return item.data === "numberId"
                     || item.data === "houseHolderNo"
@@ -230,7 +300,9 @@
                     || item.data === "imgResource"
             });
 
-            _.remove(colHeaderSetting, item => {
+            let headers = hotTableInstance.getColHeader();
+
+            _.remove(headers, item => {
                 return item === "Số CMT"
                     || item === "Số sổ HK"
                     || item === "Địa chỉ"
@@ -240,7 +312,7 @@
 
             hotTableInstance.updateSettings({
                 columns: columnsSetting,
-                colHeaders: colHeaderSetting
+                colHeaders: headers
             });
 
             hotTableInstance.getInstance().render();
@@ -250,12 +322,14 @@
             $scope.roleRemove = allowRole;
 
             if (!allowRole || !$scope.storeSelected.userId) {
+                let headers = hotTableInstance.getColHeader();
+
                 columnsSetting.splice(-1, 1);
-                colHeaderSetting.splice(-1, 1);
+                headers.splice(-1, 1);
 
                 hotTableInstance.updateSettings({
                     columns: columnsSetting,
-                    colHeaders: colHeaderSetting
+                    colHeaders: headers
                 });
 
                 hotTableInstance.getInstance().render();
@@ -278,7 +352,7 @@
             }
 
             if (cellProperties.prop === "actionDel") {
-                td.innerHTML = '<button class="btnAction btn btn-danger delRow" value="' + value + '" style="width:22px;"><span class="fa fa-trash delRow"></span></button>';
+                td.innerHTML = '<div style="text-align: center;"><button class="btnAction btn btn-danger delRow" value="' + value + '" style="width:22px;"><span class="fa fa-trash delRow"></span></button></div>';
                 return;
             }
 
@@ -306,8 +380,7 @@
                 });
 
                 hotTableInstance.getInstance().render();
-            }
-            else {
+            } else {
                 swal({
                     title: 'Bạn có chắc chắn muốn xóa khách hàng này ?',
                     text: "",
@@ -332,8 +405,7 @@
                                         type: 'success',
                                         message: "Xóa khách hàng thành công!"
                                     });
-                                }
-                                else {
+                                } else {
                                     AlertService.replaceAlerts({
                                         type: 'error',
                                         message: "Xóa thất bại. Khách hàng đã tồn tại số hợp đồng"
@@ -525,8 +597,7 @@
                 $('.changeFile').css("display", "none");
 
                 $scope.formProcessing = false;
-            }
-            else {
+            } else {
                 CustomerManager
                     .one($scope.customers[imgDocsIndex]._id)
                     .one("imgDocs")
@@ -598,8 +669,7 @@
                     if (!$scope.customers[avatarIndex]._id) {
                         $scope.customers[avatarIndex].photo = data.data.link;
                         $scope.saveCustomer();
-                    }
-                    else {
+                    } else {
                         CustomerManager
                             .one($scope.updateAvatar._id)
                             .customPUT({photo: data.data.link})

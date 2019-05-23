@@ -41,7 +41,7 @@
 
         $scope.pagination = {
             page: 1,
-            per_page: 1,
+            per_page: 30,
             totalItems: 0,
             totalByPages: 0
         };

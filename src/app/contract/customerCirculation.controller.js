@@ -2,11 +2,10 @@
     'use strict';
 
     angular.module('ati.contract')
-        .controller('CustomerCirculationController', CustomerCirculationController)
+        .controller('CustomerCirculationVer2Controller', CustomerCirculationVer2Controller)
     ;
 
-    function CustomerCirculationController($scope, $state, $stateParams, $timeout, hotRegisterer, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
-        let hotInstance = "";
+    function CustomerCirculationVer2Controller($scope, $rootScope, $state, $stateParams, $timeout, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
         $scope.formProcessing = false;
         $scope.filter = {
             date: "",
@@ -16,139 +15,160 @@
         };
         let STATE_NAME = "app.root.contract.cusCirculation";
 
+        $scope.contracts = [];
+
         $scope.selectedCirculation = {};
         // $('#lai-dung-dp').datepicker({startDate: new Date()});
 
-        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
-            hotInstance.render();
-        });
+        $scope.formTableProcessing = false;
 
-        $scope.status = [
-            {
-                value: -1,
-                title: "Tất cả"
-            },
-            {
-                value: 0,
-                title: "Lưu thông"
-            },
-            {
-                value: 1,
-                title: "Đáo"
-            },
-            {
-                value: 2,
-                title: "Lãi đứng"
-            },
-            {
-                value: 3,
-                title: "Thu về"
-            },
-            {
-                value: 4,
-                title: "Chốt"
-            },
-            {
-                value: 5,
-                title: "Bễ"
-            },
-            {
-                value: 6,
-                title: "Kết thúc"
-            }
-        ];
-
-        $scope.filterDateFormat = "";
-
-        $scope.pagination = {
-            page: $stateParams.p ? parseInt($stateParams.p) : 1,
-            per_page: 30,
-            totalItems: 0
-        };
-
-        $scope.checkedList = [];
-        $scope.checkbox = {checkAll: false};
-        $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                _.map($scope.contracts, function (x, index) {
-                    if (x.status === 0) {
-                        x.isActive = newValue;
-
-                        let checkedIndex = $scope.checkedList.indexOf(index);
-                        if (checkedIndex >= 0) {
-                            $scope.checkedList.splice(checkedIndex, 1);
-                        }
-                        else
-                            $scope.checkedList.push(index);
-                    }
-
-                    return x;
-                });
-
-                if (newValue) {
-                    hotInstance.selectCell(0, 0, hotInstance.countRows() - 1, hotInstance.countCols() - 1);
-                }
-                else {
-                    hotInstance.selectCell(0, 0, 0, 0, true);
-                }
-            }
-        });
-
-        $scope.$watch('filter.status', function (newValue, oldValue) {
-            if (newValue != oldValue) {
-                $scope.getData();
-            }
-        });
-
-        $scope.$watch('filter.date', function (newValue, oldValue) {
-            if (newValue != oldValue) {
-                $scope.filterDateFormat = moment(newValue, "YYYY-MM-DD").format("DD/MM/YYYY");
-                $scope.getData();
-            }
-        });
-
-        $scope.$on('$viewContentLoaded', function (event, data) {
-            $scope.getData($scope.pagination.page, $scope.pagination.per_page);
-        });
-
-        $scope.numOfDayPaidFunc = (money) => {
-            $scope.selectedCirculation.numOfDayPaid = Math.trunc(parseInt(money) / ($scope.selectedCirculation.dailyMoneyPay === 0 ? parseInt(money) : $scope.selectedCirculation.dailyMoneyPay));
-        };
-
-        $scope.newLoanMoneyFunc = (money) => {
-            $scope.selectedCirculation.totalMoney = parseInt(money) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt($scope.selectedCirculation.moneyPayOld));
-        };
-
-        $scope.newActuallyCollectedMoneyFunc = function (money) {
-            $scope.selectedCirculation.newDailyMoney = parseInt(money) / parseInt(!$scope.selectedCirculation.newLoanDate === 0 ? 1 : $scope.selectedCirculation.newLoanDate);
-        };
-
-        $scope.newLoanDateFunc = function () {
-            $scope.selectedCirculation.newDailyMoney = parseInt($scope.selectedCirculation.newActuallyCollectedMoney) / parseInt($scope.selectedCirculation.newLoanDate);
-        };
-
-        $scope.moneyPayOldDaoFunc = function (money) {
-            $scope.selectedCirculation.totalMoney = parseInt($scope.selectedCirculation.newLoanMoney) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt(money));
-        };
-
-        if ($scope.$parent.isAccountant)
-            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
-        else
-            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
-
-        $scope.contracts = [];
-        $scope.rowHeaders = true;
-        $scope.colHeaders = true;
-        $scope.settings = {
+        let container = document.getElementById('hotCirculationTable');
+        // let containerId = $("#hotCirculationTable");
+        const hotTableInstance = new Handsontable(container, {
             data: $scope.contracts,
-            // rowHeaders: true,
+            columns: [
+                {
+                    data: 'isActive',
+                    type: 'checkbox',
+                    checkedTemplate: 'true',
+                    uncheckedTemplate: 'false',
+                    width: 60
+                },
+                {
+                    data: 'customer.name',
+                    type: 'text',
+                    width: 150,
+                    readOnly: true
+                },
+                {
+                    data: 'contractCreatedAt',
+                    type: 'text',
+                    width: 100,
+                    readOnly: true,
+                },
+                {
+                    data: 'loanMoney',
+                    type: 'numeric',
+                    width: 100,
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    readOnly: true
+                },
+                {
+                    data: 'actuallyCollectedMoney',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'totalHavePay',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'totalMoneyPaid',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
+                    data: 'moneyPaid',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 120
+                },
+                {
+                    data: 'contractStatus',
+                    type: 'text',
+                    width: 250,
+                    readOnly: true
+                },
+                {
+                    data: 'contractNo',
+                    type: 'text',
+                    width: 150,
+                    readOnly: true
+                },
+                // {
+                //     data: 'status',
+                //     type: 'text',
+                //     width: 80,
+                //     readOnly: true
+                // },
+                // {
+                //     data: 'contractStatus',
+                //     type: 'text',
+                //     width: 80,
+                //     readOnly: true
+                // }
+            ],
+            stretchH: 'all',
             copyPaste: false,
-            colHeaders: true,
-            minSpareRows: 0,
-            stretchH: "all",
-            wordWrap: false,
-            fixedColumnsLeft: 3,
-            manualColumnFreeze: true,
+            autoWrapRow: true,
+            rowHeaders: true,
+            // wordWrap: false,
+            // preventOverflow: 'horizontal',
+            fixedColumnsLeft: 4,
+            // manualColumnFreeze: true,
+            viewportColumnRenderingOffset: 100,
+            viewportRowRenderingOffset: 100,
+            rowHeights: 35,
+            licenseKey: 'non-commercial-and-evaluation',
+            colHeaders: [
+                ' ',
+                'Họ và tên',
+                'Ngày vay',
+                'Gói vay',
+                'Thực thu',
+                'Dư nợ',
+                'Đã đóng',
+                'Đóng trong ngày',
+                'Thao tác',
+                'Số hợp đồng'
+                // 'Trạng thái',
+                // 'Hợp đồng'
+            ],
+            // colHeaders: function (col) {
+            //     switch (col) {
+            //         case 0:
+            //             let txt = "<input type='checkbox' class='checker' ";
+            //             txt += isChecked() ? 'checked="checked"' : '';
+            //             txt += "> ";
+            //             return txt;
+            //         case 1:
+            //             return "Họ và tên";
+            //         case 2:
+            //             return "Ngày vay";
+            //         case 3:
+            //             return "Gói vay";
+            //         case 4:
+            //             return "Thực thu";
+            //         case 5:
+            //             return "Dư nợ";
+            //         case 6:
+            //             return "Đã đóng";
+            //         case 7:
+            //             return "Đóng trong ngày";
+            //         case 8:
+            //             return "Thao tác";
+            //         case 9:
+            //             return "Số hợp đồng";
+            //
+            //     }
+            // },
             cells: function (row, col) {
                 let cellPrp = {};
                 let item = $scope.contracts[row];
@@ -158,8 +178,7 @@
 
                     if (item.contractStatus === CONTRACT_STATUS.STAND) {
                         cellPrp.className += " handsontable-td-red";
-                    }
-                    else {
+                    } else {
                         cellPrp.className += " handsontable-td-black";
                     }
 
@@ -168,16 +187,16 @@
                             cellPrp.type = "text";
                             cellPrp.renderer = myBtnsRemove;
                             break;
-                        case 9:
+                        case 8:
                             if (item.contractStatus !== CONTRACT_STATUS.STAND && item.contractStatus !== CONTRACT_STATUS.END)
                                 cellPrp.renderer = btnThuVeChotBe;
                             else
                                 cellPrp.renderer = myBtnsRemove;
                             break;
+                        case 1:
                         case 2:
-                        case 3:
-                        case 10:
-                        case 11:
+                            // case 10:
+                            // case 11:
                             cellPrp.renderer = myBtns;
                             break;
                     }
@@ -191,35 +210,33 @@
                     case 0:
                         if (typeof item === 'object'
                             && (item.contractStatus === CONTRACT_STATUS.COLLECT ||
-                            item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
+                                item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
                             cellPrp.readOnly = true;
                             // cellPrp.renderer = myBtnsRemove;
                             cellPrp.renderer = myBtns;
                         }
                         break;
+                    // case 8:
+                    //     if (typeof item === 'object'
+                    //         && (item.contractStatus === CONTRACT_STATUS.COLLECT ||
+                    //             item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
+                    //         cellPrp.readOnly = true;
+                    //     } else
+                    //         cellPrp.className = "hot-normal";
+                    //
+                    //     break;
                     case 8:
-                        if (typeof item === 'object'
-                            && (item.contractStatus === CONTRACT_STATUS.COLLECT ||
-                            item.contractStatus === CONTRACT_STATUS.CLOSE_DEAL || item.contractStatus === CONTRACT_STATUS.ESCAPE)) {
-                            cellPrp.readOnly = true;
-                        }
-                        else
-                            cellPrp.className = "hot-normal";
-
-                        break;
-                    case 9:
                         if (typeof item === 'object' && item.status > 0) {
                             cellPrp.renderer = myBtnsRemove;
-                        }
-                        else {
+                        } else {
                             cellPrp.renderer = myBtns;
                             cellPrp.readOnly = true;
                         }
                         break;
+                    case 1:
                     case 2:
-                    case 3:
-                    case 10:
-                    case 11:
+                        // case 10:
+                        // case 11:
                         cellPrp.renderer = myBtns;
                         cellPrp.readOnly = true;
                         break;
@@ -334,36 +351,196 @@
                     if (source[0][1] === "isActive") {
                         let rowChecked = source[0][0];
                         let checkedIndex = $scope.checkedList.indexOf(rowChecked);
+                        let moneyDraft = parseInt($scope.contracts[rowChecked].moneyPaid) || 0;
 
                         if (checkedIndex >= 0) {
-                            $scope.checkedList.splice(checkedIndex, 1);
-                            if ($scope.checkedList.length === 0)
-                                $scope.checkbox.checkAll = false;
-                        }
-                        else
-                            $scope.checkedList.push(rowChecked);
+                            // $scope.totalMoneyPayDraft -= moneyDraft;
+                            $scope.totalMoneyPayDraft = Math.max(0, $scope.totalMoneyPayDraft - moneyDraft);
 
+                            $scope.checkedList.splice(checkedIndex, 1);
+                            // if ($scope.checkedList.length === 0)
+                            //     $scope.checkbox.checkAll = false;
+                        } else {
+                            $scope.checkedList.push(rowChecked);
+                            $scope.totalMoneyPayDraft += moneyDraft;
+                        }
+
+                        setTimeout(function () {
+                            $scope.$apply();
+                        }, 1);
+
+                        // hotTableInstance.render();
                         // console.log('row: ' + source[0][0]);
                         // console.log('col: ' + source[0][1]);
                         // console.log('old value: ' + source[0][2]);
                         // console.log('new value: ' + source[0][3]);
                     }
                 }
+            },
+            beforeChange: function (changes) {
+                if (changes[0][1] === "moneyPaid") {
+                    changes[0][3] = numbro.unformat(changes[0][3]);
+                }
             }
+        });
+
+        // containerId.on('mouseup', 'input.checker', function (event) {
+        //     let current = !$('input.checker').is(':checked'); //returns boolean
+        //     $scope.totalMoneyPayDraft = 0;
+        //     $scope.checkedList = [];
+        //     for (let index = 0; index < $scope.contracts.length; index++) {
+        //         $scope.contracts[index].isActive = current;
+        //         $scope.checkedList.push(index);
+        //
+        //         let moneyDraft = parseInt($scope.contracts[index].moneyPaid) || 0;
+        //         if (current)
+        //             $scope.totalMoneyPayDraft += moneyDraft;
+        //         else
+        //             $scope.totalMoneyPayDraft = Math.max(0, $scope.totalMoneyPayDraft - moneyDraft);
+        //     }
+        //
+        //     setTimeout(function () {
+        //         $scope.$apply();
+        //     }, 1);
+        //
+        //     hotTableInstance.render();
+        // });
+
+        function isChecked() {
+            // let itemHasActive = _.find($scope.contracts, {isActive: false});
+            // return itemHasActive ? false : true;
+            for (let i = 0, ilen = $scope.contracts.length; i < ilen; i++) {
+                if (!$scope.contracts[i].isActive) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        $scope.$on(CONTRACT_EVENT.RESIZE_TABLE, function (event, data) {
+            setTimeout(function () {
+                hotTableInstance.render();
+            }, 1);
+
+        });
+
+        // $scope.status = [
+        //     {
+        //         value: -1,
+        //         title: "Tất cả"
+        //     },
+        //     {
+        //         value: 0,
+        //         title: "Lưu thông"
+        //     },
+        //     {
+        //         value: 1,
+        //         title: "Đáo"
+        //     },
+        //     {
+        //         value: 2,
+        //         title: "Lãi đứng"
+        //     },
+        //     {
+        //         value: 3,
+        //         title: "Thu về"
+        //     },
+        //     {
+        //         value: 4,
+        //         title: "Chốt"
+        //     },
+        //     {
+        //         value: 5,
+        //         title: "Bễ"
+        //     },
+        //     {
+        //         value: 6,
+        //         title: "Kết thúc"
+        //     }
+        // ];
+        // $scope.filterDateFormat = "";
+
+        $scope.pagination = {
+            page: $stateParams.p ? parseInt($stateParams.p) : 1,
+            per_page: 30,
+            totalItems: 0,
+            totalByPages: 0
         };
+
+        $scope.checkedList = [];
+        // $scope.checkbox = {checkAll: false};
+        // $scope.$watch('checkbox.checkAll', function (newValue, oldValue) {
+        //     if (newValue !== oldValue) {
+        //         _.map($scope.contracts, function (x, index) {
+        //             if (x.status === 0) {
+        //                 x.isActive = newValue;
+        //
+        //                 let checkedIndex = $scope.checkedList.indexOf(index);
+        //                 if (checkedIndex >= 0) {
+        //                     $scope.checkedList.splice(checkedIndex, 1);
+        //                 } else
+        //                     $scope.checkedList.push(index);
+        //             }
+        //
+        //             return x;
+        //         });
+        //
+        //         if (newValue) {
+        //             hotTableInstance.selectCell(0, 0, hotTableInstance.countRows() - 1, hotTableInstance.countCols() - 1);
+        //         } else {
+        //             hotTableInstance.selectCell(0, 0, 0, 0, true);
+        //         }
+        //     }
+        // });
+
+        // $scope.$watch('filter.status', function (newValue, oldValue) {
+        //     if (newValue != oldValue) {
+        //         $scope.getData();
+        //     }
+        // });
+
+        $scope.$watch('filter.date', function (newValue, oldValue) {
+            if (newValue != oldValue) {
+                // $scope.filterDateFormat = moment(newValue, "YYYY-MM-DD").format("DD/MM/YYYY");
+                $scope.getData();
+            }
+        });
+
+        $scope.$on('$viewContentLoaded', function (event, data) {
+            $scope.getData($scope.pagination.page, $scope.pagination.per_page);
+        });
+
+        $scope.numOfDayPaidFunc = (money) => {
+            $scope.selectedCirculation.numOfDayPaid = Math.trunc(parseInt(money) / ($scope.selectedCirculation.dailyMoneyPay === 0 ? parseInt(money) : $scope.selectedCirculation.dailyMoneyPay));
+        };
+
+        $scope.newLoanMoneyFunc = (money) => {
+            $scope.selectedCirculation.totalMoney = parseInt(money) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt($scope.selectedCirculation.moneyPayOld));
+        };
+
+        $scope.newActuallyCollectedMoneyFunc = function (money) {
+            $scope.selectedCirculation.newDailyMoney = parseInt(money) / parseInt(!$scope.selectedCirculation.newLoanDate === 0 ? 1 : $scope.selectedCirculation.newLoanDate);
+        };
+
+        $scope.newLoanDateFunc = function () {
+            $scope.selectedCirculation.newDailyMoney = parseInt($scope.selectedCirculation.newActuallyCollectedMoney) / parseInt($scope.selectedCirculation.newLoanDate);
+        };
+
+        $scope.moneyPayOldDaoFunc = function (money) {
+            $scope.selectedCirculation.totalMoney = parseInt($scope.selectedCirculation.newLoanMoney) - (parseInt($scope.selectedCirculation.moneyContractOld) - parseInt(money));
+        };
+
+        if ($scope.$parent.isAccountant)
+            $scope.filter.date = moment(new Date()).subtract(1, "days").format("YYYY-MM-DD");
+        else
+            $scope.filter.date = moment(new Date()).format("YYYY-MM-DD");
+
+        $scope.contracts = [];
+        $scope.rowHeaders = true;
+        $scope.colHeaders = true;
 
         $scope.totalMoneyPaid = 0;
-        $scope.totalMoneyPayDraft = () => {
-            let totalFee = 0;
-
-            $scope.contracts.forEach(item => {
-                if (item.isActive)
-                    totalFee += item.moneyPaid;
-            });
-
-
-            return totalFee;
-        };
+        $scope.totalMoneyPayDraft = 0;
 
         $scope.showModalThuVe = (actuallyCollectedMoney, totalMoneyPaid) => {
             // let nowDate = moment($scope.filter.date, "YYYYMMDD");
@@ -435,7 +612,7 @@
             }
 
 
-            if (cellProperties.prop === "contractStatus" && col === 9) {
+            if (cellProperties.prop === "contractStatus" && col === 8) {
                 if ($scope.$parent.storeSelected.userId) {
                     switch (value) {
                         case 2:
@@ -453,56 +630,55 @@
                             td.innerHTML = '';
                             break;
                     }
-                }
-                else
+                } else
                     td.innerHTML = '';
             }
 
 
-            if (cellProperties.prop === "status") {
-                let statusName = "";
-                switch (value) {
-                    case 0:
-                        statusName = "Lưu thông";
-                        break;
-                    case 1:
-                        statusName = "Đã đóng";
-                        break;
-                }
-                td.innerHTML = '<div style="text-align: center;"><button class="btnStatus btn status-lt-' + value + '" value="' + 0 + '">' + statusName + '</button></div>';
-            }
+            // if (cellProperties.prop === "status") {
+            //     let statusName = "";
+            //     switch (value) {
+            //         case 0:
+            //             statusName = "Lưu thông";
+            //             break;
+            //         case 1:
+            //             statusName = "Đã đóng";
+            //             break;
+            //     }
+            //     td.innerHTML = '<div style="text-align: center;"><button class="btnStatus btn status-lt-' + value + '" value="' + 0 + '">' + statusName + '</button></div>';
+            // }
 
-            if (cellProperties.prop === "contractStatus" && col === 11) {
-                let statusName = "";
-                switch (value) {
-                    case 0:
-                        statusName = "Mới";
-                        break;
-                    case 1:
-                        statusName = "Đáo";
-                        break;
-                    case 2:
-                        statusName = "Lãi đứng";
-                        break;
-                    case 3:
-                        statusName = "Thu về";
-                        break;
-                    case 4:
-                        statusName = "Chốt";
-                        break;
-                    case 5:
-                        statusName = "Bễ";
-                        break;
-                    case 6:
-                        statusName = "Kết thúc";
-                        break;
-                    case 8:
-                        statusName = "Hết họ";
-                        break;
-
-                }
-                td.innerHTML = '<div style="text-align: center;"><button class="btnStatus btn status-' + value + '" value="' + 0 + '">' + statusName + '</button></div>';
-            }
+            // if (cellProperties.prop === "contractStatus" && col === 11) {
+            //     let statusName = "";
+            //     switch (value) {
+            //         case 0:
+            //             statusName = "Mới";
+            //             break;
+            //         case 1:
+            //             statusName = "Đáo";
+            //             break;
+            //         case 2:
+            //             statusName = "Lãi đứng";
+            //             break;
+            //         case 3:
+            //             statusName = "Thu về";
+            //             break;
+            //         case 4:
+            //             statusName = "Chốt";
+            //             break;
+            //         case 5:
+            //             statusName = "Bễ";
+            //             break;
+            //         case 6:
+            //             statusName = "Kết thúc";
+            //             break;
+            //         case 8:
+            //             statusName = "Hết họ";
+            //             break;
+            //
+            //     }
+            //     td.innerHTML = '<div style="text-align: center;"><button class="btnStatus btn status-' + value + '" value="' + 0 + '">' + statusName + '</button></div>';
+            // }
 
         }
 
@@ -542,8 +718,7 @@
                 }
 
                 // td.innerHTML += '&nbsp;&nbsp;<button class="btnAction btn btn-success btAction-' + 6 + '" value="' + 6 + '">' + 'Đóng trước' + '</button>';
-            }
-            else
+            } else
                 td.innerHTML = '';
         }
 
@@ -579,8 +754,11 @@
         };
 
         $scope.getData = function (page, per_page) {
+            // $scope.$broadcast(CONTRACT_EVENT.BLOCKING_UI, {isShow: true});
+
             $scope.filter.page = page;
             $scope.filter.per_page = per_page;
+            $scope.formTableProcessing = true;
 
             HdLuuThongManager
                 .one('listByDate')
@@ -591,27 +769,44 @@
                         $scope.contracts = angular.copy(data.docs);
                         $scope.pagination.totalItems = data.totalItems;
                         $scope.totalMoneyPaid = data.totalMoneyStatusEnd;
-                    }
-                    else {
+
+                        let totalContract = $scope.contracts.length;
+
+                        if ($scope.filter.page > 1) {
+                            $scope.pagination.totalByPages = (($scope.filter.page - 1) * $scope.filter.per_page) + totalContract;
+                        } else {
+                            $scope.pagination.totalByPages = totalContract;
+                        }
+                    } else {
                         $scope.contracts = [];
                         $scope.pagination.totalItems = 0;
+                        $scope.pagination.totalByPages = 0;
                         $scope.totalMoneyPaid = 0;
                     }
 
-                    // setTimeout(function () {
-                    //     hotInstance.render();
-                    // }, 1);
+                    // hotTableInstance.render();
+                    hotTableInstance.updateSettings({
+                        data: $scope.contracts
+                    });
 
+                    hotTableInstance.render();
+
+                })
+                .finally(() => {
+                    $scope.formTableProcessing = false;
+                    // $scope.$broadcast(CONTRACT_EVENT.BLOCKING_UI, {isShow: false});
                 });
         };
 
         $timeout(function () {
-            hotInstance = hotRegisterer.getInstance('my-handsontable');
+            // let plugin = hotTableInstance.getPlugin('ManualColumnFreeze');
+            // plugin.freezeColumn(1);
+            // plugin.freezeColumn(2);
+            // plugin.freezeColumn(3);
+            //
+            // hotTableInstance.render();
 
-            $scope.onAfterInit = function () {
-                hotInstance.validateCells();
-            };
-
+            Inputmask({}).mask(document.querySelectorAll(".datemask"));
         }, 0);
 
         $scope.saveCirculation = () => {
@@ -630,7 +825,7 @@
                 .customPUT(contracts)
                 .then((items) => {
                     $scope.checkedList = [];
-                    $scope.checkbox.checkAll = false;
+                    // $scope.checkbox.checkAll = false;
 
                     $scope.goToGetData();
 
@@ -650,13 +845,11 @@
 
             $scope.formProcessing = true;
 
-            // if (!$scope.selectedCirculation.newPayMoney
-            //     || parseInt($scope.selectedCirculation.newPayMoney) <= 0) {
-            //     toastr.error("Số tiền đóng không được <= 0");
-            //
-            //     $scope.formProcessing = false;
-            //     return;
-            // }
+            if (!$scope.selectedCirculation.newPayMoney
+                || parseInt($scope.selectedCirculation.newPayMoney) <= 0) {
+                toastr.error("Số tiền đóng không được <= 0");
+                return;
+            }
 
             // if (!$scope.selectedCirculation.newAppointmentDate) {
             //     toastr.error("Chưa chọn ngày hẹn!");
@@ -711,7 +904,7 @@
                     // });
 
                     $scope.checkedList = [];
-                    $scope.checkbox.checkAll = false;
+                    // $scope.checkbox.checkAll = false;
                     $scope.selectedCirculation = {};
                     $('#hopDongDaoModal').modal('hide');
 
@@ -743,7 +936,7 @@
                     toastr.success('Chuyển hợp đồng Thu Về thành công!');
 
                     $scope.checkedList = [];
-                    $scope.checkbox.checkAll = false;
+                    // $scope.checkbox.checkAll = false;
                     $scope.selectedCirculation = {};
                     $('#hopDongThuVeModal').modal('hide');
 
@@ -853,8 +1046,9 @@
                     toastr.success('Chuyển hợp đồng Kết Thúc thành công!');
 
                     $scope.checkedList = [];
-                    $scope.checkbox.checkAll = false;
+                    // $scope.checkbox.checkAll = false;
                     $scope.selectedCirculation = {};
+
 
                     $('#ketThucModal').modal('hide');
                     $scope.getData();
@@ -912,13 +1106,11 @@
             if (type === 1) {
                 $scope.opened = true;
                 $scope.opened2 = false;
-            }
-            else {
+            } else {
                 $scope.opened2 = true;
                 $scope.opened = false;
             }
         };
-
 
     }
 })();

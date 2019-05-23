@@ -79,7 +79,13 @@
             <!--</div>-->
             <!--</div>-->
             <!--</div>-->
+
             <div class="modal-footer">
+                <button type="button" class="btn btn-danger"
+                        ng-click="logout()">
+                    <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Đăng xuất
+                </button>
+
                 <button type="button" class="btn btn-primary"
                         ng-disabled="!storeDraff.storeId || formStoreProcessing || formProcessing"
                         ng-click="saveStore()">

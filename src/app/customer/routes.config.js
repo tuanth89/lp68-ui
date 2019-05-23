@@ -27,6 +27,12 @@
                     customerSource: function ($stateParams, CustomerManager, Auth) {
                         return CustomerManager.one('list').one('autoComplete').getList("", {storeId: Auth.getSession().selectedStoreId, userId: Auth.getSession().selectedUserId});
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
             .state('customer.cusInfo', {
@@ -36,6 +42,12 @@
                         controller: 'CustomerListController',
                         templateUrl: 'customer/customerList.tpl.html'
                     }
+                },
+                onEnter: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = true;
+                },
+                onExit: function (blockUIConfig) {
+                    blockUIConfig.autoBlock = false;
                 }
             })
     }

@@ -15,36 +15,7 @@
                placeholder="Chọn ngày"
                ng-required="true">
     </div>
-
-    <div class="col-sm-3">
-        <ui-select ng-model="filter.status" theme="bootstrap" search-enabled="false">
-            <ui-select-match placeholder="Trạng thái">
-                <span ng-bind="$select.selected.title"></span>
-            </ui-select-match>
-            <ui-select-choices repeat="i.value as i in status">
-                <span ng-bind="i.title"></span>
-            </ui-select-choices>
-        </ui-select>
-    </div>
-    <!--<div class="col-md-12" style="text-align: center;margin-top: 10px;" ng-show="formTableProcessing">-->
-    <!--<i class="fa fa-spinner fa-pulse fa-3x" style="text-align: center;"></i>-->
-    <!--</div>-->
 </div>
-
-<!--<div class="row mb-20" style="align-items: center;">-->
-<!--<div class="col-sm-3" ng-if="contracts.length > 0">-->
-<!--<input class="mt15" type="checkbox" ng-model="checkbox.checkAll" id="checkAll">-->
-<!--<label class="form-check-label">-->
-<!--</label>-->
-<!--</div>-->
-
-<!--<div class="col-sm-3" ng-if="checkedList.length > 0">-->
-<!--<button type="button" class="btn btn-success" ng-click="showModal(0)">Đáo</button>-->
-<!--<button type="button" class="btn btn-success" ng-click="showModal(1)">Thu về</button>-->
-<!--<button type="button" class="btn btn-success" ng-click="showModal(2)">Chốt</button>-->
-<!--<button type="button" class="btn btn-success" ng-click="showModal(3)">Bễ</button>-->
-<!--</div>-->
-<!--</div>-->
 
 <div class="row col-md-12">
     <h5>Tổng thu được: </h5>&nbsp;&nbsp;<h5 class="text-danger">{{totalMoneyPaid | number}}</h5>
@@ -54,7 +25,10 @@
     <h5>Tổng sẽ thu: </h5>&nbsp;&nbsp;<h5 class="text-danger">{{totalMoneyPayDraft | number}}</h5>
 </div>
 
-<div style="width: 100%; height: auto; overflow: auto" id="hotCirculationTable"></div>
+<div id="parentContainer">
+    <div style="width: 100%; height: auto; overflow: auto" id="hotCirculationTable"></div>
+</div>
+
 
 <div class="row col-sm-12">
     <div class="search-result col-md-4" style="margin: 27px 0 27px -15px;">

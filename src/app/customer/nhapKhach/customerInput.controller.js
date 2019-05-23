@@ -10,6 +10,7 @@
 
         let typeContract = [
             {name: "", value: false},
+            {name: "Khách mới", value: true},
             {name: "Đáo", value: true},
             {name: "Thu về", value: true},
             {name: "Lãi đứng", value: true},
@@ -52,15 +53,16 @@
                         item.storeCode = storeCode;
                     }
 
-                    if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
-                        item.isCustomerNew = item.isCustomerNew === "TRUE";
-                    }
+                    // if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
+                    //     item.isCustomerNew = item.isCustomerNew === "TRUE";
+                    // }
 
                     item.isHdThuVe = item.statusType === "Thu về";
                     item.isHdChot = item.statusType === "Chốt";
                     item.isHdBe = item.statusType === "Bễ";
                     item.isHdDao = item.statusType === "Đáo";
                     item.isHdLaiDung = item.statusType === "Lãi đứng";
+                    item.isCustomerNew = item.statusType === "Khách mới";
 
                     if (item.isHdLaiDung) {
                         item.actuallyCollectedMoney = item.loanMoney;
@@ -119,7 +121,8 @@
             {
                 data: 'statusType',
                 type: 'dropdown',
-                width: 70
+                width: 70,
+                allowInvalid: false
             },
             {
                 data: 'customer.name',
@@ -181,13 +184,13 @@
                 correctFormat: true,
                 width: 70,
             },
-            {
-                data: 'isCustomerNew',
-                type: 'checkbox',
-                checkedTemplate: 'true',
-                uncheckedTemplate: 'false',
-                width: 55,
-            },
+            // {
+            //     data: 'isCustomerNew',
+            //     type: 'checkbox',
+            //     checkedTemplate: 'true',
+            //     uncheckedTemplate: 'false',
+            //     width: 55,
+            // },
             {
                 data: 'actionDel',
                 type: 'text',
@@ -205,7 +208,7 @@
             'Đã đóng',
             'Dư nợ',
             'Ngày chốt',
-            'Khách mới',
+            // 'Khách mới',
             ' '
         ];
         let userIdSelected = $scope.$parent.storeSelected.userId;
@@ -240,7 +243,7 @@
                     cellPrp.readOnly = true;
                 }
 
-                if (col === 10)
+                if (col === 9)
                     cellPrp.renderer = columnRenderer;
 
                 if (col === 0) {
@@ -255,24 +258,6 @@
                     cellPrp.allowInvalid = true;
                     cellPrp.strict = false;
                 }
-
-                // if (col === 3) {
-                //     cellPrp.renderer = columnNumericRenderer;
-                // }
-
-                // if (col === 3) {
-                //     cellPrp = {
-                //         format: '#,###',
-                //         language: 'en-US'
-                //     };
-                // }
-
-                // if (col === 3) {
-                //     cellPrp.type = 'date';
-                //     cellPrp.dateFormat = 'DD/MM/YYYY';
-                //     cellPrp.defaultDate = '01/01/1900';
-                //     cellPrp.correctFormat = true;
-                // }
 
                 if (!userIdSelected)
                     cellPrp.readOnly = true;
@@ -310,6 +295,7 @@
                             $scope.customers[rowChecked].isHdThuVe = typeItem.name === "Thu về";
                             $scope.customers[rowChecked].isHdChot = typeItem.name === "Chốt";
                             $scope.customers[rowChecked].isHdBe = typeItem.name === "Bễ";
+                            $scope.customers[rowChecked].isCustomerNew = typeItem.name === "Khách mới";
                         }
                     }
 
@@ -460,79 +446,86 @@
         }, 0);
 
         $scope.saveCustomer = () => {
-            let checkValid = true;
-            let indexInvalid = -1;
-            let colIndex = -1;
-            let validCustomers = angular.copy($scope.customers);
+            hotTableInstance.validateCells(function (result, obj) {
+                if (result) {
+                    let checkValid = true;
+                    let indexInvalid = -1;
+                    let colIndex = -1;
+                    let validCustomers = angular.copy($scope.customers);
 
-            _.filter(validCustomers, (item, index) => {
-                if (!item.customer.name || !item.loanMoney
-                    // || !item.paidMoney
-                    // || !item.totalMoneyNeedPay
-                    || (!item.isHdLaiDung && (!item.actuallyCollectedMoney || !item.loanDate))) {
+                    _.filter(validCustomers, (item, index) => {
+                        if (!item.customer.name || !item.loanMoney
+                            // || !item.paidMoney
+                            // || !item.totalMoneyNeedPay
+                            || (!item.isHdLaiDung && (!item.actuallyCollectedMoney || !item.loanDate))) {
 
-                    if (!item.customer.name)
-                        colIndex = 1;
-                    else if (!item.loanMoney)
-                        colIndex = 3;
-                    // else if (!item.paidMoney)
-                    //     colIndex = 6;
-                    // else if (!item.totalMoneyNeedPay)
-                    //     colIndex = 7;
+                            if (!item.customer.name)
+                                colIndex = 1;
+                            else if (!item.loanMoney)
+                                colIndex = 3;
+                            // else if (!item.paidMoney)
+                            //     colIndex = 6;
+                            // else if (!item.totalMoneyNeedPay)
+                            //     colIndex = 7;
 
-                    if (!item.isHdLaiDung && colIndex < 0) {
-                        if (!item.actuallyCollectedMoney)
-                            colIndex = 4;
-                        else if (!item.loanDate)
-                            colIndex = 5;
-                        else if (!item.dateEnd)
-                            colIndex = 8;
-                    }
+                            if (!item.isHdLaiDung && colIndex < 0) {
+                                if (!item.actuallyCollectedMoney)
+                                    colIndex = 4;
+                                else if (!item.loanDate)
+                                    colIndex = 5;
+                                else if (!item.dateEnd)
+                                    colIndex = 8;
+                            }
 
-                    checkValid = false;
-                    indexInvalid = index;
-                    return false;
-                }
-            });
-
-            if (!checkValid) {
-                hotTableInstance.selectCell(indexInvalid, colIndex);
-
-                AlertService.replaceAlerts({
-                    type: 'error',
-                    message: "Chưa nhập đủ thông tin hợp đồng!"
-                });
-                return;
-            }
-
-            let customers = _.map(validCustomers, (item) => {
-                if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !item._id) {
-                    item.storeId = $scope.userSelected.storeId;
-                    item.creator = $scope.userSelected.id;
-                    item.isRemove = true;
-                }
-
-                return item;
-            });
-
-            ContractManager
-                .one('insertCusAndContract')
-                .customPOST(customers)
-                .then((items) => {
-                    $scope.customers = [];
-                    $scope.customers.push(angular.copy(customerItem));
-                    toastr.success('Thêm dữ liệu khách thành công!');
-
-                    hotTableInstance.updateSettings({
-                        data: $scope.customers
-
+                            checkValid = false;
+                            indexInvalid = index;
+                            return false;
+                        }
                     });
 
-                    hotTableInstance.getInstance().render();
-                })
-                .catch((error) => {
-                    toastr.error("Có lỗi xảy ra! Hãy thử lại");
-                });
+                    if (!checkValid) {
+                        hotTableInstance.selectCell(indexInvalid, colIndex);
+
+                        AlertService.replaceAlerts({
+                            type: 'error',
+                            message: "Chưa nhập đủ thông tin hợp đồng!"
+                        });
+                        return;
+                    }
+
+                    let customers = _.map(validCustomers, (item) => {
+                        if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !item._id) {
+                            item.storeId = $scope.userSelected.storeId;
+                            item.creator = $scope.userSelected.id;
+                            item.isRemove = true;
+                        }
+
+                        return item;
+                    });
+
+                    ContractManager
+                        .one('insertCusAndContract')
+                        .customPOST(customers)
+                        .then((items) => {
+                            $scope.customers = [];
+                            $scope.customers.push(angular.copy(customerItem));
+                            toastr.success('Thêm dữ liệu khách thành công!');
+
+                            hotTableInstance.updateSettings({
+                                data: $scope.customers
+
+                            });
+
+                            hotTableInstance.getInstance().render();
+                        })
+                        .catch((error) => {
+                            toastr.error("Có lỗi xảy ra! Hãy thử lại");
+                        });
+                } else {
+                    toastr.error("Hãy nhập đủ thông tin và thử lại!");
+                }
+            });
+
         };
 
     }
