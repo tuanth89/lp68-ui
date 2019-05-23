@@ -1,7 +1,7 @@
 <h4 class="title-page">Báo cáo ngày {{filter.date | date:'dd/MM/yyyy'}}</h4>
 <div class="bgc-white bd bdrs-3 p-20 mB-20">
     <div class="row mb-20">
-        <div class="col-sm-3" ng-if="isAccountant || isRoot">
+        <div class="col-sm-2 col-md-2" ng-if="isAccountant || isRoot">
             <ui-select ng-model="filter.storeId" theme="bootstrap" search-enabled="true"
                        on-select="selectedStoreEvent($item)">
                 <ui-select-match placeholder="Cửa hàng">
@@ -9,6 +9,19 @@
                 </ui-select-match>
                 <ui-select-choices repeat="i._id as i in stores | filter : {name: $select.search}">
                     <span ng-bind-html="i.name | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+        <div class="col-sm-2 col-md-2" ng-if="isAccountant || isRoot">
+            <ui-select ng-model="filter.staffId" theme="bootstrap" search-enabled="true"
+                       on-select="selectedStaffEvent($item)">
+                <ui-select-match placeholder="Nhân viên">
+                    <span ng-bind-html="$select.selected.fullName"></span>
+                </ui-select-match>
+                <ui-select-choices
+                        repeat="i._id as i in usersByStore | filter : {fullName: $select.search}">
+                    <span ng-bind-html="i.fullName | highlight: $select.search"></span>
                 </ui-select-choices>
             </ui-select>
         </div>

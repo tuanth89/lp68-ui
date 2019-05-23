@@ -8,13 +8,12 @@
         // let currentUser = Auth.getSession();
         $scope.filter = {
             date: moment().format("YYYY-MM-DD"),
-            storeId: $scope.$parent.storeSelected.storeId
+            storeId: $scope.$parent.storeSelected.storeId,
+            staffId: $scope.$parent.storeSelected.userId
         };
 
-        // let storeArr = angular.copy(Restangular.stripRestangular(storeList));
-        // let storeItem = _.find(storeArr, {_id: selectedStoreId});
-
-        $scope.stores = [];
+        $scope.stores = angular.copy(Restangular.stripRestangular(storeList));
+        $scope.usersByStore = [];
 
         $scope.$watch('filter.date', function (newValue, oldValue) {
             if (newValue != oldValue) {
@@ -31,22 +30,36 @@
         $scope.$on('$viewContentLoaded', function (event, data) {
             $scope.getData();
 
-            StoreManager.one('listForUser').getList()
-                .then((stores) => {
-                    $scope.stores = angular.copy(Restangular.stripRestangular(stores));
+            // StoreManager.one('listForUser').getList()
+            //     .then((stores) => {
+            //         $scope.stores = angular.copy(Restangular.stripRestangular(stores));
+            //
+            //         StoreManager.one($scope.filter.storeId).one('listUserByStore').get()
+            //             .then((store) => {
+            //                 $scope.usersByStore = _.map(store.staffs, (item) => {
+            //                     if (!item.isAccountant)
+            //                         return item;
+            //                 });
+            //             }, (error) => {
+            //             })
+            //             .finally(() => {
+            //             });
+            //     });
 
-                    // StoreManager.one($scope.filter.storeId).one('listUserByStore').get()
-                    //     .then((store) => {
-                    //
-                    //     }, (error) => {
-                    //     })
-                    //     .finally(() => {
-                    //     });
+            StoreManager.one($scope.filter.storeId).one('listUserByStore').get()
+                .then((store) => {
+                    $scope.usersByStore = _.map(store.staffs, (item) => {
+                        if (!item.isAccountant)
+                            return item;
+                    });
+                }, (error) => {
+                })
+                .finally(() => {
                 });
         });
 
         $scope.selectedStoreEvent = function (item) {
-            $scope.userSelected.id = "";
+            $scope.filter.staffId = "";
             $scope.getData();
             StoreManager.one(item._id).one('listUserByStore').get()
                 .then((store) => {
