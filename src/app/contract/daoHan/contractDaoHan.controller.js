@@ -15,7 +15,7 @@
 
         $scope.pagination = {
             page: 1,
-            per_page: 1,
+            per_page: 30,
             totalItems: 0,
             totalByPages: 0
         };
@@ -113,7 +113,7 @@
                     readOnly: true
                 },
                 {
-                    data: 'totalMoneyNeedPay',
+                    data: 'totalHavePay',
                     type: 'numeric',
                     numericFormat: {
                         pattern: '#,###'
@@ -131,9 +131,15 @@
                     readOnly: true
                 },
                 {
+                    data: 'note',
+                    type: 'text',
+                    width: 250,
+                    readOnly: true
+                },
+                {
                     data: 'transferDate',
                     type: 'text',
-                    width: 90,
+                    width: 95,
                     readOnly: true
                 }
             ],
@@ -156,13 +162,14 @@
                 'Thực thu',
                 'Dư nợ',
                 'Đã đóng',
+                'Ghi chú',
                 'Ngày đáo'
             ],
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
 
-                if (col === 1 || col === 2 || col === 8) {
+                if (col === 1 || col === 2 || col === 9) {
                     cellPrp.renderer = myBtns;
                 }
 

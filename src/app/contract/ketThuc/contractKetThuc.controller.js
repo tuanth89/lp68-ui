@@ -21,7 +21,7 @@
 
         $scope.pagination = {
             page: 1,
-            per_page: 1,
+            per_page: 30,
             totalItems: 0,
             totalByPages: 0
         };
@@ -144,6 +144,12 @@
                     readOnly: true
                 },
                 {
+                    data: 'note',
+                    type: 'text',
+                    width: 250,
+                    readOnly: true
+                },
+                {
                     data: 'status',
                     type: 'text',
                     width: 90,
@@ -176,6 +182,7 @@
                 'Dư nợ',
                 'Đã đóng',
                 'Ngày chuyển',
+                'Ghi chú',
                 'Trạng thái',
                 'Thao tác'
             ],
@@ -183,7 +190,7 @@
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
 
-                if (col === 1 || col === 2 || col === 8 || col === 9 || col === 10) {
+                if (col === 1 || col === 2 || col === 8 || col === 10 || col === 11) {
                     cellPrp.renderer = myBtns;
                 }
 
@@ -203,6 +210,7 @@
                     let contractSelected = angular.copy(Restangular.stripRestangular($scope.contracts[rowCol.row]));
                     let {actuallyCollectedMoney, totalMoneyPaid, moneyPaid} = contractSelected;
 
+                    contractSelected.newTransferDate = moment().format("YYYY-MM-DD");
                     contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
                     contractSelected.moneyNotEnough = 0;
 
@@ -254,7 +262,10 @@
             ContractManager
                 .one($scope.contractSelected._id)
                 .one('changeStatus')
-                .customPUT({status: CONTRACT_STATUS.ACCOUNTANT_END})
+                .customPUT({
+                    status: CONTRACT_STATUS.ACCOUNTANT_END,
+                    newTransferDate: $scope.contractSelected.newTransferDate
+                })
                 .then((contract) => {
                     toastr.success('Cập nhật thành công!');
 

@@ -129,6 +129,12 @@
                 readOnly: true
             },
             {
+                data: 'note',
+                type: 'text',
+                width: 250,
+                readOnly: true
+            },
+            {
                 data: 'actionDel',
                 type: 'text',
                 width: 40,
@@ -144,6 +150,7 @@
             'Dư nợ',
             'Đã đóng',
             'Số ngày vay',
+            'Ghi chú',
             ' '
         ];
         const hotTableInstance = new Handsontable(container, {
@@ -167,7 +174,7 @@
                 cellPrp.className = "hot-normal";
                 cellPrp.readOnly = true;
 
-                if (col === 1 || col === 2 || col === 8) {
+                if (col === 1 || col === 2 || col === 9) {
                     cellPrp.renderer = columnRenderer;
                 }
 

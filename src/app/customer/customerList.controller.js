@@ -154,6 +154,8 @@
             data: $scope.contracts,
             columns: columnsSetting,
             stretchH: 'all',
+            rowHeaders: true,
+            autoWrapRow: true,
             // copyPaste: false,
             rowHeights: 35,
             licenseKey: 'non-commercial-and-evaluation',
@@ -174,7 +176,7 @@
                     case 6:
                         return "Tài liệu";
                     case 7:
-                        return "<button class='btnAction btn btn-danger delRowAll' style='width:22px;'><span class='fa fa-trash delRowAll'></span></button>";
+                        return "<button class='btnAction btn btn-danger delAll' style='width:22px;'><span class='fa fa-trash delAll'></span></button>";
                 }
             },
             cells: function (row, col) {
@@ -241,7 +243,7 @@
             }
         });
 
-        containerId.on('mouseup', 'button.delRowAll', function (event) {
+        containerId.on('mouseup', 'button.delAll', function (event) {
             if ($scope.customers.length === 0)
                 return;
 

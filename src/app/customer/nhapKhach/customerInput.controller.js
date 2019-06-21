@@ -5,6 +5,9 @@
         .controller('CustomerInputController', CustomerInputController);
 
     function CustomerInputController($scope, $timeout, ContractManager, Restangular, storeList, customerSource, AlertService, AdminService, CONTRACT_EVENT) {
+
+        const LIMIT_PASTE_DATA = 50;
+
         let storeArr = angular.copy(Restangular.stripRestangular(storeList));
         let customerS = angular.copy(Restangular.stripRestangular(customerSource));
 
@@ -52,10 +55,6 @@
                         item.storeId = selectedStoreId;
                         item.storeCode = storeCode;
                     }
-
-                    // if (item.isCustomerNew === "TRUE" || item.isCustomerNew === "FALSE") {
-                    //     item.isCustomerNew = item.isCustomerNew === "TRUE";
-                    // }
 
                     item.isHdThuVe = item.statusType === "Thu về";
                     item.isHdChot = item.statusType === "Chốt";
@@ -107,6 +106,7 @@
             isHdBe: false,
             isCustomerNew: false,
             paidMoney: "",
+            note: "",
             storeId: selectedStoreId,
             storeCode: storeCode,
             customerCode: $scope.$parent.storeSelected.userCode,
@@ -134,7 +134,7 @@
                 type: 'date',
                 dateFormat: 'DD/MM/YYYY',
                 correctFormat: true,
-                width: 70,
+                width: 75,
             },
             {
                 data: 'loanMoney',
@@ -182,7 +182,7 @@
                 type: 'date',
                 dateFormat: 'DD/MM/YYYY',
                 correctFormat: true,
-                width: 70,
+                width: 75,
             },
             // {
             //     data: 'isCustomerNew',
@@ -192,41 +192,65 @@
             //     width: 55,
             // },
             {
+                data: 'note',
+                type: 'text',
+                width: 100
+            },
+            {
                 data: 'actionDel',
                 type: 'text',
                 width: 25,
                 readOnly: true
             }
         ];
-        let colHeaderSetting = [
-            'Loại',
-            'Họ và tên',
-            'Ngày vay',
-            'Gói vay',
-            'Thực thu',
-            'Số ngày vay',
-            'Đã đóng',
-            'Dư nợ',
-            'Ngày chốt',
-            // 'Khách mới',
-            ' '
-        ];
+        // let colHeaderSetting = [
+        //     'Loại',
+        //     'Họ và tên',
+        //     'Ngày vay',
+        //     'Gói vay',
+        //     'Thực thu',
+        //     'Số ngày vay',
+        //     'Đã đóng',
+        //     'Dư nợ',
+        //     'Ngày chốt',
+        //     // 'Khách mới',
+        //     ' '
+        // ];
         let userIdSelected = $scope.$parent.storeSelected.userId;
+        let containerId = $("#hotTable");
         const hotTableInstance = new Handsontable(container, {
             data: $scope.customers,
             columns: columnsSetting,
             stretchH: 'all',
             copyPaste: true,
-            // autoWrapRow: true,
-            // wordWrap: false,
-            // preventOverflow: 'horizontal',
-            // fixedColumnsLeft: 3,
-            // manualColumnFreeze: true,
-            // viewportColumnRenderingOffset: 100,
-            // viewportRowRenderingOffset: 100,
             rowHeights: 35,
             licenseKey: 'non-commercial-and-evaluation',
-            colHeaders: colHeaderSetting,
+            colHeaders: function (col) {
+                switch (col) {
+                    case 0:
+                        return "Loại";
+                    case 1:
+                        return "Họ và tên";
+                    case 2:
+                        return "Ngày vay";
+                    case 3:
+                        return "Gói vay";
+                    case 4:
+                        return "Thực thu";
+                    case 5:
+                        return "Số ngày vay";
+                    case 6:
+                        return "Đã đóng";
+                    case 7:
+                        return "Dư nợ";
+                    case 8:
+                        return "Ngày chốt";
+                    case 9:
+                        return "Ghi chú";
+                    case 10:
+                        return "<button class='btnAction btn btn-danger delAll' style='width:22px;'><span class='fa fa-trash delAll'></span></button>";
+                }
+            },
             beforeRemoveRow: function (index, amount) {
                 if (hotTableInstance.countRows() <= 1)
                     return false;
@@ -243,7 +267,7 @@
                     cellPrp.readOnly = true;
                 }
 
-                if (col === 9)
+                if (col === 10)
                     cellPrp.renderer = columnRenderer;
 
                 if (col === 0) {
@@ -280,7 +304,7 @@
                 currCol = col;
             },
             afterChange: function (source, changes) {
-                $scope.isPaste = changes === 'CopyPaste.paste';
+                // $scope.isPaste = (changes === 'CopyPaste.paste' || changes === 'dateValidator');
                 if (changes === 'edit') {
                     let rowChecked = source[0][0];
                     let newValue = source[0][3];
@@ -359,19 +383,52 @@
                 ) {
                     changes[0][3] = numbro.unformat(changes[0][3]);
                 }
-            }
+            },
+            // beforePaste: function (data, coords) {
+            //     let count = data.length;
+            //     if (count > LIMIT_PASTE_DATA) {
+            //         data.splice(0, count - LIMIT_PASTE_DATA);
+            //     }
+            // }
+        });
+
+        containerId.on('mouseup', 'button.delAll', function (event) {
+            if ($scope.customers.length === 0)
+                return;
+
+            swal({
+                title: 'Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Có',
+                cancelButtonText: 'Không',
+            }).then((result) => {
+                if (result.value) {
+                    $scope.customers = [];
+                    $scope.customers.push(angular.copy(customerItem));
+
+                    hotTableInstance.updateSettings({
+                        data: $scope.customers
+
+                    });
+                    hotTableInstance.getInstance().render();
+                }
+            });
         });
 
         AdminService.checkRole(['customer.remove']).then(function (allowRole) {
             $scope.roleRemove = allowRole;
 
             if (!allowRole) {
+                let headers = hotTableInstance.getColHeader();
+
                 columnsSetting.splice(-1, 1);
-                colHeaderSetting.splice(-1, 1);
+                headers.splice(-1, 1);
 
                 hotTableInstance.updateSettings({
                     columns: columnsSetting,
-                    colHeaders: colHeaderSetting
+                    colHeaders: headers
                 });
 
                 hotTableInstance.getInstance().render();
@@ -492,6 +549,41 @@
                         });
                         return;
                     }
+
+                    _.forEach(validCustomers, (item, index) => {
+                        if (!item.customerId) {
+                            let customerItem = _.find(customerS, {name: item.customer.name});
+                            if (customerItem) {
+                                item.customerId = customerItem._id;
+                                item.customer = customerItem;
+                            }
+                        }
+
+                        if (!item.customerCode || !item.creator || !item.storeCode || !item.storeId) {
+                            item.customerCode = $scope.$parent.storeSelected.userCode;
+                            item.creator = $scope.$parent.storeSelected.userId;
+                            item.storeId = selectedStoreId;
+                            item.storeCode = storeCode;
+                        }
+
+                        item.isHdThuVe = item.statusType === "Thu về";
+                        item.isHdChot = item.statusType === "Chốt";
+                        item.isHdBe = item.statusType === "Bễ";
+                        item.isHdDao = item.statusType === "Đáo";
+                        item.isHdLaiDung = item.statusType === "Lãi đứng";
+                        item.isCustomerNew = item.statusType === "Khách mới";
+
+                        if (item.isHdLaiDung) {
+                            item.actuallyCollectedMoney = item.loanMoney;
+                        }
+
+                        if (item.totalMoneyNeedPay === "" || item.totalMoneyNeedPay === 0) {
+                            if (item.paidMoney > 0) {
+                                item.totalMoneyNeedPay = item.actuallyCollectedMoney - item.paidMoney;
+                            }
+                        }
+
+                    });
 
                     let customers = _.map(validCustomers, (item) => {
                         if (($scope.$parent.isAccountant || $scope.$parent.isRoot) && !item._id) {

@@ -173,6 +173,8 @@
         $scope.logout = function () {
             let lang = window.localStorage[LANG_KEY];
             $('#storeModal').modal('hide');
+            $('.modal-backdrop').remove();
+            $(document.body).removeClass("modal-open");
 
             Auth.logout();
             $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess, lang);

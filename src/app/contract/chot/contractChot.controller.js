@@ -26,6 +26,7 @@
             date: ""
         };
         $scope.totalMoneyPaid = 0;
+        $scope.totalMoneyHavePayEnd = 0;
 
         $scope.$watch('filter.date', function (newValue, oldValue) {
             if (newValue != oldValue) {
@@ -41,7 +42,7 @@
 
         $scope.pagination = {
             page: 1,
-            per_page: 1,
+            per_page: 30,
             totalItems: 0,
             totalByPages: 0
         };
@@ -64,6 +65,7 @@
                         $scope.contracts = angular.copy(Restangular.stripRestangular(data.docs));
                         $scope.pagination.totalItems = data.totalItems;
                         $scope.totalMoneyPaid = data.totalMoneyStatus;
+                        $scope.totalMoneyHavePayEnd = data.totalMoneyHavePayEnd;
 
                         let totalContract = $scope.contracts.length;
 
@@ -78,6 +80,7 @@
                         $scope.pagination.totalItems = 0;
                         $scope.pagination.totalByPages = 0;
                         $scope.totalMoneyPaid = 0;
+                        $scope.totalMoneyHavePayEnd = 0;
                     }
 
                     hotTableInstance.updateSettings({
@@ -184,6 +187,12 @@
                     readOnly: true
                 },
                 {
+                    data: 'note',
+                    type: 'text',
+                    width: 250,
+                    readOnly: true
+                },
+                {
                     data: 'actionTransf',
                     type: 'text',
                     width: 280,
@@ -212,12 +221,13 @@
                 'Ngày chuyển',
                 'Ngày hẹn',
                 'Hẹn đóng',
+                'Ghi chú',
                 'Thao tác'
             ],
             cells: function (row, col) {
                 let cellPrp = {};
                 cellPrp.className = "hot-normal";
-                if (col === 1 || col === 2 || col === 8 || col === 9 || col === 11) {
+                if (col === 1 || col === 2 || col === 8 || col === 9 || col === 12) {
                     cellPrp.renderer = myBtns;
                 }
 

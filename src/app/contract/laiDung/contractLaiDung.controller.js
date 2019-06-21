@@ -23,7 +23,7 @@
 
         $scope.pagination = {
             page: 1,
-            per_page: 1,
+            per_page: 30,
             totalItems: 0,
             totalByPages: 0
         };
@@ -136,6 +136,12 @@
                     },
                     width: 100,
                     readOnly: true
+                },
+                {
+                    data: 'note',
+                    type: 'text',
+                    width: 250,
+                    readOnly: true
                 }
             ],
             stretchH: 'all',
@@ -156,7 +162,8 @@
                 'Gói vay',
                 'Thực thu',
                 'Dư nợ',
-                'Đã đóng'
+                'Đã đóng',
+                'Ghi chú'
             ],
             cells: function (row, col) {
                 let cellPrp = {};

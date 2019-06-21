@@ -921,6 +921,12 @@ input.has-error, textarea.has-error, select.has-error {
     border-color: #d50a0a !important;
 }
 
+.btnAction.btAction-8 {
+    width: 80px !important;
+    background-color: #d50a0a !important;
+    border-color: #d50a0a !important;
+}
+
 .btnStatus {
     padding: 2px;
     margin: 2px;

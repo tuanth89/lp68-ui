@@ -15,7 +15,7 @@
 
         $scope.pagination = {
             page: 1,
-            per_page: 1,
+            per_page: 30,
             totalItems: 0,
             totalByPages: 0
         };
@@ -85,6 +85,15 @@
                     readOnly: true,
                 },
                 {
+                    data: 'loanDate',
+                    type: 'numeric',
+                    numericFormat: {
+                        pattern: '#,###'
+                    },
+                    width: 100,
+                    readOnly: true
+                },
+                {
                     data: 'loanMoney',
                     type: 'numeric',
                     width: 100,
@@ -103,7 +112,7 @@
                     readOnly: true
                 },
                 {
-                    data: 'totalMoneyNeedPay',
+                    data: 'totalHavePay',
                     type: 'numeric',
                     numericFormat: {
                         pattern: '#,###'
@@ -121,12 +130,9 @@
                     readOnly: true
                 },
                 {
-                    data: 'loanDate',
-                    type: 'numeric',
-                    numericFormat: {
-                        pattern: '#,###'
-                    },
-                    width: 100,
+                    data: 'note',
+                    type: 'text',
+                    width: 250,
                     readOnly: true
                 },
                 {
@@ -156,6 +162,7 @@
                 'Thực thu',
                 'Dư nợ',
                 'Đã đóng',
+                'Ghi chú',
                 'Ngày chuyển'
             ],
             cells: function (row, col) {
@@ -163,7 +170,7 @@
                 cellPrp.className = "hot-normal";
                 cellPrp.readOnly = true;
 
-                if (col === 1 || col === 2 || col === 8) {
+                if (col === 1 || col === 2 || col === 9) {
                     cellPrp.renderer = myBtns;
                 }
 
