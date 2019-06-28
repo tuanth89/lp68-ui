@@ -273,7 +273,9 @@
                             $scope.selectedCirculation.newTransferDate = $scope.filter.date;
                             $scope.selectedCirculation.createdAt = nowDate.format("YYYY-MM-DD");
                             $scope.selectedCirculation.contractDate = nowDate.format("DD/MM/YYYY");
+                            $scope.selectedCirculation.contractCreatedAt = moment($scope.selectedCirculation.contractCreatedAt).utc().format("DD/MM/YYYY");
                             $scope.selectedCirculation.totalMoney = -$scope.selectedCirculation.moneyContractOld;
+                            $scope.selectedCirculation.isPheCustomerNew = false;
 
                             $('#hopDongDaoModal').on('shown.bs.modal', function () {
                                 $('.inputDao').focus();
@@ -443,8 +445,8 @@
 
                     for (let index = row; index < (row2 + 1); index++) {
                         let contractItem = $scope.contracts[index];
-                        if (contractItem.status !== 1 && parseInt(contractItem.moneyPaid) > 0)
-                            $scope.totalMoneyPayDraft += parseInt(contractItem.moneyPaid);
+                        // if (contractItem.status !== 1 && parseInt(contractItem.moneyPaid) > 0)
+                        $scope.totalMoneyPayDraft += parseInt(contractItem.moneyPaid);
                     }
 
                     // let moneyPaids = hotTableInstance.getData.apply(hotTableInstance, item);

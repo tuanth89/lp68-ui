@@ -213,6 +213,7 @@
                     contractSelected.newTransferDate = moment().format("YYYY-MM-DD");
                     contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
                     contractSelected.moneyNotEnough = 0;
+                    contractSelected.isPheCustomerNew = false;
 
                     contractSelected.totalMoney = contractSelected.moneyContractOld;
                     $scope.$parent.contractSelected = angular.copy(Restangular.stripRestangular(contractSelected));
@@ -264,7 +265,8 @@
                 .one('changeStatus')
                 .customPUT({
                     status: CONTRACT_STATUS.ACCOUNTANT_END,
-                    newTransferDate: $scope.contractSelected.newTransferDate
+                    newTransferDate: $scope.contractSelected.newTransferDate,
+                    isPheCustomerNew: $scope.contractSelected.isPheCustomerNew
                 })
                 .then((contract) => {
                     toastr.success('Cập nhật thành công!');

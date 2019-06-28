@@ -4,7 +4,7 @@
     angular.module('ati.pheNv')
         .controller('PheNvListController', PheNvListController);
 
-    function PheNvListController($scope, $state, $stateParams, $compile, AlertService, Restangular, ContractManager, storeList, StoreManager, Auth) {
+    function PheNvListController($scope, $state, $stateParams, $compile, AlertService, Restangular, ContractManager, storeList, StoreManager, Auth, moment) {
         let currentUser = Auth.getSession();
         $scope.filter = angular.copy($stateParams);
 
@@ -30,7 +30,7 @@
         $scope.pagination = {
             // page: $stateParams.p ? parseInt($stateParams.p) : 1,
             page: 1,
-            per_page: 12,
+            per_page: 30,
             totalItems: 0
         };
 
@@ -93,8 +93,18 @@
                     per_page: per_page
                 })
                 .then(function (resp) {
-                    let r = resp.plain();
-                    $scope.contracts = r.contracts;
+                    // let r = resp.plain();
+                    // $scope.contracts = r.contracts;
+
+                    if (resp) {
+                        let data = resp.plain();
+                        $scope.contracts = angular.copy(Restangular.stripRestangular(data.contracts));
+                        $scope.pagination.totalItems = data.totalItems;
+                    } else {
+                        $scope.contracts = [];
+                        $scope.pagination.page = 1;
+                        $scope.pagination.totalItems = 0;
+                    }
                 });
         };
 
@@ -117,7 +127,7 @@
             let totalFee = 0;
 
             $scope.contracts.forEach(item => {
-                totalFee += item.commissionFee.receive;
+                totalFee += item.commissionFee === undefined ? 0 : item.commissionFee.receive;
             });
 
             return totalFee;
@@ -207,6 +217,16 @@
                     width: 200,
                     render: function (data, e, full, meta) {
                         return data;
+                    }
+                },
+                {
+                    title: "Ngày vay",
+                    orderable: false,
+                    data: "loanDate",
+                    width: 100,
+                    className: "text-right",
+                    render: function (data, e, full, meta) {
+                        return moment(data).format("DD/MM/YYYY");
                     }
                 },
                 {

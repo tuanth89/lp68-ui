@@ -56,26 +56,35 @@
             //     actions: ["list"]
             // },
             {
-                title: "Cấu hình phế",
+                title: "Phế nhân viên",
                 icon: "c-pink-500 ti-money",
-                state: "",
-                featureName: "",
-                actions: ["list"],
-                children: [
-                    {
-                        title: "Nhân viên",
-                        featureName: "contract",
-                        actions: ["list"],
-                        state: ".pheNv.list"
-                    },
-                    {
-                        title: "Cấu hình phế",
-                        featureName: "pheConfig",
-                        actions: ["list"],
-                        state: ".pheConfig.newCustomer"
-                    }
-                ]
+                state: ".pheNv.list",
+                noneDropdown: true,
+                visible: true,
+                featureName: "contract",
+                actions: ["list"]
             },
+            // {
+            //     title: "Cấu hình phế",
+            //     icon: "c-pink-500 ti-money",
+            //     state: "",
+            //     featureName: "",
+            //     actions: ["list"],
+            //     children: [
+            //         {
+            //             title: "Nhân viên",
+            //             featureName: "contract",
+            //             actions: ["list"],
+            //             state: ".pheNv.list"
+            //         },
+            //         // {
+            //         //     title: "Cấu hình phế",
+            //         //     featureName: "pheConfig",
+            //         //     actions: ["list"],
+            //         //     state: ".pheConfig.newCustomer"
+            //         // }
+            //     ]
+            // },
             {
                 title: "Cửa hàng",
                 state: ".store.list",

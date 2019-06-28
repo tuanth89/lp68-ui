@@ -156,7 +156,7 @@
                             </label>
                             <div class="col-md-5 control-label">
                                 <label>
-                                    {{selectedCirculation.contractDate}}
+                                    {{selectedCirculation.contractCreatedAt}}
                                 </label>
                             </div>
                         </div>
@@ -239,6 +239,15 @@
                                        class="form-control textAlign"/>
                             </div>
                         </div>
+
+                        <div class="form-group col-md-12 ptb5">
+                            <div class="col-md-12 checkbox checkbox-danger" style="text-align: center;">
+                                <input id="checkbox6" type="checkbox" class="styled" ng-model="selectedCirculation.isPheCustomerNew">
+                                <label for="checkbox6">Tính phế theo khách mới (nếu tính theo khách cũ thì bỏ tích chọn)
+                                </label>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -745,7 +754,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
                 <button type="button" class="btn btn-primary" ng-click="saveSuaTienDongModal()"
-                        ng-disabled="selectedCirculation.payMoneyOriginal === 0">
+                        ng-disabled="selectedCirculation.payMoneyOriginal < 0">
                     <i class="fa fa-spinner fa-spin" ng-show="formProcessing"></i>Lưu
                 </button>
             </div>

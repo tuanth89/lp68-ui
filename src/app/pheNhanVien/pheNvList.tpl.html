@@ -64,6 +64,9 @@
                 <th class="text-center">STT</th>
                 <th class="text-center">Số hợp đồng</th>
                 <th class="text-center">Tên khách hàng</th>
+                <th class="text-center">Ngày vay</th>
+                <th class="text-center">Ngày đáo</th>
+                <th class="text-center">Ngày hết họ</th>
                 <th class="text-center">Gói vay</th>
                 <th class="text-center">Số ngày vay</th>
                 <th class="text-center">Tiền phế</th>
@@ -79,10 +82,13 @@
                 </td>
                 <td class="text-left" style="width: 120px">{{item.contractNo}}</td>
                 <td class="text-left" style="width: 170px">{{item.customerId.name}}</td>
+                <td class="text-right" style="width: 100px">{{item.createdAt | date: 'dd/MM/yyyy'}}</td>
+                <td class="text-right" style="width: 100px">{{item.maturityDate | date: 'dd/MM/yyyy'}}</td>
+                <td class="text-right" style="width: 100px">{{item.contractEndDate | date: 'dd/MM/yyyy'}}</td>
                 <td class="text-right" style="width: 100px">{{item.loanMoney | number}}</td>
                 <td class="text-right" style="width: 100px">{{item.loanDate}}</td>
                 <td class="text-right" style="width: 120px">
-                    <span ng-if="!item.isEdit">{{item.commissionFee.receive | number}}</span>
+                    <span ng-if="!item.isEdit" class="text-danger">{{item.commissionFee.receive | number}}</span>
                     <input id="comFee-{{$index}}" ng-if="item.isEdit" type="text" class="form-control text-right"
                            value="{{item.commissionFee.receive | number: 0}}" ng-blur="formatNumber($index,item)"/>
                 </td>
@@ -105,7 +111,7 @@
             </tbody>
             <tfoot>
             <tr>
-                <th class="text-right" colspan="5">TỔNG:
+                <th class="text-right" colspan="8">TỔNG:
                 </th>
                 <th class="text-right text-danger">{{totalMoneyFee() | number}}</th>
             </tr>

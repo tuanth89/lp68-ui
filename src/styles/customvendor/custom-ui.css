@@ -1139,6 +1139,10 @@ input.textAlign {
         height: 5em;
     }
 }
+
+.checkbox label::before {
+    border: 1px solid #ff3c7e !important;
+}
 /*endregion*/
 
 
