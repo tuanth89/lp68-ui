@@ -276,6 +276,9 @@
                         case 5:
                             $scope.showModalDongTien(actuallyCollectedMoney, totalMoneyPaid);
                             break;
+                        case 8:
+                            $scope.showModalSuaDongTien(actuallyCollectedMoney, totalMoneyPaid);
+                            break;
                     }
 
                     setTimeout(function () {
@@ -305,6 +308,12 @@
                         '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 3 + '">' + 'Bễ' + '</button>&nbsp;&nbsp;' +
                         '<button class="btnAction btn btn-success btAction-' + row + '" value="' + 4 + '">' + 'Kết thúc' + '</button>&nbsp;&nbsp;' +
                         '<button class="btnAction btn btn-success btAction-' + 5 + '" value="' + 5 + '">' + 'Đóng' + '</button>';
+
+                    let isMoneyPaid = $scope.contracts[row].luuThongOtherId !== null;
+                    if (isMoneyPaid) {
+                        td.innerHTML += '<button class="btnAction btn btn-success btAction-' + 8 + '" value="' + 8 + '">' + 'Sửa tiền đóng' + '</button>&nbsp;&nbsp;';
+                    }
+
                 } else
                     td.innerHTML = '';
             }
@@ -320,6 +329,26 @@
             $scope.$parent.contractSelected = angular.copy($scope.contractSelected);
 
             $('#dongTienModal').modal('show');
+        };
+
+        $scope.showModalSuaDongTien = (actuallyCollectedMoney, totalMoneyPaid) => {
+            $scope.contractSelected.moneyContractOld = parseInt(actuallyCollectedMoney) - parseInt(totalMoneyPaid); // - parseInt(moneyPaid);
+            $scope.contractSelected.newPayMoney = 0;
+
+            $scope.contractSelected.totalMoney = $scope.contractSelected.moneyContractOld;
+            $scope.contractSelected.contractCreatedAt = moment($scope.contractSelected.createdAt).utc().format("DD/MM/YYYY");
+            $scope.contractSelected.payDate = $scope.filter.date;
+            $scope.contractSelected.payMoneyOriginal = parseInt($scope.contractSelected.moneyPaid);
+            $scope.$parent.contractSelected = angular.copy($scope.contractSelected);
+            setTimeout(function () {
+                $scope.$apply();
+            }, 0);
+
+            $('#suaTienDongModal').on('shown.bs.modal', function () {
+                $('.inputSuaTienDongModal').focus();
+                $('.inputSuaTienDongModal').blur();
+            });
+            $('#suaTienDongModal').modal('show');
         };
 
         $scope.showModalThuVe = (actuallyCollectedMoney, totalMoneyPaid) => {

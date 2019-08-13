@@ -11,6 +11,9 @@
         /* event source that contains custom events on the scope */
         $scope.events = [];
 
+        let debitArr = [];
+        let prepayArr = [];
+
         $scope.selectedCustomer = {};
         $scope.formProcessing = false;
         $scope.contracts = [];
@@ -30,7 +33,16 @@
                 .getList()
                 .then((results) => {
                     $scope.selectedCustomer.customer.photo = results[0].photo;
-                    $scope.contracts = Restangular.stripRestangular(results[1]);
+                    let contracts = Restangular.stripRestangular(results[1]);
+                    $scope.contracts = contracts;
+
+                    let selectedItem = _.find(contracts, item => {
+                        return item.contractNo === $scope.selectedCustomer.contractNo;
+                    });
+                    if (selectedItem !== undefined) {
+                        $scope.fromSelected(selectedItem);
+                    }
+
                 })
                 .finally(() => {
                     $scope.formProcessing = false;
@@ -49,10 +61,16 @@
             $scope.filter.contractNo = "";
             $scope.contractInfo = {};
             contractNo = "";
+            debitArr = [];
+            prepayArr = [];
 
             _.remove($scope.events, function (item) {
                 return item;
             });
+            if (uiCalendarConfig.calendars["myCalendar1"] !== undefined) {
+                uiCalendarConfig.calendars["myCalendar1"].fullCalendar('prev');
+                uiCalendarConfig.calendars["myCalendar1"].fullCalendar('next');
+            }
 
             $scope.$broadcast(CONTRACT_EVENT.RESIZE_TABLE);
         };
@@ -60,6 +78,8 @@
         $scope.contractSelected = {};
 
         $scope.dongTienFunc = () => {
+            $scope.formProcessing = true;
+
             HdLuuThongManager
                 .one($scope.contractSelected._id)
                 .one('updateTotalMoneyPaidTCB')
@@ -75,24 +95,50 @@
                 })
                 .catch((error) => {
                     toastr.error('Có lỗi xảy ra. Hãy thử lại!');
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
                 });
         };
 
-        $('#dongTienModal').on('hidden.bs.modal', function () {
-            $scope.contractSelected.payDate = "";
-            $scope.contractSelected = {};
-            $('#payDate').val("");
-        });
+        $scope.editDongTienFunc = () => {
+            $scope.formProcessing = true;
+            $scope.contractSelected.isTVChotBe = true;
 
-        $('#dongTienModal').on('show.bs.modal', function () {
-            $scope.contractSelected.payDate = "";
-        });
+            HdLuuThongManager
+                .one($scope.contractSelected.contractId)
+                .one('editMoneyPaidPerDay')
+                .customPUT($scope.contractSelected)
+                .then((contract) => {
+                    toastr.success('Cập nhật tiền đóng thành công!');
+
+                    $('#suaTienDongModal').modal('hide');
+                    $scope.$broadcast(CONTRACT_EVENT.UPDATE_SUCCESS);
+                })
+                .catch((error) => {
+                    toastr.error("Có lỗi xảy ra! Hãy thử lại");
+                })
+                .finally(() => {
+                    $scope.formProcessing = false;
+                });
+        };
+
+        // $('#dongTienModal').on('hidden.bs.modal', function () {
+        //     $scope.contractSelected.payDate = "";
+        //     $scope.contractSelected = {};
+        //     $('#payDate').val("");
+        // });
+        //
+        // $('#dongTienModal').on('show.bs.modal', function () {
+        //     $scope.contractSelected.payDate = "";
+        // });
 
         let contractNo = "";
         $scope.fromSelected = function (item, model) {
             if (contractNo === item.contractNo)
                 return;
             contractNo = item.contractNo;
+            $scope.filter.contractNo = item.contractNo;
 
             _.remove($scope.events, function (item) {
                 return item;
@@ -111,14 +157,40 @@
                     $scope.contractInfo.loanMoney = contract.loanMoney;
                     $scope.contractInfo.actuallyCollectedMoney = contract.actuallyCollectedMoney;
                     $scope.contractInfo.moneyContractOld = parseInt(contract.actuallyCollectedMoney) - parseInt(contract.totalMoneyPaid); // - parseInt(moneyPaid);
+                    $scope.contractInfo.loanDate = contract.loanDate;
+                    $scope.contractInfo.loanEndDate = contract.loanEndDate;
+                    $scope.contractInfo.startLoanDate = contract.createdAt;
 
+                    contract.histories = contract.histories.filter((item) => {
+                        return item.title;
+                    });
+
+                    debitArr = contract.histories
+                        .filter(item => {
+                            return item.title === "Nợ";
+                        }).map(item => {
+                            return moment(item.start).format("YYYY-MM-DD");
+                        });
+
+                    prepayArr = contract.histories
+                        .filter(item => {
+                            return item.title === "Đã đóng";
+                        }).map(item => {
+                            return moment(item.start).format("YYYY-MM-DD");
+                        });
 
                     $scope.events.push(...contract.histories);
 
                 })
                 .finally(() => {
 
-                    uiCalendarConfig.calendars['myCalendar1'].fullCalendar('renderEvent', $scope.events, true);
+                    //
+                    $timeout(function () {
+                        uiCalendarConfig.calendars["myCalendar1"].fullCalendar('changeView', $scope.currentView);
+                        uiCalendarConfig.calendars["myCalendar1"].fullCalendar('prev');
+                        uiCalendarConfig.calendars["myCalendar1"].fullCalendar('next');
+                    });
+
                     // setTimeout(function () {
                     // uiCalendarConfig.calendars['myCalendar1'].fullCalendar('addEventSource', $scope.events);
                     // uiCalendarConfig.calendars['myCalendar1'].fullCalendar('rerenderEvents');
@@ -126,14 +198,8 @@
                 });
         };
 
-        // let date = new Date();
-        // let d = date.getDate();
-        // let m = date.getMonth();
-        // let y = date.getFullYear();
-
         // $scope.changeTo = 'English';
         $scope.currentView = 'month';
-
 
         // $scope.events = [{
         //     title: 'All Day Event',
@@ -165,10 +231,10 @@
 
         /* event source that calls a function on every view switch */
         $scope.eventsF = function (start, end, timezone, callback) {
-            var s = new Date(start).getTime() / 1000;
-            var e = new Date(end).getTime() / 1000;
-            var m = new Date(start).getMonth();
-            var events = [{
+            let s = new Date(start).getTime() / 1000;
+            let e = new Date(end).getTime() / 1000;
+            let m = new Date(start).getMonth();
+            let events = [{
                 title: 'Feed Me ' + m,
                 start: s + (50000),
                 end: s + (100000),
@@ -216,30 +282,30 @@
         $scope.eventRender = function (event, element, view) {
         };
 
-        /* config object */
-        $scope.uiConfig = {
-            calendar: {
-                locale: 'vi',
-                height: 450,
-                editable: false,
-                displayEventTime: false,
-                header: {
-                    left: 'title',
-                    // center: 'myCustomButton',
-                    right: 'today prev,next'
-                },
-                // dayClick: $scope.alertOnDayClick,
-                // eventClick: $scope.alertOnEventClick,
-                eventRender: $scope.eventRender,
-                dayNames: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
-                dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
-                monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
-                monthNamesShort: ['Th01', 'Th02', 'Th03', 'Th04', 'Th05', 'Th06', 'Th07', 'Th08', 'Th09', 'Th10', 'Th11', 'Th12']
-            }
-        };
-
         /* event sources array*/
         $scope.eventSources = [$scope.events, $scope.eventsF];
+
+        $scope.dayRender = function (date, cell) {
+            if ($scope.contractInfo.hasOwnProperty("createdAt")) {
+                if (date.diff(moment($scope.contractInfo.startLoanDate), 'days') >= 0 &&
+                    date.diff(moment($scope.contractInfo.loanEndDate), 'days') <= 0) {
+                    let dateCalendar = moment(date).format("YYYY-MM-DD");
+
+                    // Trường hợp nợ = 0 thì hiển thị ô màu xanh lá cây
+                    if (debitArr.indexOf(dateCalendar) >= 0) {
+                        cell.css("background-color", "#9acd32");
+                    }
+                    // Trường hợp đóng trước thì hiển thị ô màu xanh dương
+                    else if (prepayArr.indexOf(dateCalendar) >= 0) {
+                        cell.css("background-color", "#00bfff");
+                    }
+                    // Gói vay bắt đầu --> kết thúc hiển thị ô màu vàng
+                    else
+                        cell.css("background-color", "#ffff00");
+                } else
+                    cell.css("background-color", "");
+            }
+        };
 
         $scope.uploadNew = function (fileUpload) {
             if (!fileUpload)
@@ -292,7 +358,34 @@
             //     hotInstance.validateCells();
             // };
 
-            Inputmask({}).mask(document.querySelectorAll(".datemask"));
+            Inputmask({}).mask(document.querySelectorAll(".datemask"))
+
+            /* config object */
+            $timeout(function () {
+                $scope.uiConfig = {
+                    calendar: {
+                        locale: 'vi',
+                        height: 450,
+                        editable: false,
+                        displayEventTime: false,
+                        header: {
+                            left: 'title',
+                            // center: 'myCustomButton',
+                            right: 'today prev,next'
+                        },
+                        dayRender: $scope.dayRender,
+                        // dayClick: $scope.alertOnDayClick,
+                        // eventClick: $scope.alertOnEventClick,
+                        eventRender: $scope.eventRender,
+                        dayNames: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+                        dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+                        monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                        monthNamesShort: ['Th01', 'Th02', 'Th03', 'Th04', 'Th05', 'Th06', 'Th07', 'Th08', 'Th09', 'Th10', 'Th11', 'Th12']
+                    }
+                };
+            }, 2000);
+
+
         }, 0);
 
     }

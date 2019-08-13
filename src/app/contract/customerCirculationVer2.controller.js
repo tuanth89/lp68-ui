@@ -633,6 +633,10 @@
                         $scope.totalMoneyHavePayEnd = 0;
                     }
 
+                    $scope.totalMoneyPayDraft = 0;
+                    $scope.checkedList = [];
+                    $('input.checker').attr("checked", false);
+
                     // isCheckboxVisible = _.find($scope.contracts, {status: 0}) === undefined;
                     totalLuuThong = _.filter($scope.contracts, function (item) {
                         return item.status === 0;

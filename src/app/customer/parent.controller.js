@@ -4,7 +4,7 @@
     angular.module('ati.contract')
         .controller('CustomerParentController', CustomerParentController);
 
-    function CustomerParentController($scope, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, Restangular, CustomerManager, CONTRACT_EVENT) {
+    function CustomerParentController($scope, $timeout, moment, Upload, IMGUR_API, uiCalendarConfig, ContractLogManager, ContractManager, Restangular, CustomerManager, CONTRACT_EVENT) {
 
         $scope.showInfoCus = false;
 
@@ -81,7 +81,6 @@
                     $scope.contractInfo.actuallyCollectedMoney = contract.actuallyCollectedMoney;
 
                     $scope.events.push(...contract.histories);
-
                 })
                 .finally(() => {
 
