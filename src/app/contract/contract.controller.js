@@ -13,6 +13,7 @@
 
         let debitArr = [];
         let prepayArr = [];
+        let traNoArr = [];
 
         $scope.selectedCustomer = {};
         $scope.formProcessing = false;
@@ -179,8 +180,17 @@
                             return moment(item.start).format("YYYY-MM-DD");
                         });
 
-                    $scope.events.push(...contract.histories);
+                    traNoArr = contract.histories
+                        .filter(item => {
+                            return item.title === "Trả nợ";
+                        }).map(item => {
+                            return moment(item.start).format("YYYY-MM-DD");
+                        });
 
+                    setTimeout(function () {
+                        // uiCalendarConfig.calendars['myCalendar1'].fullCalendar('rerenderEvents' );
+                        $scope.events.push(...contract.histories);
+                    }, 0);
                 })
                 .finally(() => {
 
@@ -230,19 +240,19 @@
         // }];
 
         /* event source that calls a function on every view switch */
-        $scope.eventsF = function (start, end, timezone, callback) {
-            let s = new Date(start).getTime() / 1000;
-            let e = new Date(end).getTime() / 1000;
-            let m = new Date(start).getMonth();
-            let events = [{
-                title: 'Feed Me ' + m,
-                start: s + (50000),
-                end: s + (100000),
-                allDay: false,
-                className: ['customFeed']
-            }];
-            callback(events);
-        };
+        // $scope.eventsF = function (start, end, timezone, callback) {
+        //     let s = new Date(start).getTime() / 1000;
+        //     let e = new Date(end).getTime() / 1000;
+        //     let m = new Date(start).getMonth();
+        //     let events = [{
+        //         title: 'Feed Me ' + m,
+        //         start: s + (50000),
+        //         end: s + (100000),
+        //         allDay: false,
+        //         className: ['customFeed']
+        //     }];
+        //     callback(events);
+        // };
 
         $scope.ev = {};
 
@@ -283,7 +293,7 @@
         };
 
         /* event sources array*/
-        $scope.eventSources = [$scope.events, $scope.eventsF];
+        $scope.eventSources = [$scope.events];
 
         $scope.dayRender = function (date, cell) {
             if ($scope.contractInfo.hasOwnProperty("createdAt")) {
@@ -291,19 +301,50 @@
                     date.diff(moment($scope.contractInfo.loanEndDate), 'days') <= 0) {
                     let dateCalendar = moment(date).format("YYYY-MM-DD");
 
-                    // Trường hợp nợ = 0 thì hiển thị ô màu xanh lá cây
+                    // Trường hợp nợ = 0 thì hiển thị ô màu tím
                     if (debitArr.indexOf(dateCalendar) >= 0) {
-                        cell.css("background-color", "#9acd32");
+                        cell.css("background-color", "#6f00ff");
                     }
                     // Trường hợp đóng trước thì hiển thị ô màu xanh dương
                     else if (prepayArr.indexOf(dateCalendar) >= 0) {
                         cell.css("background-color", "#00bfff");
+                    }
+                    // Trường hợp trả nợ thì hiển thị ô màu xanh lá cây
+                    else if (traNoArr.indexOf(dateCalendar) >= 0) {
+                        cell.css("background-color", "#9acd32");
                     }
                     // Gói vay bắt đầu --> kết thúc hiển thị ô màu vàng
                     else
                         cell.css("background-color", "#ffff00");
                 } else
                     cell.css("background-color", "");
+            }
+
+        };
+
+        /* config object */
+        $scope.uiConfig = {
+            calendar: {
+                locale: 'vi',
+                height: 450,
+                editable: false,
+                displayEventTime: false,
+                header: {
+                    left: 'title',
+                    // center: 'myCustomButton',
+                    right: 'today prev,next'
+                },
+                dayRender: $scope.dayRender,
+                // eventAfterRender: function(event, element, view) {
+                //     $(element).css('width','10px');
+                // },
+                // dayClick: $scope.alertOnDayClick,
+                // eventClick: $scope.alertOnEventClick,
+                eventRender: $scope.eventRender,
+                dayNames: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+                dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+                monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                monthNamesShort: ['Th01', 'Th02', 'Th03', 'Th04', 'Th05', 'Th06', 'Th07', 'Th08', 'Th09', 'Th10', 'Th11', 'Th12']
             }
         };
 
@@ -359,32 +400,6 @@
             // };
 
             Inputmask({}).mask(document.querySelectorAll(".datemask"))
-
-            /* config object */
-            $timeout(function () {
-                $scope.uiConfig = {
-                    calendar: {
-                        locale: 'vi',
-                        height: 450,
-                        editable: false,
-                        displayEventTime: false,
-                        header: {
-                            left: 'title',
-                            // center: 'myCustomButton',
-                            right: 'today prev,next'
-                        },
-                        dayRender: $scope.dayRender,
-                        // dayClick: $scope.alertOnDayClick,
-                        // eventClick: $scope.alertOnEventClick,
-                        eventRender: $scope.eventRender,
-                        dayNames: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
-                        dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
-                        monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
-                        monthNamesShort: ['Th01', 'Th02', 'Th03', 'Th04', 'Th05', 'Th06', 'Th07', 'Th08', 'Th09', 'Th10', 'Th11', 'Th12']
-                    }
-                };
-            }, 2000);
-
 
         }, 0);
 
