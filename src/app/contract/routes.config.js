@@ -73,12 +73,27 @@
                     blockUIConfig.autoBlock = false;
                 },
             })
-            .state('contract.cusCirculation', {
+            // .state('contract.cusCirculation', {
+            //     url: '/luu-thong?q&date&p',
+            //     views: {
+            //         'content@app.root.contract': {
+            //             controller: 'CustomerCirculationVer2Controller',
+            //             templateUrl: 'contract/customerCirculationVer2.tpl.html'
+            //         }
+            //     },
+            //     onEnter: function (blockUIConfig) {
+            //         blockUIConfig.autoBlock = true;
+            //     },
+            //     onExit: function (blockUIConfig) {
+            //         blockUIConfig.autoBlock = false;
+            //     }
+            // })
+            .state('contract.luuThong', {
                 url: '/luu-thong?q&date&p',
                 views: {
                     'content@app.root.contract': {
-                        controller: 'CustomerCirculationVer2Controller',
-                        templateUrl: 'contract/customerCirculationVer2.tpl.html'
+                        controller: 'LuuThongController',
+                        templateUrl: 'contract/luuThong/luuthong.tpl.html'
                     }
                 },
                 onEnter: function (blockUIConfig) {

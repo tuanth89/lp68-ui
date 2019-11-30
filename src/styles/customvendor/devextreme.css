@@ -1,0 +1,9 @@
+td[role="columnheader"] {
+    text-align: center !important;
+    font-weight: bold !important;
+    color: #666666;
+}
+
+.search-toolbar {
+    align-self: center;
+}

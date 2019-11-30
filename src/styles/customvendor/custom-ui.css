@@ -204,9 +204,9 @@ input:checked + .slider:before {
     margin-bottom: 20px;
 }
 
-#mainContent {
-    margin-top: 30px;
-}
+/*#mainContent {*/
+/*    margin-top: 30px;*/
+/*}*/
 
 /* table */
 .table-bordered thead th, .table-bordered thead td {
@@ -223,9 +223,9 @@ input:checked + .slider:before {
 }
 
 table tbody td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /*white-space: nowrap;*/
+    /*overflow: hidden;*/
+    /*text-overflow: ellipsis;*/
     vertical-align: middle !important;
 }
 
@@ -911,18 +911,18 @@ input.has-error, textarea.has-error, select.has-error {
     padding: 2px;
     margin: 2px;
     font-size: 13px;
-    width: 50px;
+    width: 60px;
     font-weight: bold;
 }
 
 .btnAction.btAction-6 {
-    width: 70px !important;
+    width: 80px !important;
     background-color: #d50a0a !important;
     border-color: #d50a0a !important;
 }
 
 .btnAction.btAction-8 {
-    width: 80px !important;
+    width: 95px !important;
     background-color: #d50a0a !important;
     border-color: #d50a0a !important;
 }
