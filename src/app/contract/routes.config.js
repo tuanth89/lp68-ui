@@ -73,27 +73,12 @@
                     blockUIConfig.autoBlock = false;
                 },
             })
-            // .state('contract.cusCirculation', {
-            //     url: '/luu-thong?q&date&p',
-            //     views: {
-            //         'content@app.root.contract': {
-            //             controller: 'CustomerCirculationVer2Controller',
-            //             templateUrl: 'contract/customerCirculationVer2.tpl.html'
-            //         }
-            //     },
-            //     onEnter: function (blockUIConfig) {
-            //         blockUIConfig.autoBlock = true;
-            //     },
-            //     onExit: function (blockUIConfig) {
-            //         blockUIConfig.autoBlock = false;
-            //     }
-            // })
-            .state('contract.luuThong', {
+            .state('contract.cusCirculation', {
                 url: '/luu-thong?q&date&p',
                 views: {
                     'content@app.root.contract': {
-                        controller: 'LuuThongController',
-                        templateUrl: 'contract/luuThong/luuthong.tpl.html'
+                        controller: 'CustomerCirculationVer2Controller',
+                        templateUrl: 'contract/customerCirculationVer2.tpl.html'
                     }
                 },
                 onEnter: function (blockUIConfig) {
@@ -103,6 +88,21 @@
                     blockUIConfig.autoBlock = false;
                 }
             })
+            // .state('contract.luuThong', {
+            //     url: '/luu-thong?q&date&p',
+            //     views: {
+            //         'content@app.root.contract': {
+            //             controller: 'LuuThongController',
+            //             templateUrl: 'contract/luuThong/luuthong.tpl.html'
+            //         }
+            //     },
+            //     onEnter: function (blockUIConfig) {
+            //         blockUIConfig.autoBlock = true;
+            //     },
+            //     onExit: function (blockUIConfig) {
+            //         blockUIConfig.autoBlock = false;
+            //     }
+            // })
             .state('contract.daoHan', {
                 url: '/dao-han',
                 views: {

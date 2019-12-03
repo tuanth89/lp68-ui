@@ -5,7 +5,7 @@
         .controller('CustomerCirculationVer2Controller', CustomerCirculationVer2Controller)
     ;
 
-    function CustomerCirculationVer2Controller($scope, $rootScope, $state, $stateParams, $timeout, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT) {
+    function CustomerCirculationVer2Controller($scope, $rootScope, $state, $stateParams, $timeout, $http, CONTRACT_STATUS, ContractManager, moment, Restangular, HdLuuThongManager, CONTRACT_EVENT, API_END_POINT) {
         $scope.formProcessing = false;
         $scope.filter = {
             date: "",
@@ -97,7 +97,7 @@
                 {
                     data: 'contractStatus',
                     type: 'text',
-                    width: 250,
+                    width: 330,
                     readOnly: true
                 },
                 {
@@ -109,7 +109,7 @@
                 {
                     data: 'note',
                     type: 'text',
-                    width: 250,
+                    width: 200,
                     readOnly: true
                 },
                 // {
@@ -334,7 +334,12 @@
                             $scope.selectedCirculation.numOfDayPaid = 0;
                             $scope.selectedCirculation.totalMoney = $scope.selectedCirculation.moneyContractOld;
 
-                            $('#dongNhieuNgayModal').modal('show');
+                            // $('#dongNhieuNgayModal').modal('show');
+
+                            let ws = XLSX.utils.json_to_sheet($scope.contracts);
+                            let wb = XLSX.utils.book_new();
+                            XLSX.utils.book_append_sheet(wb, ws, "Presidents");
+                            XLSX.writeFile(wb, "sheetjs.xlsx");
                             break;
 
                         case 8:
@@ -546,7 +551,7 @@
         });
 
         $scope.$on('$viewContentLoaded', function (event, data) {
-            $scope.getData($scope.pagination.page, $scope.pagination.per_page);
+            $scope.getData();
         });
 
         $scope.numOfDayPaidFunc = (money) => {
@@ -603,8 +608,8 @@
         $scope.getData = function (page, per_page) {
             // $scope.$broadcast(CONTRACT_EVENT.BLOCKING_UI, {isShow: true});
 
-            $scope.filter.page = page;
-            $scope.filter.per_page = per_page;
+            $scope.filter.page = $scope.pagination.page;
+            $scope.filter.per_page = $scope.pagination.per_page;
             $scope.formTableProcessing = true;
 
             HdLuuThongManager
@@ -658,6 +663,39 @@
                     // $scope.$broadcast(CONTRACT_EVENT.BLOCKING_UI, {isShow: false});
                 });
         };
+
+        $scope.exportToExcel = function () {
+            $scope.filter.page = $scope.pagination.page;
+            $scope.filter.per_page = $scope.pagination.per_page;
+
+            // $scope.formTableProcessing = true;
+
+            // HdLuuThongManager
+            //     .one('listByDate')
+            //     .customGET("exportAll", $scope.filter)
+            //     .then(function (resp) {
+            //
+            //     })
+            //     .finally(() => {
+            //         $scope.formTableProcessing = false;
+            //         // $scope.$broadcast(CONTRACT_EVENT.BLOCKING_UI, {isShow: false});
+            //     });
+
+            $http({
+                method: 'GET',
+                url: `${API_END_POINT}/admin/v1/hdLuuThongs/listByDate/exportAll`,
+                params: $scope.filter,
+                responseType: 'arraybuffer'
+            })
+                .then(function successCallback(response) {
+                    let today = new Date();
+                    let filename = `Danh_sach_Luu_Thong_ngay_${moment($scope.filter.date).format("DD/MM/YYYY")}.xlsx`;
+                    let file = new Blob([response.data], { type: 'application/octet-stream' });
+                    saveAs(file, filename);
+                }, function errorCallback(response) {
+                    console.log(response);
+                });
+        }
 
         $scope.$on('$stateChangeStart', function (event) {
             // if ($scope.formProcessing) {
